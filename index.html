@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopEase – Product Store</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <div class="logo">🛍️ ShopEase</div>
+      <div class="cart-info">
+        <span id="cart-count">0</span> item(s) in cart
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Find Your Perfect Product</h1>
+    <p>Filter by category, price, and rating to discover exactly what you need.</p>
+  </section>
+
+  <!-- Filters -->
+  <main>
+    <aside class="filters-panel">
+      <h2>Filter Products</h2>
+
+      <!-- Criterion 1: Category -->
+      <div class="filter-group">
+        <label class="filter-label">1. Category</label>
+        <div class="chip-group" id="category-chips">
+          <button class="chip active" data-value="all">All</button>
+          <button class="chip" data-value="Electronics">Electronics</button>
+          <button class="chip" data-value="Clothing">Clothing</button>
+          <button class="chip" data-value="Home & Garden">Home &amp; Garden</button>
+          <button class="chip" data-value="Sports">Sports</button>
+          <button class="chip" data-value="Books">Books</button>
+        </div>
+      </div>
+
+      <!-- Criterion 2: Price Range -->
+      <div class="filter-group">
+        <label class="filter-label">2. Price Range</label>
+        <div class="range-labels">
+          <span>$0</span>
+          <span id="price-value">$500</span>
+          <span>$1000</span>
+        </div>
+        <input
+          type="range"
+          id="price-range"
+          min="0"
+          max="1000"
+          value="1000"
+          step="10"
+        />
+        <p class="range-hint">Show products up to <strong id="price-display">$1000</strong></p>
+      </div>
+
+      <!-- Criterion 3: Minimum Rating -->
+      <div class="filter-group">
+        <label class="filter-label">3. Minimum Rating</label>
+        <div class="star-group" id="rating-stars">
+          <button class="star-btn active" data-value="0">Any</button>
+          <button class="star-btn" data-value="3">3+ ★</button>
+          <button class="star-btn" data-value="4">4+ ★</button>
+          <button class="star-btn" data-value="4.5">4.5+ ★</button>
+        </div>
+      </div>
+
+      <button id="reset-btn">Reset Filters</button>
+    </aside>
+
+    <!-- Product Grid -->
+    <section class="products-section">
+      <div class="results-bar">
+        <span id="results-count">Showing all products</span>
+        <select id="sort-select">
+          <option value="default">Sort: Default</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="rating-desc">Rating: High to Low</option>
+        </select>
+      </div>
+
+      <div class="product-grid" id="product-grid">
+        <!-- Products rendered by JS -->
+      </div>
+
+      <div class="no-results hidden" id="no-results">
+        <div class="no-results-icon">🔍</div>
+        <h3>No products found</h3>
+        <p>Try adjusting your filters to see more results.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Cart Toast -->
+  <div class="toast hidden" id="toast">Item added to cart!</div>
+
+  <footer>
+    <p>&copy; 2026 ShopEase. All rights reserved.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
