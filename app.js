@@ -64,15 +64,23 @@ function render() {
   noResults.classList.add("hidden");
 
   grid.innerHTML = filtered.map(p => {
-    const meta     = BRAND_META[p.brand] || { color: "#333", abbr: p.brand.slice(0,3).toUpperCase() };
-    const textCol  = meta.textDark ? "rgba(0,0,0,0.85)" : "rgba(255,255,255,0.92)";
-    const vanCol   = meta.textDark ? "rgba(0,0,0,0.5)"  : "rgba(255,255,255,0.55)";
-    const fitCls   = p.fitment === "OEM" ? "ci-fitment--oem" : "ci-fitment--afterfit";
+    const meta    = BRAND_META[p.brand] || { color: "#333", abbr: p.brand.slice(0,3).toUpperCase() };
+    const textCol = meta.textDark ? "rgba(0,0,0,0.85)" : "rgba(255,255,255,0.92)";
+    const vanCol  = meta.textDark ? "rgba(0,0,0,0.5)"  : "rgba(255,255,255,0.55)";
+    const fitCls  = p.fitment === "OEM" ? "ci-fitment--oem" : "ci-fitment--afterfit";
+    const imgUrl  = VAN_IMAGES[p.van] || "";
+    const fbStyle = `background:linear-gradient(135deg,${meta.color} 0%,${meta.color}bb 100%)`;
     return `
     <a class="product-card" href="product.html?id=${p.id}">
-      <div class="card-image" style="background:linear-gradient(135deg,${meta.color} 0%,${meta.color}bb 100%)">
-        <div class="ci-abbr" style="color:${textCol}">${meta.abbr}</div>
-        <div class="ci-van"  style="color:${vanCol}">${p.van}</div>
+      <div class="card-image">
+        ${imgUrl
+          ? `<img src="${imgUrl}" alt="${p.brand} ${p.van}" loading="lazy"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+          : ""}
+        <div class="card-img-fallback" style="${fbStyle};${imgUrl ? "display:none" : ""}">
+          <div class="ci-abbr" style="color:${textCol}">${meta.abbr}</div>
+          <div class="ci-van"  style="color:${vanCol}">${p.van}</div>
+        </div>
         <span class="ci-fitment ${fitCls}">${p.fitment}</span>
       </div>
       <div class="card-body">

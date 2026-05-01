@@ -18,15 +18,33 @@ document.title = `Snoeks – ${product.brand} ${product.van} ${product.type}`;
 document.getElementById("bc-brand").textContent   = product.brand;
 document.getElementById("bc-product").textContent = `${product.van} – ${product.type}`;
 
-/* ── Vehicle image placeholder ────────────────────────────────────── */
+/* ── Vehicle image ────────────────────────────────────────────────── */
 const vehEl   = document.getElementById("vehicle-img");
 const textCol = meta.textDark ? "rgba(0,0,0,0.85)" : "rgba(255,255,255,0.92)";
 const vanCol  = meta.textDark ? "rgba(0,0,0,0.5)"  : "rgba(255,255,255,0.55)";
-vehEl.style.background = `linear-gradient(135deg,${meta.color} 0%,${meta.color}99 100%)`;
-document.getElementById("vp-abbr").textContent  = meta.abbr;
-document.getElementById("vp-abbr").style.color  = textCol;
-document.getElementById("vp-van").textContent   = product.van;
-document.getElementById("vp-van").style.color   = vanCol;
+
+// Populate fallback (shown if photo fails or isn't available)
+const fallbackEl = document.getElementById("vp-fallback");
+fallbackEl.style.background = `linear-gradient(135deg,${meta.color} 0%,${meta.color}99 100%)`;
+document.getElementById("vp-abbr").textContent = meta.abbr;
+document.getElementById("vp-abbr").style.color = textCol;
+document.getElementById("vp-van").textContent  = product.van;
+document.getElementById("vp-van").style.color  = vanCol;
+
+const imgUrl = VAN_IMAGES[product.van] || null;
+const photoEl = document.getElementById("vehicle-photo");
+if (imgUrl) {
+  photoEl.src = imgUrl;
+  photoEl.alt = `${product.brand} ${product.van}`;
+  photoEl.onerror = () => {
+    photoEl.style.display = "none";
+    fallbackEl.style.display = "flex";
+  };
+  fallbackEl.style.display = "none";
+} else {
+  photoEl.style.display = "none";
+  fallbackEl.style.display = "flex";
+}
 
 /* ── Product image placeholder ────────────────────────────────────── */
 document.getElementById("pp-icon").textContent = TYPE_ICON[product.type] || "📦";
