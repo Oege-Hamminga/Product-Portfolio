@@ -11,19 +11,21 @@
   <header>
     <div class="header-inner">
       <div class="logo">
-        <span class="logo-snoeks">SNOEKS</span>
-        <span class="logo-sub">Automotive</span>
+        <div class="logo-slash"></div>
+        <div class="logo-text">
+          <span class="logo-snoeks">Snoeks</span>
+          <span class="logo-sub">Automotive</span>
+        </div>
       </div>
-      <nav class="header-nav">
+      <div class="header-right">
         <a href="index.html" class="back-link">← Back to Portfolio</a>
-      </nav>
+      </div>
     </div>
   </header>
 
-  <!-- Breadcrumb -->
   <div class="breadcrumb-bar">
     <div class="breadcrumb-inner">
-      <a href="index.html">Portfolio</a>
+      <a href="index.html">Product Portfolio</a>
       <span class="bc-sep">›</span>
       <span id="bc-brand"></span>
       <span class="bc-sep">›</span>
@@ -33,63 +35,50 @@
 
   <main class="detail-main">
 
-    <!-- ── Top: Images + Meta ────────────────────────── -->
+    <!-- ── Images + Meta ──────────────────────────────── -->
     <section class="detail-top">
 
       <div class="detail-images">
 
-        <!-- Vehicle Image -->
         <div class="image-card">
           <div class="image-label">Vehicle</div>
           <div class="vehicle-placeholder" id="vehicle-img">
-            <div class="vp-brand" id="vp-brand-abbr"></div>
-            <div class="vp-van"   id="vp-van-name"></div>
+            <div class="vp-brand" id="vp-abbr"></div>
+            <div class="vp-van"   id="vp-van"></div>
           </div>
         </div>
 
-        <!-- Product Image -->
         <div class="image-card">
           <div class="image-label">Snoeks Product</div>
-          <div class="product-placeholder" id="product-img">
-            <div class="pp-icon" id="pp-icon"></div>
-            <div class="pp-type" id="pp-type-name"></div>
+          <div class="product-placeholder">
+            <div class="pp-icon"  id="pp-icon"></div>
+            <div class="pp-type"  id="pp-type"></div>
             <div class="pp-label">Snoeks Conversion</div>
           </div>
         </div>
 
       </div>
 
-      <!-- Meta Info -->
       <div class="detail-meta">
-        <div class="meta-badge" id="meta-segment"></div>
-        <h1 class="detail-title" id="detail-title"></h1>
-        <table class="meta-table">
-          <tr>
-            <td>Brand</td>
-            <td id="m-brand"></td>
-          </tr>
-          <tr>
-            <td>Van Model</td>
-            <td id="m-van"></td>
-          </tr>
-          <tr>
-            <td>Segment</td>
-            <td id="m-segment"></td>
-          </tr>
-          <tr>
-            <td>Product Type</td>
-            <td id="m-type"></td>
-          </tr>
-          <tr>
-            <td>Part Series</td>
-            <td id="m-part"></td>
-          </tr>
-        </table>
+        <div class="meta-header">
+          <div class="meta-eyebrow" id="meta-eyebrow"></div>
+          <div class="meta-title"   id="meta-title"></div>
+        </div>
+        <div class="meta-body">
+          <table class="meta-table">
+            <tr><td>Brand</td>        <td id="m-brand"></td></tr>
+            <tr><td>Van Model</td>    <td id="m-van"></td></tr>
+            <tr><td>Segment</td>      <td id="m-segment"></td></tr>
+            <tr><td>Fitment</td>      <td id="m-fitment"></td></tr>
+            <tr><td>Product Type</td> <td id="m-type"></td></tr>
+            <tr><td>Part Series</td>  <td id="m-part"></td></tr>
+          </table>
+        </div>
       </div>
 
     </section>
 
-    <!-- ── Tabs ──────────────────────────────────────── -->
+    <!-- ── Tabs ─────────────────────────────────────────── -->
     <section class="detail-tabs-section">
 
       <div class="tabs-bar" role="tablist">
@@ -105,7 +94,7 @@
           <p>Complete parts list for this product configuration.</p>
         </div>
         <div class="bom-table-wrap">
-          <table class="bom-table" id="bom-table">
+          <table class="bom-table">
             <thead>
               <tr>
                 <th>Part No.</th>
@@ -118,7 +107,7 @@
           </table>
         </div>
         <div class="bom-footer">
-          <button class="action-btn" onclick="window.print()">⬇ Download BOM (PDF)</button>
+          <button class="action-btn" onclick="window.print()">Download BOM (PDF)</button>
         </div>
       </div>
 
@@ -126,7 +115,7 @@
       <div class="tab-panel" id="tab-aftersales">
         <div class="tab-header">
           <h2>Aftersales &amp; Service</h2>
-          <p>Warranty, service intervals, and spare parts for your Snoeks product.</p>
+          <p>Warranty terms, service intervals, and available spare parts.</p>
         </div>
         <div class="aftersales-grid">
           <div class="as-card">
@@ -141,14 +130,15 @@
           </div>
           <div class="as-card">
             <div class="as-card-icon">📦</div>
-            <h3>Available Spare Parts</h3>
+            <h3>Spare Parts</h3>
             <ul id="as-spares"></ul>
           </div>
           <div class="as-card">
             <div class="as-card-icon">✉️</div>
             <h3>Contact Aftersales</h3>
             <p id="as-contact"></p>
-            <a href="#" class="action-btn" style="margin-top:12px;display:inline-block">Submit Service Request</a>
+            <br/>
+            <a href="#" class="action-btn" style="margin-top:8px">Submit Service Request</a>
           </div>
         </div>
       </div>
@@ -156,58 +146,160 @@
       <!-- Tab: Configurator -->
       <div class="tab-panel" id="tab-configurator">
         <div class="tab-header">
-          <h2>Product Configurator</h2>
-          <p>Customise your Snoeks product to match your fleet requirements.</p>
-        </div>
-        <div class="configurator-grid">
-
-          <div class="config-group">
-            <label class="config-label">Interior Finish</label>
-            <div class="config-options" id="cfg-finish">
-              <button class="cfg-opt active">Standard Black</button>
-              <button class="cfg-opt">Anthracite Grey</button>
-              <button class="cfg-opt">Beige / Cream</button>
-              <button class="cfg-opt">Custom RAL</button>
-            </div>
-          </div>
-
-          <div class="config-group">
-            <label class="config-label">Window Panel</label>
-            <div class="config-options" id="cfg-window">
-              <button class="cfg-opt active">No Window</button>
-              <button class="cfg-opt">Fixed Polycarbonate</button>
-              <button class="cfg-opt">Opening Polycarbonate</button>
-              <button class="cfg-opt">Tinted Safety Glass</button>
-            </div>
-          </div>
-
-          <div class="config-group" id="cfg-seat-group">
-            <label class="config-label">Seating</label>
-            <div class="config-options" id="cfg-seat">
-              <button class="cfg-opt active">2-Seat Bench</button>
-              <button class="cfg-opt">3-Seat Bench</button>
-              <button class="cfg-opt">Folding Seat (Flex)</button>
-            </div>
-          </div>
-
-          <div class="config-group">
-            <label class="config-label">Floor Treatment</label>
-            <div class="config-options" id="cfg-floor">
-              <button class="cfg-opt active">Standard Ply</button>
-              <button class="cfg-opt">Anti-Slip Rubber</button>
-              <button class="cfg-opt">Aluminium Checker Plate</button>
-            </div>
-          </div>
-
+          <h2>Configurator</h2>
+          <p>Specify the vehicle details and customise your Snoeks product.</p>
         </div>
 
+        <div class="cfg-layout">
+
+          <!-- LEFT: Vehicle Specification -->
+          <div class="cfg-vehicle">
+            <div class="cfg-col-header">
+              <span class="cfg-col-header-dot dot-vehicle"></span>
+              Vehicle Specification
+            </div>
+
+            <div class="config-group">
+              <label class="config-label">Body Length</label>
+              <div class="config-options">
+                <button class="cfg-opt" data-group="length" data-val="L1">L1 – Short</button>
+                <button class="cfg-opt active" data-group="length" data-val="L2">L2 – Medium</button>
+                <button class="cfg-opt" data-group="length" data-val="L3">L3 – Long</button>
+                <button class="cfg-opt" data-group="length" data-val="L4">L4 – Extra Long</button>
+              </div>
+            </div>
+
+            <div class="config-group">
+              <label class="config-label">Roof Height</label>
+              <div class="config-options">
+                <button class="cfg-opt" data-group="roof" data-val="H1">H1 – Low Roof</button>
+                <button class="cfg-opt active" data-group="roof" data-val="H2">H2 – Medium Roof</button>
+                <button class="cfg-opt" data-group="roof" data-val="H3">H3 – High Roof</button>
+              </div>
+            </div>
+
+            <div class="config-group">
+              <label class="config-label">Sliding Door(s)</label>
+              <div class="config-options">
+                <button class="cfg-opt active" data-group="door" data-val="Right only">Right only</button>
+                <button class="cfg-opt" data-group="door" data-val="Left only">Left only</button>
+                <button class="cfg-opt" data-group="door" data-val="Both sides">Both sides</button>
+              </div>
+            </div>
+
+            <div class="config-group">
+              <label class="config-label">Powertrain</label>
+              <div class="config-options">
+                <button class="cfg-opt active" data-group="power" data-val="Diesel">Diesel</button>
+                <button class="cfg-opt" data-group="power" data-val="Petrol">Petrol</button>
+                <button class="cfg-opt" data-group="power" data-val="Electric">Electric (BEV)</button>
+                <button class="cfg-opt" data-group="power" data-val="Hybrid">Hybrid (PHEV)</button>
+              </div>
+            </div>
+
+            <div class="config-group">
+              <label class="config-label">Drive</label>
+              <div class="config-options">
+                <button class="cfg-opt active" data-group="drive" data-val="FWD">FWD</button>
+                <button class="cfg-opt" data-group="drive" data-val="RWD">RWD</button>
+                <button class="cfg-opt" data-group="drive" data-val="4WD">4WD / AWD</button>
+              </div>
+            </div>
+
+            <div class="config-group">
+              <label class="config-label">Maximum Payload (kg)</label>
+              <div class="config-options">
+                <button class="cfg-opt" data-group="payload" data-val="Up to 600 kg">Up to 600 kg</button>
+                <button class="cfg-opt active" data-group="payload" data-val="600–1000 kg">600 – 1000 kg</button>
+                <button class="cfg-opt" data-group="payload" data-val="1000–1500 kg">1000 – 1500 kg</button>
+                <button class="cfg-opt" data-group="payload" data-val=">1500 kg">&gt; 1500 kg</button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT: Snoeks Product Specification -->
+          <div class="cfg-product">
+            <div class="cfg-col-header">
+              <span class="cfg-col-header-dot dot-product"></span>
+              Snoeks Product Specification
+            </div>
+
+            <div class="config-group">
+              <label class="config-label">Interior Finish</label>
+              <div class="config-options">
+                <button class="cfg-opt active" data-group="finish" data-val="Standard Black">Standard Black</button>
+                <button class="cfg-opt" data-group="finish" data-val="Anthracite Grey">Anthracite Grey</button>
+                <button class="cfg-opt" data-group="finish" data-val="Beige / Cream">Beige / Cream</button>
+                <button class="cfg-opt" data-group="finish" data-val="Custom RAL">Custom RAL</button>
+              </div>
+            </div>
+
+            <div class="config-group">
+              <label class="config-label">Window Panel</label>
+              <div class="config-options">
+                <button class="cfg-opt active" data-group="window" data-val="No Window">No Window</button>
+                <button class="cfg-opt" data-group="window" data-val="Fixed Polycarbonate">Fixed Polycarbonate</button>
+                <button class="cfg-opt" data-group="window" data-val="Opening Polycarbonate">Opening Polycarbonate</button>
+                <button class="cfg-opt" data-group="window" data-val="Tinted Safety Glass">Tinted Safety Glass</button>
+              </div>
+            </div>
+
+            <div class="config-group" id="cfg-seat-group">
+              <label class="config-label">Seating Configuration</label>
+              <div class="config-options">
+                <button class="cfg-opt active" data-group="seat" data-val="2-Seat Bench">2-Seat Bench</button>
+                <button class="cfg-opt" data-group="seat" data-val="3-Seat Bench">3-Seat Bench</button>
+                <button class="cfg-opt" data-group="seat" data-val="Folding Seats">Folding Seats (Flex)</button>
+              </div>
+            </div>
+
+            <div class="config-group" id="cfg-seat-group">
+              <label class="config-label">Seat Upholstery</label>
+              <div class="config-options">
+                <button class="cfg-opt active" data-group="upholstery" data-val="Fabric">Fabric</button>
+                <button class="cfg-opt" data-group="upholstery" data-val="Leatherette">Leatherette</button>
+                <button class="cfg-opt" data-group="upholstery" data-val="Vinyl (washable)">Vinyl (washable)</button>
+              </div>
+            </div>
+
+            <div class="config-group">
+              <label class="config-label">Floor Treatment</label>
+              <div class="config-options">
+                <button class="cfg-opt active" data-group="floor" data-val="Standard Ply">Standard Ply</button>
+                <button class="cfg-opt" data-group="floor" data-val="Anti-Slip Rubber">Anti-Slip Rubber</button>
+                <button class="cfg-opt" data-group="floor" data-val="Aluminium Checker Plate">Aluminium Checker Plate</button>
+              </div>
+            </div>
+
+            <div class="config-group">
+              <label class="config-label">Additional Options</label>
+              <div class="extras-grid">
+                <label class="extra-check"><input type="checkbox" data-extra="USB charging ports"> USB Charging Ports</label>
+                <label class="extra-check"><input type="checkbox" data-extra="LED interior strip"> LED Interior Strip</label>
+                <label class="extra-check"><input type="checkbox" data-extra="Cargo net divider"> Cargo Net Divider</label>
+                <label class="extra-check"><input type="checkbox" data-extra="Side storage pockets"> Side Storage Pockets</label>
+                <label class="extra-check"><input type="checkbox" data-extra="Airbag compatibility kit"> Airbag Compatibility Kit</label>
+                <label class="extra-check"><input type="checkbox" data-extra="Privacy tinted glass"> Privacy Tinted Glass</label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Summary bar -->
         <div class="cfg-summary">
-          <h3>Your Configuration Summary</h3>
-          <div id="cfg-summary-text" class="cfg-summary-text"></div>
-          <button class="action-btn" id="cfg-request-btn">Request Quotation</button>
+          <div style="flex:1">
+            <h3>Configuration Summary</h3>
+            <div class="cfg-summary-text" id="cfg-summary-text"></div>
+          </div>
+          <div class="cfg-actions">
+            <button class="action-btn" id="cfg-quote-btn">Request Quotation</button>
+            <button class="action-btn action-btn--outline" onclick="window.print()">Save as PDF</button>
+          </div>
         </div>
 
-      </div>
+      </div><!-- /tab-configurator -->
 
     </section>
 
@@ -215,8 +307,8 @@
 
   <footer>
     <div class="footer-inner">
-      <span>&copy; 2026 Snoeks Automotive B.V.</span>
-      <span>All rights reserved.</span>
+      <span>&copy; 2026 Snoeks Automotive B.V. — All rights reserved.</span>
+      <span>Product Portfolio v2.0</span>
     </div>
   </footer>
 

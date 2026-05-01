@@ -1,7 +1,8 @@
+/* ── Brand meta (card colour + abbreviation) ─────────────────────────── */
 const BRAND_META = {
-  "Citroen":        { color: "#C00011", abbr: "CIT" },
+  "Citroën":        { color: "#C00011", abbr: "CIT" },
   "Peugeot":        { color: "#003189", abbr: "PEU" },
-  "Opel":           { color: "#E2000F", abbr: "OPL" },
+  "Opel":           { color: "#1C1C1C", abbr: "OPL" },
   "Fiat":           { color: "#BE0000", abbr: "FIA" },
   "Toyota":         { color: "#EB0A1E", abbr: "TOY" },
   "RAM":            { color: "#1B365D", abbr: "RAM" },
@@ -13,131 +14,158 @@ const BRAND_META = {
   "KIA":            { color: "#05141F", abbr: "KIA" },
 };
 
+/* ── Product type icons ──────────────────────────────────────────────── */
+const TYPE_ICON = {
+  "Crew Cab":      "🚐",
+  "Flex Cab":      "🔄",
+  "Partition Wall":"🔩",
+};
+
+/* ── Helper to build a product entry ────────────────────────────────── */
+let _id = 0;
+function p(brand, van, segment, fitment, type) {
+  return { id: ++_id, brand, van, segment, fitment, type };
+}
+
+/* ── Product catalog ─────────────────────────────────────────────────── */
 const products = [
-  // ── Volkswagen ───────────────────────────────────────────────────────────────
-  { id: 1,  brand: "Volkswagen",    van: "Caddy",              segment: "F1",   type: "Partition Wall" },
-  { id: 2,  brand: "Volkswagen",    van: "Transporter T6.1",   segment: "K1",   type: "Crew Cabin"     },
-  { id: 3,  brand: "Volkswagen",    van: "Transporter T6.1",   segment: "K1",   type: "Partition Wall" },
-  { id: 4,  brand: "Volkswagen",    van: "Crafter",            segment: "K2/3", type: "Crew Cabin"     },
-  { id: 5,  brand: "Volkswagen",    van: "Crafter",            segment: "K2/3", type: "Partition Wall" },
 
-  // ── Mercedes-Benz ────────────────────────────────────────────────────────────
-  { id: 6,  brand: "Mercedes-Benz", van: "Citan",              segment: "F1",   type: "Partition Wall" },
-  { id: 7,  brand: "Mercedes-Benz", van: "Vito",               segment: "K1",   type: "Crew Cabin"     },
-  { id: 8,  brand: "Mercedes-Benz", van: "Vito",               segment: "K1",   type: "Partition Wall" },
-  { id: 9,  brand: "Mercedes-Benz", van: "Sprinter",           segment: "K2/3", type: "Crew Cabin"     },
-  { id: 10, brand: "Mercedes-Benz", van: "Sprinter",           segment: "K2/3", type: "Flex Cabin"     },
-  { id: 11, brand: "Mercedes-Benz", van: "Sprinter",           segment: "K2/3", type: "Partition Wall" },
+  /* ── VOLKSWAGEN ─────────────────────────────────────────────────── */
+  p("Volkswagen","Caddy",       "F1",   "After-fit","Crew Cab"),
+  p("Volkswagen","Caddy",       "F1",   "After-fit","Flex Cab"),
+  p("Volkswagen","Caddy",       "F1",   "After-fit","Partition Wall"),
+  p("Volkswagen","Transporter", "K1",   "After-fit","Crew Cab"),
+  p("Volkswagen","Transporter", "K1",   "After-fit","Flex Cab"),
+  p("Volkswagen","Crafter",     "K2/3", "After-fit","Crew Cab"),
+  p("Volkswagen","Caravelle",   "K1",   "After-fit","Partition Wall"),
+  p("Volkswagen","ID Buzz",     "K1",   "After-fit","Partition Wall"),
+  p("Volkswagen","Multivan",    "K1",   "After-fit","Partition Wall"),
 
-  // ── Ford ─────────────────────────────────────────────────────────────────────
-  { id: 12, brand: "Ford",          van: "Transit Connect",    segment: "F1",   type: "Partition Wall" },
-  { id: 13, brand: "Ford",          van: "Transit Custom",     segment: "K1",   type: "Crew Cabin"     },
-  { id: 14, brand: "Ford",          van: "Transit Custom",     segment: "K1",   type: "Partition Wall" },
-  { id: 15, brand: "Ford",          van: "Transit",            segment: "K2/3", type: "Crew Cabin"     },
-  { id: 16, brand: "Ford",          van: "Transit",            segment: "K2/3", type: "Flex Cabin"     },
-  { id: 17, brand: "Ford",          van: "Transit",            segment: "K2/3", type: "Partition Wall" },
+  /* ── STELLANTIS – F1 (OEM Crew Cab) ─────────────────────────────── */
+  p("Citroën","Berlingo",   "F1","OEM","Crew Cab"),
+  p("Fiat",   "Doblo",      "F1","OEM","Crew Cab"),
+  p("Opel",   "Combo",      "F1","OEM","Crew Cab"),
+  p("Peugeot","Partner",    "F1","OEM","Crew Cab"),
+  p("Toyota", "Proace City","F1","OEM","Crew Cab"),
 
-  // ── Renault ──────────────────────────────────────────────────────────────────
-  { id: 18, brand: "Renault",       van: "Kangoo",             segment: "F1",   type: "Partition Wall" },
-  { id: 19, brand: "Renault",       van: "Trafic",             segment: "K1",   type: "Crew Cabin"     },
-  { id: 20, brand: "Renault",       van: "Trafic",             segment: "K1",   type: "Partition Wall" },
-  { id: 21, brand: "Renault",       van: "Master",             segment: "K2/3", type: "Crew Cabin"     },
-  { id: 22, brand: "Renault",       van: "Master",             segment: "K2/3", type: "Flex Cabin"     },
+  /* ── STELLANTIS – K1 (OEM & After-fit, Crew Cab & Flex Cab) ─────── */
+  p("Citroën","Jumpy", "K1","OEM",       "Crew Cab"),
+  p("Citroën","Jumpy", "K1","OEM",       "Flex Cab"),
+  p("Citroën","Jumpy", "K1","After-fit", "Crew Cab"),
+  p("Citroën","Jumpy", "K1","After-fit", "Flex Cab"),
 
-  // ── Peugeot ──────────────────────────────────────────────────────────────────
-  { id: 23, brand: "Peugeot",       van: "Partner",            segment: "F1",   type: "Partition Wall" },
-  { id: 24, brand: "Peugeot",       van: "Expert",             segment: "K1",   type: "Crew Cabin"     },
-  { id: 25, brand: "Peugeot",       van: "Expert",             segment: "K1",   type: "Partition Wall" },
-  { id: 26, brand: "Peugeot",       van: "Boxer",              segment: "K2/3", type: "Crew Cabin"     },
-  { id: 27, brand: "Peugeot",       van: "Boxer",              segment: "K2/3", type: "Partition Wall" },
+  p("Fiat",   "Scudo", "K1","OEM",       "Crew Cab"),
+  p("Fiat",   "Scudo", "K1","OEM",       "Flex Cab"),
+  p("Fiat",   "Scudo", "K1","After-fit", "Crew Cab"),
+  p("Fiat",   "Scudo", "K1","After-fit", "Flex Cab"),
 
-  // ── Citroen ──────────────────────────────────────────────────────────────────
-  { id: 28, brand: "Citroen",       van: "Berlingo",           segment: "F1",   type: "Partition Wall" },
-  { id: 29, brand: "Citroen",       van: "Dispatch",           segment: "K1",   type: "Crew Cabin"     },
-  { id: 30, brand: "Citroen",       van: "Dispatch",           segment: "K1",   type: "Partition Wall" },
-  { id: 31, brand: "Citroen",       van: "Jumper",             segment: "K2/3", type: "Crew Cabin"     },
-  { id: 32, brand: "Citroen",       van: "Jumper",             segment: "K2/3", type: "Partition Wall" },
+  p("Opel",   "Vivaro","K1","OEM",       "Crew Cab"),
+  p("Opel",   "Vivaro","K1","OEM",       "Flex Cab"),
+  p("Opel",   "Vivaro","K1","After-fit", "Crew Cab"),
+  p("Opel",   "Vivaro","K1","After-fit", "Flex Cab"),
 
-  // ── Opel ─────────────────────────────────────────────────────────────────────
-  { id: 33, brand: "Opel",          van: "Combo",              segment: "F1",   type: "Partition Wall" },
-  { id: 34, brand: "Opel",          van: "Vivaro",             segment: "K1",   type: "Crew Cabin"     },
-  { id: 35, brand: "Opel",          van: "Vivaro",             segment: "K1",   type: "Partition Wall" },
-  { id: 36, brand: "Opel",          van: "Movano",             segment: "K2/3", type: "Partition Wall" },
+  p("Peugeot","Expert","K1","OEM",       "Crew Cab"),
+  p("Peugeot","Expert","K1","OEM",       "Flex Cab"),
+  p("Peugeot","Expert","K1","After-fit", "Crew Cab"),
+  p("Peugeot","Expert","K1","After-fit", "Flex Cab"),
 
-  // ── Fiat ─────────────────────────────────────────────────────────────────────
-  { id: 37, brand: "Fiat",          van: "Doblo",              segment: "F1",   type: "Partition Wall" },
-  { id: 38, brand: "Fiat",          van: "Scudo",              segment: "K1",   type: "Crew Cabin"     },
-  { id: 39, brand: "Fiat",          van: "Ducato",             segment: "K2/3", type: "Crew Cabin"     },
-  { id: 40, brand: "Fiat",          van: "Ducato",             segment: "K2/3", type: "Flex Cabin"     },
-  { id: 41, brand: "Fiat",          van: "Ducato",             segment: "K2/3", type: "Partition Wall" },
+  p("Toyota", "Proace","K1","OEM",       "Crew Cab"),
+  p("Toyota", "Proace","K1","OEM",       "Flex Cab"),
+  p("Toyota", "Proace","K1","After-fit", "Crew Cab"),
+  p("Toyota", "Proace","K1","After-fit", "Flex Cab"),
 
-  // ── Toyota ───────────────────────────────────────────────────────────────────
-  { id: 42, brand: "Toyota",        van: "Proace City",        segment: "F1",   type: "Partition Wall" },
-  { id: 43, brand: "Toyota",        van: "Proace",             segment: "K1",   type: "Crew Cabin"     },
-  { id: 44, brand: "Toyota",        van: "Proace",             segment: "K1",   type: "Partition Wall" },
+  /* ── STELLANTIS – K2/3 (OEM & After-fit, Crew Cab) ──────────────── */
+  p("Citroën","Jumper",    "K2/3","OEM",       "Crew Cab"),
+  p("Citroën","Jumper",    "K2/3","After-fit", "Crew Cab"),
+  p("Fiat",   "Ducato",    "K2/3","OEM",       "Crew Cab"),
+  p("Fiat",   "Ducato",    "K2/3","After-fit", "Crew Cab"),
+  p("Opel",   "Movano",    "K2/3","OEM",       "Crew Cab"),
+  p("Opel",   "Movano",    "K2/3","After-fit", "Crew Cab"),
+  p("Peugeot","Boxer",     "K2/3","OEM",       "Crew Cab"),
+  p("Peugeot","Boxer",     "K2/3","After-fit", "Crew Cab"),
+  p("Toyota", "Proace Max","K2/3","OEM",       "Crew Cab"),
+  p("Toyota", "Proace Max","K2/3","After-fit", "Crew Cab"),
 
-  // ── IVECO ────────────────────────────────────────────────────────────────────
-  { id: 45, brand: "IVECO",         van: "Daily 35S",          segment: "K1",   type: "Partition Wall" },
-  { id: 46, brand: "IVECO",         van: "Daily 50C",          segment: "K2/3", type: "Crew Cabin"     },
-  { id: 47, brand: "IVECO",         van: "Daily 50C",          segment: "K2/3", type: "Flex Cabin"     },
+  /* ── RAM ─────────────────────────────────────────────────────────── */
+  p("RAM","ProMaster","K2/3","OEM","Crew Cab"),
 
-  // ── RAM ──────────────────────────────────────────────────────────────────────
-  { id: 48, brand: "RAM",           van: "ProMaster 1500",     segment: "K1",   type: "Partition Wall" },
-  { id: 49, brand: "RAM",           van: "ProMaster 2500",     segment: "K2/3", type: "Crew Cabin"     },
-  { id: 50, brand: "RAM",           van: "ProMaster 2500",     segment: "K2/3", type: "Partition Wall" },
+  /* ── RENAULT ─────────────────────────────────────────────────────── */
+  p("Renault","Trafic",        "K1",  "OEM",      "Crew Cab"),
+  p("Renault","Trafic E-Tech", "K1",  "OEM",      "Crew Cab"),
+  p("Renault","Master",        "K2/3","After-fit", "Crew Cab"),
 
-  // ── KIA ──────────────────────────────────────────────────────────────────────
-  { id: 51, brand: "KIA",           van: "PV5",                segment: "K1",   type: "Crew Cabin"     },
-  { id: 52, brand: "KIA",           van: "PV5",                segment: "K1",   type: "Partition Wall" },
+  /* ── FORD ────────────────────────────────────────────────────────── */
+  p("Ford","Transit Connect","F1",  "After-fit","Crew Cab"),
+  p("Ford","Transit Custom", "K1",  "After-fit","Crew Cab"),
+  p("Ford","Transit",        "K2/3","After-fit","Crew Cab"),
+  p("Ford","Tourneo",        "K1",  "After-fit","Partition Wall"),
+  p("Ford","Transit Kombi",  "K1",  "After-fit","Partition Wall"),
+
+  /* ── IVECO ───────────────────────────────────────────────────────── */
+  p("IVECO","Daily","K2/3","OEM",      "Crew Cab"),
+  p("IVECO","Daily","K2/3","After-fit","Crew Cab"),
+
+  /* ── MERCEDES-BENZ ───────────────────────────────────────────────── */
+  p("Mercedes-Benz","Vito",      "K1","After-fit","Crew Cab"),
+  p("Mercedes-Benz","Vito Mixto","K1","After-fit","Partition Wall"),
+  p("Mercedes-Benz","V-Class",   "K1","After-fit","Partition Wall"),
+  p("Mercedes-Benz","Sprinter",  "K1","After-fit","Crew Cab"),
+
+  /* ── KIA ─────────────────────────────────────────────────────────── */
+  p("KIA","PV5","K1","After-fit","Crew Cab"),
 ];
 
-// BOM rows per product type
+/* ── BOM data per product type ───────────────────────────────────────── */
 const BOM_DATA = {
-  "Crew Cabin": [
-    { part: "SNK-CC-001", description: "Cabin Module Frame",         qty: 1, unit: "pcs" },
-    { part: "SNK-CC-002", description: "Sliding Divider Panel",      qty: 1, unit: "pcs" },
-    { part: "SNK-CC-003", description: "Upholstered Rear Seat Bench",qty: 1, unit: "pcs" },
-    { part: "SNK-CC-004", description: "3-Point Safety Belt Set",    qty: 3, unit: "set" },
-    { part: "SNK-CC-005", description: "Floor Mounting Bracket Set", qty: 1, unit: "set" },
-    { part: "SNK-CC-006", description: "Wiring Harness Extension",   qty: 1, unit: "pcs" },
-    { part: "SNK-CC-007", description: "Interior Trim Panel",        qty: 2, unit: "pcs" },
-    { part: "SNK-CC-008", description: "Fastener & Hardware Kit",    qty: 1, unit: "kit" },
+  "Crew Cab": [
+    { part:"SNK-CC-001", description:"Crew Cabin Module Frame (steel)",       qty:1, unit:"pcs" },
+    { part:"SNK-CC-002", description:"Sliding Divider Panel Assembly",        qty:1, unit:"pcs" },
+    { part:"SNK-CC-003", description:"Upholstered Rear Seat Bench",           qty:1, unit:"pcs" },
+    { part:"SNK-CC-004", description:"3-Point Inertia Reel Belt Set",         qty:3, unit:"set" },
+    { part:"SNK-CC-005", description:"Floor Mounting Bracket Kit",            qty:1, unit:"kit" },
+    { part:"SNK-CC-006", description:"Wiring Harness Extension",              qty:1, unit:"pcs" },
+    { part:"SNK-CC-007", description:"Interior Trim Side Panel (pair)",       qty:2, unit:"pcs" },
+    { part:"SNK-CC-008", description:"Acoustic Insulation Mat",               qty:1, unit:"pcs" },
+    { part:"SNK-CC-009", description:"Fastener & Hardware Kit",               qty:1, unit:"kit" },
   ],
-  "Flex Cabin": [
-    { part: "SNK-FC-001", description: "Flex Module Frame",          qty: 1, unit: "pcs" },
-    { part: "SNK-FC-002", description: "Folding Seat Assembly",      qty: 2, unit: "pcs" },
-    { part: "SNK-FC-003", description: "Quick-Release Locking Rail", qty: 2, unit: "pcs" },
-    { part: "SNK-FC-004", description: "3-Point Safety Belt Set",    qty: 2, unit: "set" },
-    { part: "SNK-FC-005", description: "Conversion Floor Panel",     qty: 1, unit: "pcs" },
-    { part: "SNK-FC-006", description: "Modular Divider Bracket",    qty: 4, unit: "pcs" },
-    { part: "SNK-FC-007", description: "Fastener & Hardware Kit",    qty: 1, unit: "kit" },
+  "Flex Cab": [
+    { part:"SNK-FC-001", description:"Flex Cabin Module Frame (aluminium)",   qty:1, unit:"pcs" },
+    { part:"SNK-FC-002", description:"Folding Seat Assembly (fold-flat)",     qty:2, unit:"pcs" },
+    { part:"SNK-FC-003", description:"Quick-Release Floor Rail System",       qty:2, unit:"pcs" },
+    { part:"SNK-FC-004", description:"3-Point Inertia Reel Belt Set",         qty:2, unit:"set" },
+    { part:"SNK-FC-005", description:"Modular Conversion Floor Panel",        qty:1, unit:"pcs" },
+    { part:"SNK-FC-006", description:"Locking Rail End Stop (set of 4)",      qty:4, unit:"pcs" },
+    { part:"SNK-FC-007", description:"Interior Trim Side Panel (pair)",       qty:2, unit:"pcs" },
+    { part:"SNK-FC-008", description:"Fastener & Hardware Kit",               qty:1, unit:"kit" },
   ],
   "Partition Wall": [
-    { part: "SNK-PW-001", description: "Steel Partition Frame",      qty: 1, unit: "pcs" },
-    { part: "SNK-PW-002", description: "Polycarbonate Window Panel", qty: 1, unit: "pcs" },
-    { part: "SNK-PW-003", description: "Acoustic Foam Insert",       qty: 1, unit: "pcs" },
-    { part: "SNK-PW-004", description: "Side Mounting Bracket Set",  qty: 1, unit: "set" },
-    { part: "SNK-PW-005", description: "Fastener & Hardware Kit",    qty: 1, unit: "kit" },
+    { part:"SNK-PW-001", description:"Steel Partition Wall Frame",            qty:1, unit:"pcs" },
+    { part:"SNK-PW-002", description:"Polycarbonate Window Panel",            qty:1, unit:"pcs" },
+    { part:"SNK-PW-003", description:"Acoustic Foam Insert",                  qty:1, unit:"pcs" },
+    { part:"SNK-PW-004", description:"Side Mounting Bracket Set",             qty:1, unit:"set" },
+    { part:"SNK-PW-005", description:"Rubber Edge Seal Strip",                qty:2, unit:"m"   },
+    { part:"SNK-PW-006", description:"Fastener & Hardware Kit",               qty:1, unit:"kit" },
   ],
 };
 
+/* ── Aftersales data per product type ───────────────────────────────── */
 const AFTERSALES_DATA = {
-  "Crew Cabin": {
-    warranty: "5 years structural / 2 years trim",
+  "Crew Cab": {
+    warranty:        "5 years structural / 2 years trim & upholstery",
     serviceInterval: "Annual inspection recommended",
-    spares: ["Seat upholstery set", "Belt retractor unit", "Mounting bracket (pair)", "Trim panel replacement"],
+    spares: ["Seat upholstery set","Belt retractor unit","Mounting bracket pair","Trim panel set","Acoustic mat"],
     contact: "aftersales@snoeks.com",
   },
-  "Flex Cabin": {
-    warranty: "5 years structural / 2 years mechanical",
+  "Flex Cab": {
+    warranty:        "5 years structural / 2 years mechanical components",
     serviceInterval: "Annual inspection recommended",
-    spares: ["Folding seat hinge kit", "Quick-release locking pin set", "Locking rail section", "Floor panel clip set"],
+    spares: ["Folding seat hinge kit","Quick-release pin set (×4)","Rail section (per metre)","Floor panel clip set"],
     contact: "aftersales@snoeks.com",
   },
   "Partition Wall": {
-    warranty: "5 years structural / 3 years panel",
+    warranty:        "5 years structural / 3 years panel & seals",
     serviceInterval: "Bi-annual inspection recommended",
-    spares: ["Polycarbonate window panel", "Acoustic foam insert", "Mounting bracket (single)", "Rubber seal strip"],
+    spares: ["Polycarbonate window panel","Acoustic foam insert","Mounting bracket (single)","Rubber seal strip (per metre)"],
     contact: "aftersales@snoeks.com",
   },
 };

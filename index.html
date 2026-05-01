@@ -11,112 +11,136 @@
   <header>
     <div class="header-inner">
       <div class="logo">
-        <span class="logo-snoeks">SNOEKS</span>
-        <span class="logo-sub">Automotive</span>
+        <div class="logo-slash"></div>
+        <div class="logo-text">
+          <span class="logo-snoeks">Snoeks</span>
+          <span class="logo-sub">Automotive</span>
+        </div>
       </div>
-      <nav class="header-nav">
-        <span class="nav-label">Product Portfolio</span>
-      </nav>
+      <div class="header-right">
+        <span class="header-tag">Product Portfolio</span>
+      </div>
     </div>
   </header>
 
   <section class="hero">
-    <div class="hero-content">
+    <div class="hero-inner">
       <p class="hero-eyebrow">Professional Van Conversions</p>
-      <h1>Find Your Product</h1>
+      <h1>Product <span>Portfolio</span></h1>
       <p class="hero-desc">
-        Select your van brand, product type, and segment to find the exact Snoeks solution for your fleet.
+        Filter by brand, fitment type, product, and segment to find the
+        exact Snoeks conversion for your vehicle.
       </p>
     </div>
   </section>
 
   <main class="catalog-layout">
 
-    <!-- ── Filter Panel ───────────────────────────────── -->
+    <!-- ── Filter Panel ────────────────────────────────── -->
     <aside class="filters-panel">
 
       <div class="filters-header">
         <h2>Filter</h2>
-        <button id="reset-btn" title="Reset all filters">Reset</button>
+        <button id="reset-btn">Reset</button>
       </div>
 
-      <!-- Criterion 1: Brand -->
+      <!-- 1: Brand -->
       <div class="filter-group">
         <span class="filter-label">
-          <span class="filter-number">1</span> Brand
+          <span class="filter-number">1</span>Brand
         </span>
         <div class="chip-group" id="brand-chips">
           <button class="chip active" data-value="all">All</button>
-          <button class="chip" data-value="Citroen">Citroën</button>
+          <button class="chip" data-value="Citroën">Citroën</button>
           <button class="chip" data-value="Peugeot">Peugeot</button>
           <button class="chip" data-value="Opel">Opel</button>
           <button class="chip" data-value="Fiat">Fiat</button>
           <button class="chip" data-value="Toyota">Toyota</button>
-          <button class="chip" data-value="RAM">RAM</button>
-          <button class="chip" data-value="IVECO">IVECO</button>
           <button class="chip" data-value="Volkswagen">Volkswagen</button>
           <button class="chip" data-value="Ford">Ford</button>
           <button class="chip" data-value="Mercedes-Benz">Mercedes-Benz</button>
           <button class="chip" data-value="Renault">Renault</button>
+          <button class="chip" data-value="RAM">RAM</button>
+          <button class="chip" data-value="IVECO">IVECO</button>
           <button class="chip" data-value="KIA">KIA</button>
         </div>
       </div>
 
-      <!-- Criterion 2: Product Type -->
+      <!-- 2: Fitment -->
       <div class="filter-group">
         <span class="filter-label">
-          <span class="filter-number">2</span> Product Type
+          <span class="filter-number">2</span>Fitment
+        </span>
+        <div class="chip-group" id="fitment-chips">
+          <button class="chip active"    data-value="all">All</button>
+          <button class="chip chip--fit" data-value="OEM">OEM</button>
+          <button class="chip chip--fit" data-value="After-fit">After-fit</button>
+        </div>
+      </div>
+
+      <!-- 3: Product Type -->
+      <div class="filter-group">
+        <span class="filter-label">
+          <span class="filter-number">3</span>Product Type
         </span>
         <div class="chip-group" id="type-chips">
-          <button class="chip active" data-value="all">All</button>
-          <button class="chip chip--type" data-value="Crew Cabin">Crew Cabin</button>
-          <button class="chip chip--type" data-value="Flex Cabin">Flex Cabin</button>
+          <button class="chip active"     data-value="all">All</button>
+          <button class="chip chip--type" data-value="Crew Cab">Crew Cab</button>
+          <button class="chip chip--type" data-value="Flex Cab">Flex Cab</button>
           <button class="chip chip--type" data-value="Partition Wall">Partition Wall</button>
         </div>
       </div>
 
-      <!-- Criterion 3: Segment -->
+      <!-- 4: Segment -->
       <div class="filter-group">
         <span class="filter-label">
-          <span class="filter-number">3</span> Segment
+          <span class="filter-number">4</span>Segment
         </span>
         <div class="chip-group" id="segment-chips">
           <button class="chip active" data-value="all">All</button>
-          <button class="chip chip--segment" data-value="F1">F1</button>
-          <button class="chip chip--segment" data-value="K1">K1</button>
-          <button class="chip chip--segment" data-value="K2/3">K2/3</button>
+          <button class="chip"        data-value="F1">F1</button>
+          <button class="chip"        data-value="K1">K1</button>
+          <button class="chip"        data-value="K2/3">K2/3</button>
         </div>
         <div class="segment-legend">
-          <div class="legend-item"><strong>F1</strong> Compact van</div>
-          <div class="legend-item"><strong>K1</strong> Medium van</div>
-          <div class="legend-item"><strong>K2/3</strong> Large van</div>
+          <div class="legend-item"><strong>F1</strong>Compact van</div>
+          <div class="legend-item"><strong>K1</strong>Medium van</div>
+          <div class="legend-item"><strong>K2/3</strong>Large van</div>
         </div>
       </div>
 
     </aside>
 
-    <!-- ── Product Grid ───────────────────────────────── -->
+    <!-- ── Product Grid ─────────────────────────────────── -->
     <section class="products-section">
 
       <div class="results-bar">
         <span id="results-count"></span>
+        <div class="results-bar-right">
+          <select id="sort-select">
+            <option value="default">Sort: Default</option>
+            <option value="brand-az">Brand A–Z</option>
+            <option value="segment">Segment</option>
+          </select>
+        </div>
       </div>
 
       <div class="product-grid" id="product-grid"></div>
 
       <div class="no-results hidden" id="no-results">
-        <div class="no-results-icon">🔍</div>
-        <h3>No products found</h3>
-        <p>Try adjusting the filters to see more results.</p>
+        <div class="no-results-icon">⬡</div>
+        <h3>No Products Found</h3>
+        <p>Adjust the filters to see more results.</p>
       </div>
 
     </section>
+
   </main>
 
   <footer>
     <div class="footer-inner">
-      <span>&copy; 2026 Snoeks Automotive B.V.</span>
-      <span>All rights reserved.</span>
+      <span>&copy; 2026 Snoeks Automotive B.V. — All rights reserved.</span>
+      <span>Product Portfolio v2.0</span>
     </div>
   </footer>
 
