@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snoeks – Product Detail</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="detail-page">
+
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-snoeks">SNOEKS</span>
+        <span class="logo-sub">Automotive</span>
+      </div>
+      <nav class="header-nav">
+        <a href="index.html" class="back-link">← Back to Portfolio</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-bar">
+    <div class="breadcrumb-inner">
+      <a href="index.html">Portfolio</a>
+      <span class="bc-sep">›</span>
+      <span id="bc-brand"></span>
+      <span class="bc-sep">›</span>
+      <span id="bc-product"></span>
+    </div>
+  </div>
+
+  <main class="detail-main">
+
+    <!-- ── Top: Images + Meta ────────────────────────── -->
+    <section class="detail-top">
+
+      <div class="detail-images">
+
+        <!-- Vehicle Image -->
+        <div class="image-card">
+          <div class="image-label">Vehicle</div>
+          <div class="vehicle-placeholder" id="vehicle-img">
+            <div class="vp-brand" id="vp-brand-abbr"></div>
+            <div class="vp-van"   id="vp-van-name"></div>
+          </div>
+        </div>
+
+        <!-- Product Image -->
+        <div class="image-card">
+          <div class="image-label">Snoeks Product</div>
+          <div class="product-placeholder" id="product-img">
+            <div class="pp-icon" id="pp-icon"></div>
+            <div class="pp-type" id="pp-type-name"></div>
+            <div class="pp-label">Snoeks Conversion</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Meta Info -->
+      <div class="detail-meta">
+        <div class="meta-badge" id="meta-segment"></div>
+        <h1 class="detail-title" id="detail-title"></h1>
+        <table class="meta-table">
+          <tr>
+            <td>Brand</td>
+            <td id="m-brand"></td>
+          </tr>
+          <tr>
+            <td>Van Model</td>
+            <td id="m-van"></td>
+          </tr>
+          <tr>
+            <td>Segment</td>
+            <td id="m-segment"></td>
+          </tr>
+          <tr>
+            <td>Product Type</td>
+            <td id="m-type"></td>
+          </tr>
+          <tr>
+            <td>Part Series</td>
+            <td id="m-part"></td>
+          </tr>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- ── Tabs ──────────────────────────────────────── -->
+    <section class="detail-tabs-section">
+
+      <div class="tabs-bar" role="tablist">
+        <button class="tab-btn active" data-tab="bom"          role="tab">BOM</button>
+        <button class="tab-btn"        data-tab="aftersales"   role="tab">Aftersales</button>
+        <button class="tab-btn"        data-tab="configurator" role="tab">Configurator</button>
+      </div>
+
+      <!-- Tab: BOM -->
+      <div class="tab-panel active" id="tab-bom">
+        <div class="tab-header">
+          <h2>Bill of Materials</h2>
+          <p>Complete parts list for this product configuration.</p>
+        </div>
+        <div class="bom-table-wrap">
+          <table class="bom-table" id="bom-table">
+            <thead>
+              <tr>
+                <th>Part No.</th>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Unit</th>
+              </tr>
+            </thead>
+            <tbody id="bom-body"></tbody>
+          </table>
+        </div>
+        <div class="bom-footer">
+          <button class="action-btn" onclick="window.print()">⬇ Download BOM (PDF)</button>
+        </div>
+      </div>
+
+      <!-- Tab: Aftersales -->
+      <div class="tab-panel" id="tab-aftersales">
+        <div class="tab-header">
+          <h2>Aftersales &amp; Service</h2>
+          <p>Warranty, service intervals, and spare parts for your Snoeks product.</p>
+        </div>
+        <div class="aftersales-grid">
+          <div class="as-card">
+            <div class="as-card-icon">🛡️</div>
+            <h3>Warranty</h3>
+            <p id="as-warranty"></p>
+          </div>
+          <div class="as-card">
+            <div class="as-card-icon">🔧</div>
+            <h3>Service Interval</h3>
+            <p id="as-service"></p>
+          </div>
+          <div class="as-card">
+            <div class="as-card-icon">📦</div>
+            <h3>Available Spare Parts</h3>
+            <ul id="as-spares"></ul>
+          </div>
+          <div class="as-card">
+            <div class="as-card-icon">✉️</div>
+            <h3>Contact Aftersales</h3>
+            <p id="as-contact"></p>
+            <a href="#" class="action-btn" style="margin-top:12px;display:inline-block">Submit Service Request</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Configurator -->
+      <div class="tab-panel" id="tab-configurator">
+        <div class="tab-header">
+          <h2>Product Configurator</h2>
+          <p>Customise your Snoeks product to match your fleet requirements.</p>
+        </div>
+        <div class="configurator-grid">
+
+          <div class="config-group">
+            <label class="config-label">Interior Finish</label>
+            <div class="config-options" id="cfg-finish">
+              <button class="cfg-opt active">Standard Black</button>
+              <button class="cfg-opt">Anthracite Grey</button>
+              <button class="cfg-opt">Beige / Cream</button>
+              <button class="cfg-opt">Custom RAL</button>
+            </div>
+          </div>
+
+          <div class="config-group">
+            <label class="config-label">Window Panel</label>
+            <div class="config-options" id="cfg-window">
+              <button class="cfg-opt active">No Window</button>
+              <button class="cfg-opt">Fixed Polycarbonate</button>
+              <button class="cfg-opt">Opening Polycarbonate</button>
+              <button class="cfg-opt">Tinted Safety Glass</button>
+            </div>
+          </div>
+
+          <div class="config-group" id="cfg-seat-group">
+            <label class="config-label">Seating</label>
+            <div class="config-options" id="cfg-seat">
+              <button class="cfg-opt active">2-Seat Bench</button>
+              <button class="cfg-opt">3-Seat Bench</button>
+              <button class="cfg-opt">Folding Seat (Flex)</button>
+            </div>
+          </div>
+
+          <div class="config-group">
+            <label class="config-label">Floor Treatment</label>
+            <div class="config-options" id="cfg-floor">
+              <button class="cfg-opt active">Standard Ply</button>
+              <button class="cfg-opt">Anti-Slip Rubber</button>
+              <button class="cfg-opt">Aluminium Checker Plate</button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="cfg-summary">
+          <h3>Your Configuration Summary</h3>
+          <div id="cfg-summary-text" class="cfg-summary-text"></div>
+          <button class="action-btn" id="cfg-request-btn">Request Quotation</button>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>&copy; 2026 Snoeks Automotive B.V.</span>
+      <span>All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="product.js"></script>
+</body>
+</html>
