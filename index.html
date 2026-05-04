@@ -28,8 +28,8 @@
       <p class="hero-eyebrow">Professional Van Conversions</p>
       <h1>Product <span>Portfolio</span></h1>
       <p class="hero-desc">
-        Filter by brand, fitment type, product, and segment to find the
-        exact Snoeks conversion for your vehicle.
+        Select a vehicle brand and segment to find compatible Snoeks conversions.
+        Open any vehicle to choose your product type and fitment specification.
       </p>
     </div>
   </section>
@@ -66,35 +66,10 @@
         </div>
       </div>
 
-      <!-- 2: Fitment -->
+      <!-- 2: Segment -->
       <div class="filter-group">
         <span class="filter-label">
-          <span class="filter-number">2</span>Fitment
-        </span>
-        <div class="chip-group" id="fitment-chips">
-          <button class="chip active"    data-value="all">All</button>
-          <button class="chip chip--fit" data-value="OEM">OEM</button>
-          <button class="chip chip--fit" data-value="After-fit">After-fit</button>
-        </div>
-      </div>
-
-      <!-- 3: Product Type -->
-      <div class="filter-group">
-        <span class="filter-label">
-          <span class="filter-number">3</span>Product Type
-        </span>
-        <div class="chip-group" id="type-chips">
-          <button class="chip active"     data-value="all">All</button>
-          <button class="chip chip--type" data-value="Crew Cab">Crew Cab</button>
-          <button class="chip chip--type" data-value="Flex Cab">Flex Cab</button>
-          <button class="chip chip--type" data-value="Partition Wall">Partition Wall</button>
-        </div>
-      </div>
-
-      <!-- 4: Segment -->
-      <div class="filter-group">
-        <span class="filter-label">
-          <span class="filter-number">4</span>Segment
+          <span class="filter-number">2</span>Segment
         </span>
         <div class="chip-group" id="segment-chips">
           <button class="chip active" data-value="all">All</button>
@@ -106,6 +81,20 @@
           <div class="legend-item"><strong>F1</strong>Compact van</div>
           <div class="legend-item"><strong>K1</strong>Medium van</div>
           <div class="legend-item"><strong>K2/3</strong>Large van</div>
+        </div>
+      </div>
+
+      <!-- 3: Product Type (optional pre-filter) -->
+      <div class="filter-group">
+        <span class="filter-label">
+          <span class="filter-number">3</span>Product Type
+          <span class="filter-optional">optional</span>
+        </span>
+        <div class="chip-group" id="type-chips">
+          <button class="chip active"     data-value="all">All</button>
+          <button class="chip chip--type" data-value="Crew Cab">Crew Cab</button>
+          <button class="chip chip--type" data-value="Flex Cab">Flex Cab</button>
+          <button class="chip chip--type" data-value="Partition Wall">Partition Wall</button>
         </div>
       </div>
 
@@ -129,7 +118,7 @@
 
       <div class="no-results hidden" id="no-results">
         <div class="no-results-icon">⬡</div>
-        <h3>No Products Found</h3>
+        <h3>No Vehicles Found</h3>
         <p>Adjust the filters to see more results.</p>
       </div>
 

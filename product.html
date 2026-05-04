@@ -54,9 +54,9 @@
         <div class="image-card">
           <div class="image-label">Snoeks Product</div>
           <div class="product-placeholder">
-            <div class="pp-icon"  id="pp-icon"></div>
-            <div class="pp-type"  id="pp-type"></div>
-            <div class="pp-label">Snoeks Conversion</div>
+            <div class="pp-icon"  id="pp-icon">📦</div>
+            <div class="pp-type"  id="pp-type">Select Product</div>
+            <div class="pp-label" id="pp-label">Choose type &amp; fitment below</div>
           </div>
         </div>
 
@@ -72,237 +72,118 @@
             <tr><td>Brand</td>        <td id="m-brand"></td></tr>
             <tr><td>Van Model</td>    <td id="m-van"></td></tr>
             <tr><td>Segment</td>      <td id="m-segment"></td></tr>
-            <tr><td>Fitment</td>      <td id="m-fitment"></td></tr>
-            <tr><td>Product Type</td> <td id="m-type"></td></tr>
-            <tr><td>Part Series</td>  <td id="m-part"></td></tr>
+            <tr><td>Product Type</td> <td id="m-type">—</td></tr>
+            <tr><td>Fitment</td>      <td id="m-fitment">—</td></tr>
+            <tr><td>Part Series</td>  <td id="m-part">—</td></tr>
           </table>
         </div>
       </div>
 
     </section>
 
+    <!-- ── Product Selection ─────────────────────────── -->
+    <section class="product-selector-section">
+      <div class="selector-header">
+        <span class="selector-header-icon">⚙</span>
+        Select Your Product
+      </div>
+      <div class="selector-body">
+
+        <div class="selector-step" id="step-type">
+          <div class="selector-step-label">
+            <span class="selector-step-num">1</span>
+            Product Type
+          </div>
+          <div class="selector-btns" id="type-selector-btns"></div>
+        </div>
+
+        <div class="selector-divider"></div>
+
+        <div class="selector-step selector-step--locked" id="step-fitment">
+          <div class="selector-step-label">
+            <span class="selector-step-num">2</span>
+            Fitment
+          </div>
+          <div class="selector-btns" id="fitment-selector-btns">
+            <span class="selector-hint">Select a product type first</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
     <!-- ── Tabs ─────────────────────────────────────────── -->
     <section class="detail-tabs-section">
 
-      <div class="tabs-bar" role="tablist">
-        <button class="tab-btn active" data-tab="bom"          role="tab">BOM</button>
-        <button class="tab-btn"        data-tab="aftersales"   role="tab">Aftersales</button>
-        <button class="tab-btn"        data-tab="configurator" role="tab">Configurator</button>
+      <div class="tabs-lock-overlay" id="tabs-lock">
+        <div class="tabs-lock-icon">🔒</div>
+        <p>Select a product type and fitment above to view product details</p>
       </div>
 
-      <!-- Tab: BOM -->
-      <div class="tab-panel active" id="tab-bom">
+      <div class="tabs-bar" role="tablist">
+        <button class="tab-btn active" data-tab="market" role="tab">Market Presence</button>
+        <button class="tab-btn"        data-tab="bom"    role="tab">Bill of Materials</button>
+        <button class="tab-btn"        data-tab="images" role="tab">Marketing Images</button>
+      </div>
+
+      <!-- Tab: Market Presence -->
+      <div class="tab-panel active" id="tab-market">
+        <div class="tab-header">
+          <h2>Market Presence</h2>
+          <p>Regional availability, OEM partnerships, and key application areas.</p>
+        </div>
+        <div class="market-grid" id="market-grid"></div>
+      </div>
+
+      <!-- Tab: Bill of Materials -->
+      <div class="tab-panel" id="tab-bom">
         <div class="tab-header">
           <h2>Bill of Materials</h2>
-          <p>Complete parts list for this product configuration.</p>
+          <p>Toggle modules to include or exclude parts from your configuration BOM.</p>
         </div>
-        <div class="bom-table-wrap">
-          <table class="bom-table">
-            <thead>
-              <tr>
-                <th>Part No.</th>
-                <th>Description</th>
-                <th>Qty</th>
-                <th>Unit</th>
-              </tr>
-            </thead>
-            <tbody id="bom-body"></tbody>
-          </table>
-        </div>
-        <div class="bom-footer">
-          <button class="action-btn" onclick="window.print()">Download BOM (PDF)</button>
-        </div>
-      </div>
-
-      <!-- Tab: Aftersales -->
-      <div class="tab-panel" id="tab-aftersales">
-        <div class="tab-header">
-          <h2>Aftersales &amp; Service</h2>
-          <p>Warranty terms, service intervals, and available spare parts.</p>
-        </div>
-        <div class="aftersales-grid">
-          <div class="as-card">
-            <div class="as-card-icon">🛡️</div>
-            <h3>Warranty</h3>
-            <p id="as-warranty"></p>
+        <div class="bom-cfg-layout">
+          <div class="bom-modules-panel">
+            <div class="bom-modules-header">
+              <h3>Modules</h3>
+              <button class="bom-toggle-all" id="bom-toggle-all">Deselect All</button>
+            </div>
+            <div id="bom-modules-list"></div>
           </div>
-          <div class="as-card">
-            <div class="as-card-icon">🔧</div>
-            <h3>Service Interval</h3>
-            <p id="as-service"></p>
-          </div>
-          <div class="as-card">
-            <div class="as-card-icon">📦</div>
-            <h3>Spare Parts</h3>
-            <ul id="as-spares"></ul>
-          </div>
-          <div class="as-card">
-            <div class="as-card-icon">✉️</div>
-            <h3>Contact Aftersales</h3>
-            <p id="as-contact"></p>
-            <br/>
-            <a href="#" class="action-btn" style="margin-top:8px">Submit Service Request</a>
+          <div class="bom-table-panel">
+            <div class="bom-table-wrap">
+              <table class="bom-table">
+                <thead>
+                  <tr>
+                    <th>Part No.</th>
+                    <th>Description</th>
+                    <th>Qty</th>
+                    <th>Unit</th>
+                    <th>Module</th>
+                  </tr>
+                </thead>
+                <tbody id="bom-body"></tbody>
+              </table>
+            </div>
+            <div class="bom-footer">
+              <span class="bom-count" id="bom-part-count"></span>
+              <button class="action-btn" onclick="window.print()">Export BOM (PDF)</button>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Tab: Configurator -->
-      <div class="tab-panel" id="tab-configurator">
+      <!-- Tab: Marketing Images -->
+      <div class="tab-panel" id="tab-images">
         <div class="tab-header">
-          <h2>Configurator</h2>
-          <p>Specify the vehicle details and customise your Snoeks product.</p>
+          <h2>Marketing Images</h2>
+          <p>Official product photography and renders for marketing use.</p>
         </div>
-
-        <div class="cfg-layout">
-
-          <!-- LEFT: Vehicle Specification -->
-          <div class="cfg-vehicle">
-            <div class="cfg-col-header">
-              <span class="cfg-col-header-dot dot-vehicle"></span>
-              Vehicle Specification
-            </div>
-
-            <div class="config-group">
-              <label class="config-label">Body Length</label>
-              <div class="config-options">
-                <button class="cfg-opt" data-group="length" data-val="L1">L1 – Short</button>
-                <button class="cfg-opt active" data-group="length" data-val="L2">L2 – Medium</button>
-                <button class="cfg-opt" data-group="length" data-val="L3">L3 – Long</button>
-                <button class="cfg-opt" data-group="length" data-val="L4">L4 – Extra Long</button>
-              </div>
-            </div>
-
-            <div class="config-group">
-              <label class="config-label">Roof Height</label>
-              <div class="config-options">
-                <button class="cfg-opt" data-group="roof" data-val="H1">H1 – Low Roof</button>
-                <button class="cfg-opt active" data-group="roof" data-val="H2">H2 – Medium Roof</button>
-                <button class="cfg-opt" data-group="roof" data-val="H3">H3 – High Roof</button>
-              </div>
-            </div>
-
-            <div class="config-group">
-              <label class="config-label">Sliding Door(s)</label>
-              <div class="config-options">
-                <button class="cfg-opt active" data-group="door" data-val="Right only">Right only</button>
-                <button class="cfg-opt" data-group="door" data-val="Left only">Left only</button>
-                <button class="cfg-opt" data-group="door" data-val="Both sides">Both sides</button>
-              </div>
-            </div>
-
-            <div class="config-group">
-              <label class="config-label">Powertrain</label>
-              <div class="config-options">
-                <button class="cfg-opt active" data-group="power" data-val="Diesel">Diesel</button>
-                <button class="cfg-opt" data-group="power" data-val="Petrol">Petrol</button>
-                <button class="cfg-opt" data-group="power" data-val="Electric">Electric (BEV)</button>
-                <button class="cfg-opt" data-group="power" data-val="Hybrid">Hybrid (PHEV)</button>
-              </div>
-            </div>
-
-            <div class="config-group">
-              <label class="config-label">Drive</label>
-              <div class="config-options">
-                <button class="cfg-opt active" data-group="drive" data-val="FWD">FWD</button>
-                <button class="cfg-opt" data-group="drive" data-val="RWD">RWD</button>
-                <button class="cfg-opt" data-group="drive" data-val="4WD">4WD / AWD</button>
-              </div>
-            </div>
-
-            <div class="config-group">
-              <label class="config-label">Maximum Payload (kg)</label>
-              <div class="config-options">
-                <button class="cfg-opt" data-group="payload" data-val="Up to 600 kg">Up to 600 kg</button>
-                <button class="cfg-opt active" data-group="payload" data-val="600–1000 kg">600 – 1000 kg</button>
-                <button class="cfg-opt" data-group="payload" data-val="1000–1500 kg">1000 – 1500 kg</button>
-                <button class="cfg-opt" data-group="payload" data-val=">1500 kg">&gt; 1500 kg</button>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- RIGHT: Snoeks Product Specification -->
-          <div class="cfg-product">
-            <div class="cfg-col-header">
-              <span class="cfg-col-header-dot dot-product"></span>
-              Snoeks Product Specification
-            </div>
-
-            <div class="config-group">
-              <label class="config-label">Interior Finish</label>
-              <div class="config-options">
-                <button class="cfg-opt active" data-group="finish" data-val="Standard Black">Standard Black</button>
-                <button class="cfg-opt" data-group="finish" data-val="Anthracite Grey">Anthracite Grey</button>
-                <button class="cfg-opt" data-group="finish" data-val="Beige / Cream">Beige / Cream</button>
-                <button class="cfg-opt" data-group="finish" data-val="Custom RAL">Custom RAL</button>
-              </div>
-            </div>
-
-            <div class="config-group">
-              <label class="config-label">Window Panel</label>
-              <div class="config-options">
-                <button class="cfg-opt active" data-group="window" data-val="No Window">No Window</button>
-                <button class="cfg-opt" data-group="window" data-val="Fixed Polycarbonate">Fixed Polycarbonate</button>
-                <button class="cfg-opt" data-group="window" data-val="Opening Polycarbonate">Opening Polycarbonate</button>
-                <button class="cfg-opt" data-group="window" data-val="Tinted Safety Glass">Tinted Safety Glass</button>
-              </div>
-            </div>
-
-            <div class="config-group" id="cfg-seat-group">
-              <label class="config-label">Seating Configuration</label>
-              <div class="config-options">
-                <button class="cfg-opt active" data-group="seat" data-val="2-Seat Bench">2-Seat Bench</button>
-                <button class="cfg-opt" data-group="seat" data-val="3-Seat Bench">3-Seat Bench</button>
-                <button class="cfg-opt" data-group="seat" data-val="Folding Seats">Folding Seats (Flex)</button>
-              </div>
-            </div>
-
-            <div class="config-group" id="cfg-seat-group">
-              <label class="config-label">Seat Upholstery</label>
-              <div class="config-options">
-                <button class="cfg-opt active" data-group="upholstery" data-val="Fabric">Fabric</button>
-                <button class="cfg-opt" data-group="upholstery" data-val="Leatherette">Leatherette</button>
-                <button class="cfg-opt" data-group="upholstery" data-val="Vinyl (washable)">Vinyl (washable)</button>
-              </div>
-            </div>
-
-            <div class="config-group">
-              <label class="config-label">Floor Treatment</label>
-              <div class="config-options">
-                <button class="cfg-opt active" data-group="floor" data-val="Standard Ply">Standard Ply</button>
-                <button class="cfg-opt" data-group="floor" data-val="Anti-Slip Rubber">Anti-Slip Rubber</button>
-                <button class="cfg-opt" data-group="floor" data-val="Aluminium Checker Plate">Aluminium Checker Plate</button>
-              </div>
-            </div>
-
-            <div class="config-group">
-              <label class="config-label">Additional Options</label>
-              <div class="extras-grid">
-                <label class="extra-check"><input type="checkbox" data-extra="USB charging ports"> USB Charging Ports</label>
-                <label class="extra-check"><input type="checkbox" data-extra="LED interior strip"> LED Interior Strip</label>
-                <label class="extra-check"><input type="checkbox" data-extra="Cargo net divider"> Cargo Net Divider</label>
-                <label class="extra-check"><input type="checkbox" data-extra="Side storage pockets"> Side Storage Pockets</label>
-                <label class="extra-check"><input type="checkbox" data-extra="Airbag compatibility kit"> Airbag Compatibility Kit</label>
-                <label class="extra-check"><input type="checkbox" data-extra="Privacy tinted glass"> Privacy Tinted Glass</label>
-              </div>
-            </div>
-
-          </div>
+        <div class="marketing-gallery" id="marketing-gallery"></div>
+        <div class="gallery-footer">
+          <button class="action-btn">Request Hi-Res Assets</button>
+          <button class="action-btn action-btn--outline" onclick="window.print()">Print Sheet</button>
         </div>
-
-        <!-- Summary bar -->
-        <div class="cfg-summary">
-          <div style="flex:1">
-            <h3>Configuration Summary</h3>
-            <div class="cfg-summary-text" id="cfg-summary-text"></div>
-          </div>
-          <div class="cfg-actions">
-            <button class="action-btn" id="cfg-quote-btn">Request Quotation</button>
-            <button class="action-btn action-btn--outline" onclick="window.print()">Save as PDF</button>
-          </div>
-        </div>
-
-      </div><!-- /tab-configurator -->
+      </div>
 
     </section>
 

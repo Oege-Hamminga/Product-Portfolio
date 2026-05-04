@@ -1,4 +1,4 @@
-const state = { brand: "all", fitment: "all", type: "all", segment: "all", sort: "default" };
+const state = { brand: "all", type: "all", segment: "all", sort: "default" };
 
 const grid         = document.getElementById("product-grid");
 const noResults    = document.getElementById("no-results");
@@ -17,17 +17,16 @@ function wireChips(containerId, stateKey) {
 }
 
 wireChips("brand-chips",   "brand");
-wireChips("fitment-chips", "fitment");
 wireChips("type-chips",    "type");
 wireChips("segment-chips", "segment");
 
 sortSelect.addEventListener("change", () => { state.sort = sortSelect.value; render(); });
 
 document.getElementById("reset-btn").addEventListener("click", () => {
-  state.brand = state.fitment = state.type = state.segment = "all";
+  state.brand = state.type = state.segment = "all";
   state.sort = "default";
   sortSelect.value = "default";
-  ["brand-chips","fitment-chips","type-chips","segment-chips"].forEach(id => {
+  ["brand-chips","type-chips","segment-chips"].forEach(id => {
     document.querySelectorAll(`#${id} .chip`).forEach(c =>
       c.classList.toggle("active", c.dataset.value === "all")
     );
@@ -38,23 +37,28 @@ document.getElementById("reset-btn").addEventListener("click", () => {
 const SEGMENT_ORDER = { "F1": 0, "K1": 1, "K2/3": 2 };
 
 function render() {
-  let filtered = products.filter(p => {
-    return (state.brand   === "all" || p.brand   === state.brand)
-        && (state.fitment === "all" || p.fitment === state.fitment)
-        && (state.type    === "all" || p.type    === state.type)
-        && (state.segment === "all" || p.segment === state.segment);
+  const sorted = [...products].sort((a, b) => {
+    if (state.sort === "brand-az") return a.brand.localeCompare(b.brand) || a.van.localeCompare(b.van);
+    if (state.sort === "segment")  return SEGMENT_ORDER[a.segment] - SEGMENT_ORDER[b.segment] || a.brand.localeCompare(b.brand);
+    return 0;
   });
 
-  if (state.sort === "brand-az") {
-    filtered.sort((a, b) => a.brand.localeCompare(b.brand) || a.van.localeCompare(b.van));
-  } else if (state.sort === "segment") {
-    filtered.sort((a, b) => SEGMENT_ORDER[a.segment] - SEGMENT_ORDER[b.segment] || a.brand.localeCompare(b.brand));
+  // Deduplicate by brand+van while applying filters
+  const seen     = new Set();
+  const filtered = [];
+  for (const p of sorted) {
+    const key = `${p.brand}|${p.van}`;
+    if (seen.has(key)) continue;
+    const ok = (state.brand   === "all" || p.brand   === state.brand)
+            && (state.segment === "all" || p.segment === state.segment)
+            && (state.type    === "all" || p.type    === state.type);
+    if (ok) { seen.add(key); filtered.push(p); }
   }
 
-  const total = products.length;
-  resultsCount.textContent = filtered.length === total
-    ? `All ${total} products`
-    : `${filtered.length} of ${total} products`;
+  const totalVehicles = new Set(products.map(p => `${p.brand}|${p.van}`)).size;
+  resultsCount.textContent = filtered.length === totalVehicles
+    ? `All ${totalVehicles} vehicles`
+    : `${filtered.length} of ${totalVehicles} vehicles`;
 
   if (filtered.length === 0) {
     grid.innerHTML = "";
@@ -67,11 +71,18 @@ function render() {
     const meta    = BRAND_META[p.brand] || { color: "#333", abbr: p.brand.slice(0,3).toUpperCase() };
     const textCol = meta.textDark ? "rgba(0,0,0,0.85)" : "rgba(255,255,255,0.92)";
     const vanCol  = meta.textDark ? "rgba(0,0,0,0.5)"  : "rgba(255,255,255,0.55)";
-    const fitCls  = p.fitment === "OEM" ? "ci-fitment--oem" : "ci-fitment--afterfit";
     const imgUrl  = VAN_IMAGES[p.van] || "";
     const fbStyle = `background:linear-gradient(135deg,${meta.color} 0%,${meta.color}bb 100%)`;
+
+    const vehicleTypes = [...new Set(
+      products.filter(q => q.brand === p.brand && q.van === p.van).map(q => q.type)
+    )];
+    const typeBadges = vehicleTypes.map(t =>
+      `<span class="badge badge--type">${t}</span>`
+    ).join("");
+
     return `
-    <a class="product-card" href="product.html?id=${p.id}">
+    <a class="product-card" href="product.html?brand=${encodeURIComponent(p.brand)}&van=${encodeURIComponent(p.van)}">
       <div class="card-image">
         ${imgUrl
           ? `<img src="${imgUrl}" alt="${p.brand} ${p.van}" loading="lazy"
@@ -81,16 +92,13 @@ function render() {
           <div class="ci-abbr" style="color:${textCol}">${meta.abbr}</div>
           <div class="ci-van"  style="color:${vanCol}">${p.van}</div>
         </div>
-        <span class="ci-fitment ${fitCls}">${p.fitment}</span>
+        <span class="ci-segment">${p.segment}</span>
       </div>
       <div class="card-body">
-        <div class="card-badges">
-          <span class="badge badge--type">${p.type}</span>
-          <span class="badge badge--segment">${p.segment}</span>
-        </div>
+        <div class="card-badges">${typeBadges}</div>
         <div class="card-brand">${p.brand}</div>
         <div class="card-van">${p.van}</div>
-        <div class="card-cta">View details →</div>
+        <div class="card-cta">Select Product →</div>
       </div>
     </a>`;
   }).join("");

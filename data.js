@@ -188,24 +188,59 @@ const BOM_DATA = {
   ],
 };
 
-/* ── Aftersales data per product type ───────────────────────────────── */
-const AFTERSALES_DATA = {
+/* ── BOM Modules (for module-based BOM configurator) ─────────────────── */
+const BOM_MODULES = {
+  "Crew Cab": [
+    { id:"frame",    label:"Structural Frame",      defaultOn:true,  parts:["SNK-CC-001","SNK-CC-005"] },
+    { id:"divider",  label:"Divider Panel",          defaultOn:true,  parts:["SNK-CC-002"] },
+    { id:"seating",  label:"Seating Module",         defaultOn:true,  parts:["SNK-CC-003","SNK-CC-004"] },
+    { id:"wiring",   label:"Wiring Harness",         defaultOn:true,  parts:["SNK-CC-006"] },
+    { id:"trim",     label:"Interior Trim",          defaultOn:true,  parts:["SNK-CC-007","SNK-CC-008"] },
+    { id:"hardware", label:"Fastener Kit",           defaultOn:true,  parts:["SNK-CC-009"] },
+  ],
+  "Flex Cab": [
+    { id:"frame",    label:"Structural Frame",      defaultOn:true,  parts:["SNK-FC-001","SNK-FC-005"] },
+    { id:"seating",  label:"Folding Seat Assembly",  defaultOn:true,  parts:["SNK-FC-002","SNK-FC-004"] },
+    { id:"rail",     label:"Floor Rail System",      defaultOn:true,  parts:["SNK-FC-003","SNK-FC-006"] },
+    { id:"trim",     label:"Interior Trim",          defaultOn:true,  parts:["SNK-FC-007"] },
+    { id:"hardware", label:"Fastener Kit",           defaultOn:true,  parts:["SNK-FC-008"] },
+  ],
+  "Partition Wall": [
+    { id:"frame",    label:"Wall Frame",             defaultOn:true,  parts:["SNK-PW-001"] },
+    { id:"window",   label:"Window Panel",           defaultOn:true,  parts:["SNK-PW-002"] },
+    { id:"acoustic", label:"Acoustic Insulation",    defaultOn:false, parts:["SNK-PW-003"] },
+    { id:"mounting", label:"Mounting System",        defaultOn:true,  parts:["SNK-PW-004","SNK-PW-005"] },
+    { id:"hardware", label:"Fastener Kit",           defaultOn:true,  parts:["SNK-PW-006"] },
+  ],
+};
+
+/* ── Market Presence data per product type ────────────────────────────── */
+const MARKET_DATA = {
   "Crew Cab": {
-    warranty:        "5 years structural / 2 years trim & upholstery",
-    serviceInterval: "Annual inspection recommended",
-    spares: ["Seat upholstery set","Belt retractor unit","Mounting bracket pair","Trim panel set","Acoustic mat"],
-    contact: "aftersales@snoeks.com",
+    regions:        ["Netherlands","Belgium","Germany","France","United Kingdom","Spain","Italy","Poland"],
+    oemBrands:      ["Citroën","Peugeot","Opel","Fiat","Toyota","Renault","IVECO","RAM"],
+    afterfitBrands: ["Volkswagen","Ford","Mercedes-Benz","KIA"],
+    applications:   ["Construction & Field Crews","Passenger Transport","Emergency Services","Utility Fleet"],
+    certifications: ["ECE R17","ECE R80","ISO 9001:2015"],
+    launchYear:     2019,
+    unitsFY25:      "~1,200 units",
   },
   "Flex Cab": {
-    warranty:        "5 years structural / 2 years mechanical components",
-    serviceInterval: "Annual inspection recommended",
-    spares: ["Folding seat hinge kit","Quick-release pin set (×4)","Rail section (per metre)","Floor panel clip set"],
-    contact: "aftersales@snoeks.com",
+    regions:        ["Netherlands","Belgium","Germany","France","United Kingdom"],
+    oemBrands:      ["Citroën","Peugeot","Opel","Fiat","Toyota"],
+    afterfitBrands: [],
+    applications:   ["Multi-purpose Fleet","Delivery + Crew Hybrid","Trade Services"],
+    certifications: ["ECE R17","ECE R80","ISO 9001:2015"],
+    launchYear:     2021,
+    unitsFY25:      "~480 units",
   },
   "Partition Wall": {
-    warranty:        "5 years structural / 3 years panel & seals",
-    serviceInterval: "Bi-annual inspection recommended",
-    spares: ["Polycarbonate window panel","Acoustic foam insert","Mounting bracket (single)","Rubber seal strip (per metre)"],
-    contact: "aftersales@snoeks.com",
+    regions:        ["Netherlands","Belgium","Germany","France","United Kingdom","Spain"],
+    oemBrands:      [],
+    afterfitBrands: ["Volkswagen","Ford","Mercedes-Benz"],
+    applications:   ["Cargo Security","Driver Separation","Refrigerated Transport Support"],
+    certifications: ["ECE R17 (partition retention)","DIN EN 12642","ISO 9001:2015"],
+    launchYear:     2017,
+    unitsFY25:      "~2,100 units",
   },
 };
