@@ -10,13 +10,9 @@
 
   <header>
     <div class="header-inner">
-      <div class="logo">
-        <div class="logo-slash"></div>
-        <div class="logo-text">
-          <span class="logo-snoeks">Snoeks</span>
-          <span class="logo-sub">Automotive</span>
-        </div>
-      </div>
+      <a href="index.html" class="logo">
+        <img src="Snoeks brand.png" alt="Snoeks Automotive" class="logo-img" />
+      </a>
       <div class="header-right">
         <a href="index.html" class="back-link">← Back to Portfolio</a>
       </div>
@@ -123,29 +119,43 @@
       <div class="tabs-bar" role="tablist">
         <button class="tab-btn active" data-tab="market" role="tab">Market Presence</button>
         <button class="tab-btn"        data-tab="bom"    role="tab">Bill of Materials</button>
-        <button class="tab-btn"        data-tab="images" role="tab">Marketing Images</button>
+        <button class="tab-btn"        data-tab="images" role="tab">Marketing Tools</button>
       </div>
 
       <!-- Tab: Market Presence -->
       <div class="tab-panel active" id="tab-market">
         <div class="tab-header">
           <h2>Market Presence</h2>
-          <p>Regional availability, OEM partnerships, and key application areas.</p>
+          <p>Market introduction, pricing, active markets and Certificate of Conformity availability.</p>
         </div>
-        <div class="market-grid" id="market-grid"></div>
+        <div id="market-content"></div>
       </div>
 
       <!-- Tab: Bill of Materials -->
       <div class="tab-panel" id="tab-bom">
         <div class="tab-header">
           <h2>Bill of Materials</h2>
-          <p>Toggle modules to include or exclude parts from your configuration BOM.</p>
+          <p>Answer the configurator questions to build your BOM. Fine-tune by toggling modules manually.</p>
         </div>
+
+        <!-- BOM Configurator -->
+        <div class="bom-configurator" id="bom-configurator">
+          <div class="cfg-header">
+            <span class="cfg-header-icon">🔧</span>
+            Configure Your BOM
+          </div>
+          <div class="cfg-questions" id="cfg-questions"></div>
+          <div class="cfg-footer">
+            <button class="cfg-reset-btn" id="cfg-reset">Reset Configurator</button>
+            <span class="cfg-status" id="cfg-status">Answer all questions to build your parts list</span>
+          </div>
+        </div>
+
         <div class="bom-cfg-layout">
           <div class="bom-modules-panel">
             <div class="bom-modules-header">
               <h3>Modules</h3>
-              <button class="bom-toggle-all" id="bom-toggle-all">Deselect All</button>
+              <button class="bom-toggle-all" id="bom-toggle-all">Select All</button>
             </div>
             <div id="bom-modules-list"></div>
           </div>
@@ -172,17 +182,13 @@
         </div>
       </div>
 
-      <!-- Tab: Marketing Images -->
+      <!-- Tab: Marketing Tools -->
       <div class="tab-panel" id="tab-images">
         <div class="tab-header">
-          <h2>Marketing Images</h2>
-          <p>Official product photography and renders for marketing use.</p>
+          <h2>Marketing Tools</h2>
+          <p>Brochures, price lists, and official product imagery for this configuration.</p>
         </div>
-        <div class="marketing-gallery" id="marketing-gallery"></div>
-        <div class="gallery-footer">
-          <button class="action-btn">Request Hi-Res Assets</button>
-          <button class="action-btn action-btn--outline" onclick="window.print()">Print Sheet</button>
-        </div>
+        <div id="marketing-tools-content"></div>
       </div>
 
     </section>

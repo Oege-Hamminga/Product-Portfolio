@@ -1,4 +1,4 @@
-/* ── Vehicle image URLs – all local files in repo root ───────────────── */
+/* ── Vehicle image URLs ────────────────────────────────────────────── */
 const VAN_IMAGES = {
   /* ── Volkswagen ─────────────────────────────────────────────────── */
   "Caddy":          "Caddy.png",
@@ -11,6 +11,7 @@ const VAN_IMAGES = {
   /* ── Citroën ────────────────────────────────────────────────────── */
   "Berlingo":       "Berlingo.jpeg",
   "Jumpy":          "Jumpy.jpg",
+  "Jumpy Combi":    "Jumpy combi.png",
   "Jumper":         "Jumper.jpg",
 
   /* ── Peugeot ────────────────────────────────────────────────────── */
@@ -57,6 +58,9 @@ const VAN_IMAGES = {
   "V-Class":        "V-class.jpg",
   "Sprinter":       "Sprinter.jpg",
 
+  /* ── MAN ────────────────────────────────────────────────────────── */
+  "TGE":            "TGE.jpg",
+
   /* ── KIA ────────────────────────────────────────────────────────── */
   "PV5":            "PV5.jpg",
 };
@@ -74,6 +78,7 @@ const BRAND_META = {
   "Ford":           { color: "#003478", abbr: "FOR" },
   "Mercedes-Benz":  { color: "#222222", abbr: "MB"  },
   "Renault":        { color: "#EFDF00", textDark: true, abbr: "REN" },
+  "MAN":            { color: "#E4002B", abbr: "MAN" },
   "KIA":            { color: "#05141F", abbr: "KIA" },
 };
 
@@ -137,6 +142,9 @@ const products = [
   p("Toyota", "Proace","K1","After-fit", "Crew Cab"),
   p("Toyota", "Proace","K1","After-fit", "Flex Cab"),
 
+  /* ── CITROËN Jumpy Combi – K1 (After-fit Partition Wall) ──────────── */
+  p("Citroën","Jumpy Combi","K1","After-fit","Partition Wall"),
+
   /* ── STELLANTIS – K2/3 (OEM & After-fit, Crew Cab) ──────────────── */
   p("Citroën","Jumper",    "K2/3","OEM",       "Crew Cab"),
   p("Citroën","Jumper",    "K2/3","After-fit", "Crew Cab"),
@@ -174,96 +182,469 @@ const products = [
   p("Mercedes-Benz","V-Class",   "K1","After-fit","Partition Wall"),
   p("Mercedes-Benz","Sprinter",  "K1","After-fit","Crew Cab"),
 
+  /* ── MAN ─────────────────────────────────────────────────────────── */
+  p("MAN","TGE","K2/3","After-fit","Crew Cab"),
+
   /* ── KIA ─────────────────────────────────────────────────────────── */
   p("KIA","PV5","K1","After-fit","Crew Cab"),
 ];
 
-/* ── BOM data per product type ───────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   BOM DATA (expanded for configurator-driven modules)
+═══════════════════════════════════════════════════════════════════════ */
 const BOM_DATA = {
   "Crew Cab": [
-    { part:"SNK-CC-001", description:"Crew Cabin Module Frame (steel)",       qty:1, unit:"pcs" },
-    { part:"SNK-CC-002", description:"Sliding Divider Panel Assembly",        qty:1, unit:"pcs" },
-    { part:"SNK-CC-003", description:"Upholstered Rear Seat Bench",           qty:1, unit:"pcs" },
-    { part:"SNK-CC-004", description:"3-Point Inertia Reel Belt Set",         qty:3, unit:"set" },
-    { part:"SNK-CC-005", description:"Floor Mounting Bracket Kit",            qty:1, unit:"kit" },
-    { part:"SNK-CC-006", description:"Wiring Harness Extension",              qty:1, unit:"pcs" },
-    { part:"SNK-CC-007", description:"Interior Trim Side Panel (pair)",       qty:2, unit:"pcs" },
-    { part:"SNK-CC-008", description:"Acoustic Insulation Mat",               qty:1, unit:"pcs" },
-    { part:"SNK-CC-009", description:"Fastener & Hardware Kit",               qty:1, unit:"kit" },
+    /* Structural Frame */
+    { part:"SNK-CC-F01", description:"Crew Cab Frame Assembly – Short Body (L1)",         qty:1, unit:"pcs" },
+    { part:"SNK-CC-F02", description:"Crew Cab Frame Assembly – Medium Body (L2)",        qty:1, unit:"pcs" },
+    { part:"SNK-CC-F03", description:"Crew Cab Frame Assembly – Long Body (L3)",          qty:1, unit:"pcs" },
+    { part:"SNK-CC-F10", description:"Floor Mounting Bracket Kit",                        qty:1, unit:"kit" },
+    /* Divider */
+    { part:"SNK-CC-D01", description:"Sliding Divider Panel Assembly",                    qty:1, unit:"pcs" },
+    /* Seating */
+    { part:"SNK-CC-S01", description:"Upholstered Rear Seat Bench",                       qty:1, unit:"pcs" },
+    { part:"SNK-CC-S02", description:"3-Point Inertia Reel Belt Set",                     qty:3, unit:"set" },
+    /* Sliding door kits */
+    { part:"SNK-CC-DR1", description:"Single Sliding Door Reinforcement Kit",             qty:1, unit:"kit" },
+    { part:"SNK-CC-DR2", description:"Double Sliding Door Reinforcement Kit",             qty:1, unit:"kit" },
+    /* Windows */
+    { part:"SNK-CC-W00", description:"Factory Window Retention Bracket Set",              qty:1, unit:"set" },
+    { part:"SNK-CC-W01", description:"Clear Glass Window Pack",                           qty:1, unit:"pcs" },
+    { part:"SNK-CC-W02", description:"Tinted Glass Window Pack (65 % VLT)",              qty:1, unit:"pcs" },
+    { part:"SNK-CC-W03", description:"Opaque ABS Window Cover Pack",                     qty:1, unit:"pcs" },
+    /* Upholstery */
+    { part:"SNK-CC-U01", description:"Vinyl Upholstery Set",                              qty:1, unit:"set" },
+    { part:"SNK-CC-U02", description:"Fabric & Foam Upholstery Set",                     qty:1, unit:"set" },
+    /* Trim */
+    { part:"SNK-CC-T01", description:"Base Interior Trim Package",                        qty:1, unit:"pcs" },
+    { part:"SNK-CC-T02", description:"Comfort Interior Trim Package",                     qty:1, unit:"pcs" },
+    { part:"SNK-CC-T03", description:"Premium Interior Trim Package",                     qty:1, unit:"pcs" },
+    /* Electrical & hardware */
+    { part:"SNK-CC-E01", description:"Wiring Harness Extension",                          qty:1, unit:"pcs" },
+    { part:"SNK-CC-HW1", description:"Fastener & Hardware Kit",                           qty:1, unit:"kit" },
   ],
+
   "Flex Cab": [
-    { part:"SNK-FC-001", description:"Flex Cabin Module Frame (aluminium)",   qty:1, unit:"pcs" },
-    { part:"SNK-FC-002", description:"Folding Seat Assembly (fold-flat)",     qty:2, unit:"pcs" },
-    { part:"SNK-FC-003", description:"Quick-Release Floor Rail System",       qty:2, unit:"pcs" },
-    { part:"SNK-FC-004", description:"3-Point Inertia Reel Belt Set",         qty:2, unit:"set" },
-    { part:"SNK-FC-005", description:"Modular Conversion Floor Panel",        qty:1, unit:"pcs" },
-    { part:"SNK-FC-006", description:"Locking Rail End Stop (set of 4)",      qty:4, unit:"pcs" },
-    { part:"SNK-FC-007", description:"Interior Trim Side Panel (pair)",       qty:2, unit:"pcs" },
-    { part:"SNK-FC-008", description:"Fastener & Hardware Kit",               qty:1, unit:"kit" },
+    /* Frame */
+    { part:"SNK-FC-F01", description:"Flex Cab Frame Assembly – Short Body (L1)",        qty:1, unit:"pcs" },
+    { part:"SNK-FC-F02", description:"Flex Cab Frame Assembly – Medium Body (L2)",       qty:1, unit:"pcs" },
+    { part:"SNK-FC-F03", description:"Flex Cab Frame Assembly – Long Body (L3)",         qty:1, unit:"pcs" },
+    { part:"SNK-FC-P01", description:"Modular Conversion Floor Panel",                   qty:1, unit:"pcs" },
+    /* Rail system */
+    { part:"SNK-FC-R01", description:"Quick-Release Floor Rail System (pair)",           qty:2, unit:"pcs" },
+    { part:"SNK-FC-R02", description:"Locking Rail End Stop Set (4 pcs)",               qty:4, unit:"pcs" },
+    /* Seating */
+    { part:"SNK-FC-S01", description:"Folding Seat Assembly (fold-flat)",                qty:2, unit:"pcs" },
+    { part:"SNK-FC-S02", description:"3-Point Inertia Reel Belt Set",                    qty:2, unit:"set" },
+    /* Sliding door kits */
+    { part:"SNK-FC-DR1", description:"Single Sliding Door Reinforcement Kit",            qty:1, unit:"kit" },
+    { part:"SNK-FC-DR2", description:"Double Sliding Door Reinforcement Kit",            qty:1, unit:"kit" },
+    /* Windows */
+    { part:"SNK-FC-W01", description:"Clear Glass Window Pack",                          qty:1, unit:"pcs" },
+    { part:"SNK-FC-W02", description:"Tinted Glass Window Pack (65 % VLT)",             qty:1, unit:"pcs" },
+    /* Upholstery */
+    { part:"SNK-FC-U01", description:"Vinyl Upholstery Set",                             qty:1, unit:"set" },
+    { part:"SNK-FC-U02", description:"Fabric & Foam Upholstery Set",                    qty:1, unit:"set" },
+    /* Trim */
+    { part:"SNK-FC-T01", description:"Base Trim Package",                                qty:1, unit:"pcs" },
+    { part:"SNK-FC-T02", description:"Comfort Trim Package",                             qty:1, unit:"pcs" },
+    /* Hardware */
+    { part:"SNK-FC-HW1", description:"Fastener & Hardware Kit",                          qty:1, unit:"kit" },
   ],
+
   "Partition Wall": [
-    { part:"SNK-PW-001", description:"Steel Partition Wall Frame",            qty:1, unit:"pcs" },
-    { part:"SNK-PW-002", description:"Polycarbonate Window Panel",            qty:1, unit:"pcs" },
-    { part:"SNK-PW-003", description:"Acoustic Foam Insert",                  qty:1, unit:"pcs" },
-    { part:"SNK-PW-004", description:"Side Mounting Bracket Set",             qty:1, unit:"set" },
-    { part:"SNK-PW-005", description:"Rubber Edge Seal Strip",                qty:2, unit:"m"   },
-    { part:"SNK-PW-006", description:"Fastener & Hardware Kit",               qty:1, unit:"kit" },
+    /* Frame */
+    { part:"SNK-PW-F01", description:"Steel Partition Frame – Standard Width",           qty:1, unit:"pcs" },
+    { part:"SNK-PW-F02", description:"Steel Partition Frame – Extended Width",           qty:1, unit:"pcs" },
+    /* Mounting */
+    { part:"SNK-PW-M01", description:"Side Mounting Bracket Set",                        qty:1, unit:"set" },
+    { part:"SNK-PW-M02", description:"Rubber Edge Seal Strip",                           qty:2, unit:"m"   },
+    /* Window / infill */
+    { part:"SNK-PW-W00", description:"Solid Steel Infill Panel",                         qty:1, unit:"pcs" },
+    { part:"SNK-PW-W01", description:"Polycarbonate Window Panel",                       qty:1, unit:"pcs" },
+    { part:"SNK-PW-W02", description:"Tempered Glass Window Panel",                      qty:1, unit:"pcs" },
+    { part:"SNK-PW-W03", description:"Steel Mesh Window Panel",                          qty:1, unit:"pcs" },
+    /* Acoustic */
+    { part:"SNK-PW-A01", description:"Acoustic Foam Insert",                             qty:1, unit:"pcs" },
+    /* Lining */
+    { part:"SNK-PW-L01", description:"Vinyl Surface Lining Kit",                         qty:1, unit:"kit" },
+    /* Trim */
+    { part:"SNK-PW-T01", description:"Base Finish Package",                              qty:1, unit:"pcs" },
+    { part:"SNK-PW-T02", description:"Standard Finish Package",                          qty:1, unit:"pcs" },
+    { part:"SNK-PW-T03", description:"Premium Finish Package",                           qty:1, unit:"pcs" },
+    /* Hardware */
+    { part:"SNK-PW-HW1", description:"Fastener & Hardware Kit",                          qty:1, unit:"kit" },
   ],
 };
 
-/* ── BOM Modules (for module-based BOM configurator) ─────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   BOM MODULES  (all defaultOn: false – driven by configurator)
+═══════════════════════════════════════════════════════════════════════ */
 const BOM_MODULES = {
   "Crew Cab": [
-    { id:"frame",    label:"Structural Frame",      defaultOn:true,  parts:["SNK-CC-001","SNK-CC-005"] },
-    { id:"divider",  label:"Divider Panel",          defaultOn:true,  parts:["SNK-CC-002"] },
-    { id:"seating",  label:"Seating Module",         defaultOn:true,  parts:["SNK-CC-003","SNK-CC-004"] },
-    { id:"wiring",   label:"Wiring Harness",         defaultOn:true,  parts:["SNK-CC-006"] },
-    { id:"trim",     label:"Interior Trim",          defaultOn:true,  parts:["SNK-CC-007","SNK-CC-008"] },
-    { id:"hardware", label:"Fastener Kit",           defaultOn:true,  parts:["SNK-CC-009"] },
+    { id:"frame-l1",    label:"Frame – L1 Short Body",            defaultOn:false, parts:["SNK-CC-F01","SNK-CC-F10"] },
+    { id:"frame-l2",    label:"Frame – L2 Medium Body",           defaultOn:false, parts:["SNK-CC-F02","SNK-CC-F10"] },
+    { id:"frame-l3",    label:"Frame – L3 Long Body",             defaultOn:false, parts:["SNK-CC-F03","SNK-CC-F10"] },
+    { id:"divider",     label:"Divider Panel",                     defaultOn:false, parts:["SNK-CC-D01"] },
+    { id:"seating",     label:"Seating & Safety Belts",            defaultOn:false, parts:["SNK-CC-S01","SNK-CC-S02"] },
+    { id:"door-single", label:"Single Sliding Door Kit",           defaultOn:false, parts:["SNK-CC-DR1"] },
+    { id:"door-double", label:"Double Sliding Door Kit",           defaultOn:false, parts:["SNK-CC-DR2"] },
+    { id:"win-retain",  label:"Factory Window Retention",          defaultOn:false, parts:["SNK-CC-W00"] },
+    { id:"win-clear",   label:"Clear Glass Window Pack",           defaultOn:false, parts:["SNK-CC-W01"] },
+    { id:"win-tinted",  label:"Tinted Glass Window Pack",          defaultOn:false, parts:["SNK-CC-W02"] },
+    { id:"win-opaque",  label:"Opaque Window Cover Pack",          defaultOn:false, parts:["SNK-CC-W03"] },
+    { id:"uph-vinyl",   label:"Vinyl Upholstery",                  defaultOn:false, parts:["SNK-CC-U01"] },
+    { id:"uph-fabric",  label:"Fabric Upholstery",                 defaultOn:false, parts:["SNK-CC-U02"] },
+    { id:"trim-base",   label:"Base Trim Package",                 defaultOn:false, parts:["SNK-CC-T01"] },
+    { id:"trim-comf",   label:"Comfort Trim Package",              defaultOn:false, parts:["SNK-CC-T02"] },
+    { id:"trim-prem",   label:"Premium Trim Package",              defaultOn:false, parts:["SNK-CC-T03"] },
+    { id:"wiring",      label:"Wiring Harness Extension",          defaultOn:false, parts:["SNK-CC-E01"] },
+    { id:"hardware",    label:"Fastener & Hardware Kit",           defaultOn:false, parts:["SNK-CC-HW1"] },
   ],
   "Flex Cab": [
-    { id:"frame",    label:"Structural Frame",      defaultOn:true,  parts:["SNK-FC-001","SNK-FC-005"] },
-    { id:"seating",  label:"Folding Seat Assembly",  defaultOn:true,  parts:["SNK-FC-002","SNK-FC-004"] },
-    { id:"rail",     label:"Floor Rail System",      defaultOn:true,  parts:["SNK-FC-003","SNK-FC-006"] },
-    { id:"trim",     label:"Interior Trim",          defaultOn:true,  parts:["SNK-FC-007"] },
-    { id:"hardware", label:"Fastener Kit",           defaultOn:true,  parts:["SNK-FC-008"] },
+    { id:"frame-l1",    label:"Flex Frame – L1 Short Body",       defaultOn:false, parts:["SNK-FC-F01","SNK-FC-P01"] },
+    { id:"frame-l2",    label:"Flex Frame – L2 Medium Body",      defaultOn:false, parts:["SNK-FC-F02","SNK-FC-P01"] },
+    { id:"frame-l3",    label:"Flex Frame – L3 Long Body",        defaultOn:false, parts:["SNK-FC-F03","SNK-FC-P01"] },
+    { id:"rail",        label:"Floor Rail System",                 defaultOn:false, parts:["SNK-FC-R01","SNK-FC-R02"] },
+    { id:"seating",     label:"Folding Seats & Safety Belts",      defaultOn:false, parts:["SNK-FC-S01","SNK-FC-S02"] },
+    { id:"door-single", label:"Single Sliding Door Kit",           defaultOn:false, parts:["SNK-FC-DR1"] },
+    { id:"door-double", label:"Double Sliding Door Kit",           defaultOn:false, parts:["SNK-FC-DR2"] },
+    { id:"win-clear",   label:"Clear Glass Window Pack",           defaultOn:false, parts:["SNK-FC-W01"] },
+    { id:"win-tinted",  label:"Tinted Glass Window Pack",          defaultOn:false, parts:["SNK-FC-W02"] },
+    { id:"uph-vinyl",   label:"Vinyl Upholstery",                  defaultOn:false, parts:["SNK-FC-U01"] },
+    { id:"uph-fabric",  label:"Fabric Upholstery",                 defaultOn:false, parts:["SNK-FC-U02"] },
+    { id:"trim-base",   label:"Base Trim Package",                 defaultOn:false, parts:["SNK-FC-T01"] },
+    { id:"trim-comf",   label:"Comfort Trim Package",              defaultOn:false, parts:["SNK-FC-T02"] },
+    { id:"hardware",    label:"Fastener & Hardware Kit",           defaultOn:false, parts:["SNK-FC-HW1"] },
   ],
   "Partition Wall": [
-    { id:"frame",    label:"Wall Frame",             defaultOn:true,  parts:["SNK-PW-001"] },
-    { id:"window",   label:"Window Panel",           defaultOn:true,  parts:["SNK-PW-002"] },
-    { id:"acoustic", label:"Acoustic Insulation",    defaultOn:false, parts:["SNK-PW-003"] },
-    { id:"mounting", label:"Mounting System",        defaultOn:true,  parts:["SNK-PW-004","SNK-PW-005"] },
-    { id:"hardware", label:"Fastener Kit",           defaultOn:true,  parts:["SNK-PW-006"] },
+    { id:"frame-std",   label:"Frame – Standard Width",           defaultOn:false, parts:["SNK-PW-F01"] },
+    { id:"frame-ext",   label:"Frame – Extended Width",           defaultOn:false, parts:["SNK-PW-F02"] },
+    { id:"mounting",    label:"Mounting System & Edge Seal",       defaultOn:false, parts:["SNK-PW-M01","SNK-PW-M02"] },
+    { id:"win-solid",   label:"Solid Steel Infill Panel",          defaultOn:false, parts:["SNK-PW-W00"] },
+    { id:"win-poly",    label:"Polycarbonate Window Panel",        defaultOn:false, parts:["SNK-PW-W01"] },
+    { id:"win-glass",   label:"Tempered Glass Window",             defaultOn:false, parts:["SNK-PW-W02"] },
+    { id:"win-mesh",    label:"Steel Mesh Window",                 defaultOn:false, parts:["SNK-PW-W03"] },
+    { id:"acoustic",    label:"Acoustic Insulation Foam",          defaultOn:false, parts:["SNK-PW-A01"] },
+    { id:"lining",      label:"Vinyl Surface Lining",              defaultOn:false, parts:["SNK-PW-L01"] },
+    { id:"trim-base",   label:"Base Finish Package",               defaultOn:false, parts:["SNK-PW-T01"] },
+    { id:"trim-std",    label:"Standard Finish Package",           defaultOn:false, parts:["SNK-PW-T02"] },
+    { id:"trim-prem",   label:"Premium Finish Package",            defaultOn:false, parts:["SNK-PW-T03"] },
+    { id:"hardware",    label:"Fastener & Hardware Kit",           defaultOn:false, parts:["SNK-PW-HW1"] },
   ],
 };
 
-/* ── Market Presence data per product type ────────────────────────────── */
-const MARKET_DATA = {
+/* ═══════════════════════════════════════════════════════════════════════
+   CONFIGURATOR QUESTIONS
+   Each question drives which BOM modules get activated.
+   alwaysActive: modules that are always on once a product is selected.
+═══════════════════════════════════════════════════════════════════════ */
+const CONFIGURATOR = {
   "Crew Cab": {
-    regions:        ["Netherlands","Belgium","Germany","France","United Kingdom","Spain","Italy","Poland"],
-    oemBrands:      ["Citroën","Peugeot","Opel","Fiat","Toyota","Renault","IVECO","RAM"],
-    afterfitBrands: ["Volkswagen","Ford","Mercedes-Benz","KIA"],
-    applications:   ["Construction & Field Crews","Passenger Transport","Emergency Services","Utility Fleet"],
-    certifications: ["ECE R17","ECE R80","ISO 9001:2015"],
-    launchYear:     2019,
-    unitsFY25:      "~1,200 units",
+    alwaysActive: ["divider","seating","wiring","hardware"],
+    questions: [
+      {
+        id: "length", label: "Body Length",
+        options: [
+          { value:"l1", label:"L1 – Short Body",  activates:["frame-l1"] },
+          { value:"l2", label:"L2 – Medium Body", activates:["frame-l2"] },
+          { value:"l3", label:"L3 – Long Body",   activates:["frame-l3"] },
+        ]
+      },
+      {
+        id: "sliding_doors", label: "Sliding Doors",
+        options: [
+          { value:"single", label:"Single Sliding Door",   activates:["door-single"] },
+          { value:"double", label:"Double Sliding Doors",  activates:["door-double"] },
+        ]
+      },
+      {
+        id: "factory_windows", label: "Factory Windows",
+        options: [
+          { value:"yes", label:"With Factory Windows", activates:["win-retain"] },
+          { value:"no",  label:"No Factory Windows",   activates:[] },
+        ]
+      },
+      {
+        id: "window_type", label: "Window Type",
+        options: [
+          { value:"clear",  label:"Clear Glass",    activates:["win-clear"] },
+          { value:"tinted", label:"Tinted Glass",   activates:["win-tinted"] },
+          { value:"opaque", label:"Opaque Panel",   activates:["win-opaque"] },
+          { value:"none",   label:"No Window",      activates:[] },
+        ]
+      },
+      {
+        id: "upholstery", label: "Upholstery Type",
+        options: [
+          { value:"vinyl",  label:"Vinyl",   activates:["uph-vinyl"] },
+          { value:"fabric", label:"Fabric",  activates:["uph-fabric"] },
+        ]
+      },
+      {
+        id: "trim_level", label: "Trim Level",
+        options: [
+          { value:"base",    label:"Base",    activates:["trim-base"] },
+          { value:"comfort", label:"Comfort", activates:["trim-comf"] },
+          { value:"premium", label:"Premium", activates:["trim-prem"] },
+        ]
+      },
+    ]
   },
+
   "Flex Cab": {
-    regions:        ["Netherlands","Belgium","Germany","France","United Kingdom"],
-    oemBrands:      ["Citroën","Peugeot","Opel","Fiat","Toyota"],
-    afterfitBrands: [],
-    applications:   ["Multi-purpose Fleet","Delivery + Crew Hybrid","Trade Services"],
-    certifications: ["ECE R17","ECE R80","ISO 9001:2015"],
-    launchYear:     2021,
-    unitsFY25:      "~480 units",
+    alwaysActive: ["rail","seating","hardware"],
+    questions: [
+      {
+        id: "length", label: "Body Length",
+        options: [
+          { value:"l1", label:"L1 – Short Body",  activates:["frame-l1"] },
+          { value:"l2", label:"L2 – Medium Body", activates:["frame-l2"] },
+          { value:"l3", label:"L3 – Long Body",   activates:["frame-l3"] },
+        ]
+      },
+      {
+        id: "sliding_doors", label: "Sliding Doors",
+        options: [
+          { value:"single", label:"Single Sliding Door",  activates:["door-single"] },
+          { value:"double", label:"Double Sliding Doors", activates:["door-double"] },
+        ]
+      },
+      {
+        id: "window_type", label: "Window Type",
+        options: [
+          { value:"none",   label:"No Window",    activates:[] },
+          { value:"clear",  label:"Clear Glass",  activates:["win-clear"] },
+          { value:"tinted", label:"Tinted Glass", activates:["win-tinted"] },
+        ]
+      },
+      {
+        id: "upholstery", label: "Upholstery Type",
+        options: [
+          { value:"vinyl",  label:"Vinyl",   activates:["uph-vinyl"] },
+          { value:"fabric", label:"Fabric",  activates:["uph-fabric"] },
+        ]
+      },
+      {
+        id: "trim_level", label: "Trim Level",
+        options: [
+          { value:"base",    label:"Base",    activates:["trim-base"] },
+          { value:"comfort", label:"Comfort", activates:["trim-comf"] },
+        ]
+      },
+    ]
   },
+
   "Partition Wall": {
-    regions:        ["Netherlands","Belgium","Germany","France","United Kingdom","Spain"],
-    oemBrands:      [],
-    afterfitBrands: ["Volkswagen","Ford","Mercedes-Benz"],
-    applications:   ["Cargo Security","Driver Separation","Refrigerated Transport Support"],
-    certifications: ["ECE R17 (partition retention)","DIN EN 12642","ISO 9001:2015"],
-    launchYear:     2017,
-    unitsFY25:      "~2,100 units",
+    alwaysActive: ["mounting","hardware"],
+    questions: [
+      {
+        id: "width", label: "Partition Width",
+        options: [
+          { value:"standard", label:"Standard Width",  activates:["frame-std"] },
+          { value:"extended", label:"Extended Width",  activates:["frame-ext"] },
+        ]
+      },
+      {
+        id: "window_type", label: "Window Type",
+        options: [
+          { value:"none",  label:"No Window (Solid)",    activates:["win-solid"] },
+          { value:"poly",  label:"Polycarbonate Panel",  activates:["win-poly"] },
+          { value:"glass", label:"Tempered Glass",       activates:["win-glass"] },
+          { value:"mesh",  label:"Steel Mesh",           activates:["win-mesh"] },
+        ]
+      },
+      {
+        id: "acoustic", label: "Acoustic Insulation",
+        options: [
+          { value:"yes", label:"Include", activates:["acoustic"] },
+          { value:"no",  label:"Exclude", activates:[] },
+        ]
+      },
+      {
+        id: "upholstery", label: "Upholstery / Lining",
+        options: [
+          { value:"none",  label:"None",         activates:[] },
+          { value:"vinyl", label:"Vinyl Lining",  activates:["lining"] },
+        ]
+      },
+      {
+        id: "trim_level", label: "Trim Level",
+        options: [
+          { value:"base",     label:"Base",     activates:["trim-base"] },
+          { value:"standard", label:"Standard", activates:["trim-std"] },
+          { value:"premium",  label:"Premium",  activates:["trim-prem"] },
+        ]
+      },
+    ]
   },
 };
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MARKET DATA  (per product – key: "brand|van|type|fitment")
+   For After-fit: cocMarkets should mirror activeMarkets.
+   For OEM: cocMarkets is null (not applicable).
+═══════════════════════════════════════════════════════════════════════ */
+const MARKET_DATA = {
+  /* ── Citroën Jumpy ───────────────────────────────────────────────── */
+  "Citroën|Jumpy|Crew Cab|OEM": {
+    introYear: 2019, pricingNote: "Included in OEM vehicle build price",
+    unitsFY25: "~280 units",
+    activeMarkets: ["Netherlands","Belgium","Germany","France","Spain","Italy"],
+    cocMarkets: null,
+  },
+  "Citroën|Jumpy|Crew Cab|After-fit": {
+    introYear: 2020, pricingNote: "From €3,490 excl. VAT",
+    unitsFY25: "~140 units",
+    activeMarkets: ["Netherlands","Belgium","Germany","France","United Kingdom"],
+    cocMarkets: ["Netherlands","Belgium","Germany","France","United Kingdom"],
+  },
+  "Citroën|Jumpy|Flex Cab|OEM": {
+    introYear: 2021, pricingNote: "Included in OEM vehicle build price",
+    unitsFY25: "~95 units",
+    activeMarkets: ["Netherlands","Belgium","Germany","France"],
+    cocMarkets: null,
+  },
+  "Citroën|Jumpy|Flex Cab|After-fit": {
+    introYear: 2021, pricingNote: "From €3,990 excl. VAT",
+    unitsFY25: "~45 units",
+    activeMarkets: ["Netherlands","Belgium","Germany","France"],
+    cocMarkets: ["Netherlands","Belgium","Germany","France"],
+  },
+
+  /* ── Citroën Jumpy Combi ─────────────────────────────────────────── */
+  "Citroën|Jumpy Combi|Partition Wall|After-fit": {
+    introYear: 2024, pricingNote: "From €680 excl. VAT",
+    unitsFY25: "~60 units",
+    activeMarkets: ["Netherlands","Belgium"],
+    cocMarkets: ["Netherlands","Belgium"],
+  },
+
+  /* ── Citroën Jumper ──────────────────────────────────────────────── */
+  "Citroën|Jumper|Crew Cab|OEM": {
+    introYear: 2019, pricingNote: "Included in OEM vehicle build price",
+    unitsFY25: "~320 units",
+    activeMarkets: ["Netherlands","Belgium","Germany","France","Spain","Italy"],
+    cocMarkets: null,
+  },
+  "Citroën|Jumper|Crew Cab|After-fit": {
+    introYear: 2020, pricingNote: "From €4,190 excl. VAT",
+    unitsFY25: "~110 units",
+    activeMarkets: ["Netherlands","Belgium","Germany","France","United Kingdom"],
+    cocMarkets: ["Netherlands","Belgium","Germany","France","United Kingdom"],
+  },
+
+  /* ── MAN TGE ─────────────────────────────────────────────────────── */
+  "MAN|TGE|Crew Cab|After-fit": {
+    introYear: 2022, pricingNote: "From €4,490 excl. VAT",
+    unitsFY25: "~85 units",
+    activeMarkets: ["Netherlands","Belgium","Germany"],
+    cocMarkets: ["Netherlands","Belgium","Germany"],
+  },
+
+  /* ── Volkswagen ──────────────────────────────────────────────────── */
+  "Volkswagen|Transporter|Crew Cab|After-fit": {
+    introYear: 2019, pricingNote: "From €3,590 excl. VAT",
+    unitsFY25: "~165 units",
+    activeMarkets: ["Netherlands","Belgium","Germany","United Kingdom"],
+    cocMarkets: ["Netherlands","Belgium","Germany","United Kingdom"],
+  },
+  "Volkswagen|Crafter|Crew Cab|After-fit": {
+    introYear: 2020, pricingNote: "From €4,250 excl. VAT",
+    unitsFY25: "~90 units",
+    activeMarkets: ["Netherlands","Belgium","Germany"],
+    cocMarkets: ["Netherlands","Belgium","Germany"],
+  },
+
+  /* ── Fallback entries by type+fitment ───────────────────────────── */
+  "_|Crew Cab|OEM": {
+    introYear: 2019, pricingNote: "Included in OEM vehicle build price",
+    unitsFY25: "—",
+    activeMarkets: ["Netherlands","Belgium","Germany","France"],
+    cocMarkets: null,
+  },
+  "_|Crew Cab|After-fit": {
+    introYear: 2020, pricingNote: "From €3,490 excl. VAT",
+    unitsFY25: "—",
+    activeMarkets: ["Netherlands","Belgium","Germany","France","United Kingdom"],
+    cocMarkets: ["Netherlands","Belgium","Germany","France","United Kingdom"],
+  },
+  "_|Flex Cab|OEM": {
+    introYear: 2021, pricingNote: "Included in OEM vehicle build price",
+    unitsFY25: "—",
+    activeMarkets: ["Netherlands","Belgium","Germany","France"],
+    cocMarkets: null,
+  },
+  "_|Flex Cab|After-fit": {
+    introYear: 2021, pricingNote: "From €3,990 excl. VAT",
+    unitsFY25: "—",
+    activeMarkets: ["Netherlands","Belgium","Germany","France"],
+    cocMarkets: ["Netherlands","Belgium","Germany","France"],
+  },
+  "_|Partition Wall|After-fit": {
+    introYear: 2017, pricingNote: "From €680 excl. VAT",
+    unitsFY25: "—",
+    activeMarkets: ["Netherlands","Belgium","Germany","France","Spain","United Kingdom"],
+    cocMarkets: ["Netherlands","Belgium","Germany","France","Spain","United Kingdom"],
+  },
+};
+
+/* ── Market data lookup helper ───────────────────────────────────────── */
+function getMarketData(product) {
+  const specific = `${product.brand}|${product.van}|${product.type}|${product.fitment}`;
+  const fallback  = `_|${product.type}|${product.fitment}`;
+  return MARKET_DATA[specific] || MARKET_DATA[fallback] || null;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MARKETING TOOLS  (brochures + price lists per product)
+   Key: "brand|van|type|fitment"
+═══════════════════════════════════════════════════════════════════════ */
+const MARKETING_TOOLS = {
+  "Citroën|Jumpy|Crew Cab|OEM": {
+    brochures: [
+      { title:"NL Brochure – Citroën Jumpy Crew Cab 2023",
+        filename:"NL-Brochure-Citroën-Jumpy-Crew-Cab-23.pdf", lang:"NL" },
+    ],
+    priceLists: [
+      { title:"NL Consumer Price List – 1 Feb. 2026",
+        filename:"NL-Consumenten-Prijslijst-Citroën-Jumpy-Crew-Cab-1-Feb.-2026.pdf", lang:"NL" },
+    ],
+  },
+  "Citroën|Jumpy|Crew Cab|After-fit": {
+    brochures: [
+      { title:"NL Brochure – Citroën Jumpy Crew Cab 2023",
+        filename:"NL-Brochure-Citroën-Jumpy-Crew-Cab-23.pdf", lang:"NL" },
+    ],
+    priceLists: [
+      { title:"NL Consumer Price List – 1 Feb. 2026",
+        filename:"NL-Consumenten-Prijslijst-Citroën-Jumpy-Crew-Cab-1-Feb.-2026.pdf", lang:"NL" },
+    ],
+  },
+  "Citroën|Jumper|Crew Cab|OEM": {
+    brochures: [
+      { title:"NL Brochure – Citroën Jumper Dubbele Cabine 2023",
+        filename:"NL-Brochure-Citroën-Jumper-Dubbele-Cabine-23.pdf", lang:"NL" },
+    ],
+    priceLists: [
+      { title:"NL Consumer Price List – 1 Feb. 2026",
+        filename:"NL-Consumentenprijslijst-Citroën-Jumper-Dubbele-Cabine-1-Feb.-2026.pdf", lang:"NL" },
+    ],
+  },
+  "Citroën|Jumper|Crew Cab|After-fit": {
+    brochures: [
+      { title:"NL Brochure – Citroën Jumper Dubbele Cabine 2023",
+        filename:"NL-Brochure-Citroën-Jumper-Dubbele-Cabine-23.pdf", lang:"NL" },
+    ],
+    priceLists: [
+      { title:"NL Consumer Price List – 1 Feb. 2026",
+        filename:"NL-Consumentenprijslijst-Citroën-Jumper-Dubbele-Cabine-1-Feb.-2026.pdf", lang:"NL" },
+    ],
+  },
+};
+
+/* ── Marketing tools lookup helper ──────────────────────────────────── */
+function getMarketingTools(product) {
+  const key = `${product.brand}|${product.van}|${product.type}|${product.fitment}`;
+  return MARKETING_TOOLS[key] || { brochures: [], priceLists: [] };
+}

@@ -96,7 +96,6 @@ fitBtnsEl.addEventListener("click", e => {
   if (!btn) return;
   const fitment = btn.dataset.fitment;
 
-  // Determine selected type from active type button
   const activeTypeBtn = typeBtnsEl.querySelector(".sel-btn.active");
   if (!activeTypeBtn) return;
 
@@ -120,7 +119,7 @@ document.querySelector(".tabs-bar").addEventListener("click", e => {
   document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
 });
 
-/* ── BOM module event listeners (registered once) ────────────────── */
+/* ── BOM module event listeners ──────────────────────────────────── */
 const bomModulesEl = document.getElementById("bom-modules-list");
 let bomState = {};
 
@@ -135,7 +134,7 @@ bomModulesEl.addEventListener("change", e => {
 
 document.getElementById("bom-toggle-all").addEventListener("click", () => {
   if (!currentProduct) return;
-  const cbs  = [...bomModulesEl.querySelectorAll("input[type=checkbox]")];
+  const cbs   = [...bomModulesEl.querySelectorAll("input[type=checkbox]")];
   const allOn = cbs.every(cb => cb.checked);
   cbs.forEach(cb => {
     cb.checked = !allOn;
@@ -144,6 +143,14 @@ document.getElementById("bom-toggle-all").addEventListener("click", () => {
   });
   refreshBOMToggleBtn();
   renderBOMTable();
+});
+
+/* ── Configurator reset ───────────────────────────────────────────── */
+document.getElementById("cfg-reset").addEventListener("click", () => {
+  if (!currentProduct) return;
+  cfgState = {};
+  renderConfigurator(currentProduct);
+  applyConfiguratorToBOM(currentProduct);
 });
 
 /* ── Tabs lock / unlock ───────────────────────────────────────────── */
@@ -169,69 +176,189 @@ function unlockAndPopulate(product) {
 
   populateMarket(product);
   populateBOM(product);
-  populateImages(product);
+  populateMarketingTools(product);
 
   document.getElementById("tabs-lock").classList.add("hidden");
 }
 
-/* ── Market Presence ─────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   MARKET PRESENCE
+═══════════════════════════════════════════════════════════════════════ */
 function populateMarket(product) {
-  const md = MARKET_DATA[product.type];
-  if (!md) return;
+  const md = getMarketData(product);
+  const el = document.getElementById("market-content");
 
-  document.getElementById("market-grid").innerHTML = `
-    <div class="mkt-card">
-      <div class="mkt-card-icon">🌍</div>
-      <h3>Active Regions</h3>
-      <div class="mkt-tags">${md.regions.map(r => `<span class="mkt-tag">${r}</span>`).join("")}</div>
+  if (!md) {
+    el.innerHTML = `<p class="mkt-empty-msg">No market data available for this product.</p>`;
+    return;
+  }
+
+  const isAfterfit   = product.fitment === "After-fit";
+  const countryTag   = c => `<span class="mkt-country-tag">${c}</span>`;
+
+  const cocSection = isAfterfit ? `
+    <div class="mkt-section">
+      <div class="mkt-section-header">
+        <div class="mkt-section-icon">📋</div>
+        <div>
+          <div class="mkt-section-title">CoC Availability</div>
+          <div class="mkt-section-sub">Certificate of Conformity – aligned with active markets</div>
+        </div>
+      </div>
+      <div class="mkt-country-tags">
+        ${md.cocMarkets && md.cocMarkets.length
+          ? md.cocMarkets.map(countryTag).join("")
+          : `<span class="mkt-empty">Not yet available</span>`}
+      </div>
     </div>
-    <div class="mkt-card">
-      <div class="mkt-card-icon">🏭</div>
-      <h3>OEM Partners</h3>
-      ${md.oemBrands.length
-        ? `<div class="mkt-tags">${md.oemBrands.map(b => `<span class="mkt-tag mkt-tag--oem">${b}</span>`).join("")}</div>`
-        : `<p class="mkt-empty">Not available as OEM</p>`}
+  ` : "";
+
+  el.innerHTML = `
+    <div class="mkt-overview-row">
+      <div class="mkt-stat-card">
+        <div class="mkt-stat-label">Market Introduction</div>
+        <div class="mkt-stat-value">${md.introYear}</div>
+      </div>
+      <div class="mkt-stat-card">
+        <div class="mkt-stat-label">Starting Price</div>
+        <div class="mkt-stat-value">${md.pricingNote}</div>
+      </div>
+      <div class="mkt-stat-card">
+        <div class="mkt-stat-label">FY25 Volume</div>
+        <div class="mkt-stat-value">${md.unitsFY25}</div>
+      </div>
+      <div class="mkt-stat-card">
+        <div class="mkt-stat-label">Fitment Type</div>
+        <div class="mkt-stat-value">${product.fitment}</div>
+      </div>
     </div>
-    <div class="mkt-card">
-      <div class="mkt-card-icon">🔧</div>
-      <h3>After-fit Brands</h3>
-      ${md.afterfitBrands.length
-        ? `<div class="mkt-tags">${md.afterfitBrands.map(b => `<span class="mkt-tag mkt-tag--afterfit">${b}</span>`).join("")}</div>`
-        : `<p class="mkt-empty">Not available as after-fit</p>`}
-    </div>
-    <div class="mkt-card">
-      <div class="mkt-card-icon">🏗</div>
-      <h3>Key Applications</h3>
-      <ul class="mkt-list">${md.applications.map(a => `<li>${a}</li>`).join("")}</ul>
-    </div>
-    <div class="mkt-card">
-      <div class="mkt-card-icon">✅</div>
-      <h3>Certifications</h3>
-      <ul class="mkt-list">${md.certifications.map(c => `<li>${c}</li>`).join("")}</ul>
-    </div>
-    <div class="mkt-card">
-      <div class="mkt-card-icon">📊</div>
-      <h3>Volume &amp; Launch</h3>
-      <p class="mkt-stat">FY25 volume: <strong>${md.unitsFY25}</strong></p>
-      <p class="mkt-stat">In market since: <strong>${md.launchYear}</strong></p>
+
+    <div class="mkt-sections">
+      <div class="mkt-section">
+        <div class="mkt-section-header">
+          <div class="mkt-section-icon">🌍</div>
+          <div>
+            <div class="mkt-section-title">Active Markets</div>
+            <div class="mkt-section-sub">Countries where this product is commercially available</div>
+          </div>
+        </div>
+        <div class="mkt-country-tags">
+          ${md.activeMarkets.length
+            ? md.activeMarkets.map(countryTag).join("")
+            : `<span class="mkt-empty">No active markets listed</span>`}
+        </div>
+      </div>
+
+      ${cocSection}
     </div>
   `;
 }
 
-/* ── BOM Configurator ────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   BOM CONFIGURATOR
+═══════════════════════════════════════════════════════════════════════ */
+let cfgState = {};
+
+function renderConfigurator(product) {
+  const cfg = CONFIGURATOR[product.type];
+  const el  = document.getElementById("cfg-questions");
+  if (!cfg) { el.innerHTML = ""; return; }
+
+  el.innerHTML = cfg.questions.map(q => `
+    <div class="cfg-question" data-q="${q.id}">
+      <div class="cfg-question-label">${q.label}</div>
+      <div class="cfg-options">
+        ${q.options.map(opt => `
+          <button class="cfg-opt-btn${cfgState[q.id] === opt.value ? " active" : ""}"
+                  data-q="${q.id}" data-val="${opt.value}">
+            ${opt.label}
+          </button>
+        `).join("")}
+      </div>
+    </div>
+  `).join("");
+
+  updateCfgStatus(product);
+  el.addEventListener("click", handleCfgClick);
+}
+
+function handleCfgClick(e) {
+  const btn = e.target.closest(".cfg-opt-btn[data-q]");
+  if (!btn || !currentProduct) return;
+
+  const qId = btn.dataset.q;
+  const val  = btn.dataset.val;
+  cfgState[qId] = val;
+
+  document.querySelectorAll(`.cfg-opt-btn[data-q="${qId}"]`).forEach(b =>
+    b.classList.toggle("active", b.dataset.val === val)
+  );
+
+  updateCfgStatus(currentProduct);
+  applyConfiguratorToBOM(currentProduct);
+}
+
+function updateCfgStatus(product) {
+  const cfg = CONFIGURATOR[product.type];
+  if (!cfg) return;
+  const totalQ   = cfg.questions.length;
+  const answered = cfg.questions.filter(q => cfgState[q.id] !== undefined).length;
+  const statusEl = document.getElementById("cfg-status");
+
+  if (answered === totalQ) {
+    statusEl.textContent = "✓ Configuration complete – BOM updated";
+    statusEl.classList.add("cfg-status--done");
+  } else {
+    statusEl.textContent = `${answered} of ${totalQ} questions answered`;
+    statusEl.classList.remove("cfg-status--done");
+  }
+}
+
+function applyConfiguratorToBOM(product) {
+  const cfg = CONFIGURATOR[product.type];
+  if (!cfg) return;
+
+  const activeModules = new Set(cfg.alwaysActive);
+
+  cfg.questions.forEach(q => {
+    const val = cfgState[q.id];
+    if (val === undefined) return;
+    const opt = q.options.find(o => o.value === val);
+    if (opt) opt.activates.forEach(m => activeModules.add(m));
+  });
+
+  const modules = BOM_MODULES[product.type] || [];
+  modules.forEach(m => { bomState[m.id] = activeModules.has(m.id); });
+
+  refreshModuleCheckboxes();
+  refreshBOMToggleBtn();
+  renderBOMTable();
+}
+
+function refreshModuleCheckboxes() {
+  bomModulesEl.querySelectorAll("input[type=checkbox]").forEach(cb => {
+    const isOn = bomState[cb.dataset.module] === true;
+    cb.checked = isOn;
+    cb.closest("label").classList.toggle("active", isOn);
+  });
+}
+
+/* ── BOM population ──────────────────────────────────────────────── */
 function populateBOM(product) {
   const modules = BOM_MODULES[product.type] || [];
+  cfgState = {};
   bomState = {};
-  modules.forEach(m => { bomState[m.id] = m.defaultOn; });
+  modules.forEach(m => { bomState[m.id] = false; });
 
   bomModulesEl.innerHTML = modules.map(m => `
-    <label class="bom-module-check${m.defaultOn ? " active" : ""}">
-      <input type="checkbox" data-module="${m.id}"${m.defaultOn ? " checked" : ""}>
+    <label class="bom-module-check">
+      <input type="checkbox" data-module="${m.id}">
       <span class="bom-module-label">${m.label}</span>
       <span class="bom-module-count">${m.parts.length} part${m.parts.length !== 1 ? "s" : ""}</span>
     </label>
   `).join("");
 
+  renderConfigurator(product);
   refreshBOMToggleBtn();
   renderBOMTable();
 }
@@ -239,7 +366,7 @@ function populateBOM(product) {
 function refreshBOMToggleBtn() {
   if (!currentProduct) return;
   const modules = BOM_MODULES[currentProduct.type] || [];
-  const allOn   = modules.every(m => bomState[m.id]);
+  const allOn   = modules.length > 0 && modules.every(m => bomState[m.id]);
   document.getElementById("bom-toggle-all").textContent = allOn ? "Deselect All" : "Select All";
 }
 
@@ -248,13 +375,23 @@ function renderBOMTable() {
   const modules  = BOM_MODULES[currentProduct.type] || [];
   const allParts = BOM_DATA[currentProduct.type]    || [];
 
-  const activeParts = new Set();
+  const activeParts  = new Set();
   const partToModule = {};
   modules.forEach(m => {
     if (bomState[m.id]) m.parts.forEach(pid => { activeParts.add(pid); partToModule[pid] = m.label; });
   });
 
   const visible = allParts.filter(r => activeParts.has(r.part));
+
+  if (visible.length === 0) {
+    document.getElementById("bom-body").innerHTML =
+      `<tr><td colspan="5" class="bom-empty-row">
+        Answer the configurator questions above to generate your parts list.
+       </td></tr>`;
+    document.getElementById("bom-part-count").textContent = "No parts in configuration";
+    return;
+  }
+
   document.getElementById("bom-body").innerHTML = visible.map(r => `
     <tr>
       <td>${r.part}</td>
@@ -268,40 +405,77 @@ function renderBOMTable() {
     `${visible.length} part${visible.length !== 1 ? "s" : ""} in configuration`;
 }
 
-/* ── Marketing Images ─────────────────────────────────────────────── */
-function populateImages(product) {
-  const vehicleImgUrl = VAN_IMAGES[product.van] || "";
-  const imgLabels = [
-    { label:"Exterior – 3/4 Front",   icon:"🚐" },
-    { label:"Exterior – Side View",   icon:"🚌" },
-    { label:"Interior – Cabin",       icon:"🪑" },
-    { label:"Interior – Detail",      icon:"🔩" },
-    { label:"Installation Diagram",   icon:"📐" },
-    { label:"Product Close-up",       icon:"🔍" },
-  ];
+/* ═══════════════════════════════════════════════════════════════════════
+   MARKETING TOOLS
+═══════════════════════════════════════════════════════════════════════ */
+function populateMarketingTools(product) {
+  const tools = getMarketingTools(product);
+  const el    = document.getElementById("marketing-tools-content");
 
-  document.getElementById("marketing-gallery").innerHTML = `
-    <div class="gallery-hero">
-      ${vehicleImgUrl
-        ? `<img src="${vehicleImgUrl}" alt="${product.brand} ${product.van}" loading="lazy"
-                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-        : ""}
-      <div class="gallery-hero-fallback" style="background:linear-gradient(135deg,${meta.color} 0%,${meta.color}99 100%);${vehicleImgUrl ? "display:none" : ""}">
-        <span style="font-size:3rem;font-weight:900;color:rgba(255,255,255,0.9)">${meta.abbr}</span>
-        <span style="font-size:0.75rem;color:rgba(255,255,255,0.6);letter-spacing:3px;text-transform:uppercase">${product.van}</span>
+  const vehicleImgUrl = VAN_IMAGES[product.van] || "";
+
+  const docCard = (icon, title, filename, type) => `
+    <a class="mkt-doc-card" href="${filename}" target="_blank" rel="noopener">
+      <div class="mkt-doc-icon">${icon}</div>
+      <div class="mkt-doc-info">
+        <div class="mkt-doc-type">${type}</div>
+        <div class="mkt-doc-title">${title}</div>
       </div>
-      <div class="gallery-hero-label">${product.brand} ${product.van} – ${product.type} (${product.fitment})</div>
-    </div>
-    <div class="gallery-grid">
-      ${imgLabels.map(item => `
-        <div class="gallery-tile">
-          <div class="gallery-tile-inner">
-            <div class="gallery-tile-icon">${item.icon}</div>
-            <div class="gallery-tile-label">${item.label}</div>
-            <div class="gallery-tile-badge">Coming Soon</div>
+      <div class="mkt-doc-arrow">↗</div>
+    </a>
+  `;
+
+  const hasDocuments = tools.brochures.length > 0 || tools.priceLists.length > 0;
+
+  el.innerHTML = `
+    <div class="mkt-tools-layout">
+
+      <div class="mkt-tools-docs">
+        <div class="mkt-tools-section-title">Brochures &amp; Price Lists</div>
+
+        ${hasDocuments ? `
+          <div class="mkt-docs-list">
+            ${tools.brochures.map(b  => docCard("📄", b.title,  b.filename,  `Brochure · ${b.lang}`)).join("")}
+            ${tools.priceLists.map(pl=> docCard("💶", pl.title, pl.filename, `Price List · ${pl.lang}`)).join("")}
           </div>
+        ` : `
+          <div class="mkt-no-docs">
+            <div class="mkt-no-docs-icon">📂</div>
+            <p>No documents are available for this product yet.</p>
+            <button class="action-btn" style="margin-top:12px">Request Documents</button>
+          </div>
+        `}
+      </div>
+
+      <div class="mkt-tools-images">
+        <div class="mkt-tools-section-title">Product Photography</div>
+        <div class="gallery-hero">
+          ${vehicleImgUrl
+            ? `<img src="${vehicleImgUrl}" alt="${product.brand} ${product.van}" loading="lazy"
+                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+            : ""}
+          <div class="gallery-hero-fallback" style="background:linear-gradient(135deg,${meta.color} 0%,${meta.color}99 100%);${vehicleImgUrl ? "display:none" : ""}">
+            <span style="font-size:3rem;font-weight:900;color:rgba(255,255,255,0.9)">${meta.abbr}</span>
+            <span style="font-size:0.75rem;color:rgba(255,255,255,0.6);letter-spacing:3px;text-transform:uppercase">${product.van}</span>
+          </div>
+          <div class="gallery-hero-label">${product.brand} ${product.van} – ${product.type} (${product.fitment})</div>
         </div>
-      `).join("")}
+        <div class="gallery-thumbs">
+          ${["Interior – Cabin","Installation Diagram","Product Close-up"].map(lbl => `
+            <div class="gallery-thumb">
+              <div class="gallery-thumb-inner">
+                <div class="gallery-thumb-label">${lbl}</div>
+                <div class="gallery-thumb-badge">Coming Soon</div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+        <div class="gallery-footer" style="margin-top:16px">
+          <button class="action-btn">Request Hi-Res Assets</button>
+          <button class="action-btn action-btn--outline" onclick="window.print()">Print Sheet</button>
+        </div>
+      </div>
+
     </div>
   `;
 }
