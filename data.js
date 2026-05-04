@@ -1,7 +1,4 @@
-/* ── Vehicle image URLs ───────────────────────────────────────────────
-   Local files in repo root for VW, Ford, MB, Renault, IVECO, KIA.
-   Wikimedia Commons kept for Stellantis brands.
-── */
+/* ── Vehicle image URLs – all local files in repo root ───────────────── */
 const VAN_IMAGES = {
   /* ── Volkswagen ─────────────────────────────────────────────────── */
   "Caddy":          "Caddy.png",
@@ -11,23 +8,33 @@ const VAN_IMAGES = {
   "ID Buzz":        "ID buzz.jpg",
   "Multivan":       "Multivan.jpg",
 
-  /* ── Stellantis – Wikimedia ─────────────────────────────────────── */
-  "Berlingo":       "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Citroen_Berlingo_2%2C0_HDi_DW10TD.JPG/640px-Citroen_Berlingo_2%2C0_HDi_DW10TD.JPG",
-  "Jumpy":          "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Tallink_Citro%C3%ABn_Jumpy.JPG/640px-Tallink_Citro%C3%ABn_Jumpy.JPG",
-  "Jumper":         "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Citro%C3%ABn_Jumper_II_rear.JPG/640px-Citro%C3%ABn_Jumper_II_rear.JPG",
-  "Partner":        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/2012_Peugeot_Partner_1.6_HDI_panel_van_2.JPG/640px-2012_Peugeot_Partner_1.6_HDI_panel_van_2.JPG",
-  "Expert":         "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Peugeot_Expert_III.jpg/640px-Peugeot_Expert_III.jpg",
-  "Boxer":          "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Peugeot_Boxer_Transporter_%28seit_2006%29.JPG/640px-Peugeot_Boxer_Transporter_%28seit_2006%29.JPG",
-  "Combo":          "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2018_Opel_Combo_Life.jpg/640px-2018_Opel_Combo_Life.jpg",
-  "Vivaro":         "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Opel_Vivaro_20090905_front.JPG/640px-Opel_Vivaro_20090905_front.JPG",
-  "Movano":         "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Opel_Movano_B_front_20100705.jpg/640px-Opel_Movano_B_front_20100705.jpg",
-  "Doblo":          "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Fiat_Doblo_Cargo_XXL_Facelift_front.JPG/640px-Fiat_Doblo_Cargo_XXL_Facelift_front.JPG",
-  "Scudo":          "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Fiat_Scudo_%282022%29_IMG_6710.jpg/640px-Fiat_Scudo_%282022%29_IMG_6710.jpg",
-  "Ducato":         "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Fiat_Ducato_2.8_JTD.JPG/640px-Fiat_Ducato_2.8_JTD.JPG",
-  "Proace City":    "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Toyota_Proace_City.jpg/640px-Toyota_Proace_City.jpg",
-  "Proace":         "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Toyota_Proace_Seitenansicht.JPG/640px-Toyota_Proace_Seitenansicht.JPG",
-  "Proace Max":     "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/2024_Toyota_Proace_Max_Electric_-_front.jpg/640px-2024_Toyota_Proace_Max_Electric_-_front.jpg",
-  "ProMaster":      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/2014_Ram_ProMaster_van%2C_rear_left_NYC.jpg/640px-2014_Ram_ProMaster_van%2C_rear_left_NYC.jpg",
+  /* ── Citroën ────────────────────────────────────────────────────── */
+  "Berlingo":       "Berlingo.jpeg",
+  "Jumpy":          "Jumpy.jpg",
+  "Jumper":         "Jumper.jpg",
+
+  /* ── Peugeot ────────────────────────────────────────────────────── */
+  "Partner":        "Partner.jpg",
+  "Expert":         "expert.webp",
+  "Boxer":          "boxer.jpg",
+
+  /* ── Opel ───────────────────────────────────────────────────────── */
+  "Combo":          "combo.webp",
+  "Vivaro":         "vivaro.webp",
+  "Movano":         "movano.jpg",
+
+  /* ── Fiat ───────────────────────────────────────────────────────── */
+  "Doblo":          "doblo.jpg",
+  "Scudo":          "scudo.jpg",
+  "Ducato":         "ducato.jpg",
+
+  /* ── Toyota ─────────────────────────────────────────────────────── */
+  "Proace City":    "proace city.jpg",
+  "Proace":         "proace.jpg",
+  "Proace Max":     "proace max.jpg",
+
+  /* ── RAM ────────────────────────────────────────────────────────── */
+  "ProMaster":      "promaster.jpg",
 
   /* ── Renault ────────────────────────────────────────────────────── */
   "Trafic":         "Trafic.png",
