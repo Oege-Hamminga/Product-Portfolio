@@ -87,6 +87,11 @@ typeBtnsEl.addEventListener("click", e => {
   document.getElementById("m-fitment").innerHTML  = "—";
   document.getElementById("m-part").textContent   = "—";
   document.getElementById("meta-eyebrow").textContent = firstP.segment;
+
+  /* Reset product image placeholder */
+  document.getElementById("product-photo").style.display = "none";
+  document.getElementById("pp-fallback").style.display   = "flex";
+
   lockTabs();
 });
 
@@ -147,7 +152,8 @@ document.getElementById("bom-toggle-all").addEventListener("click", () => {
 /* ── Configurator reset ───────────────────────────────────────────── */
 document.getElementById("cfg-reset").addEventListener("click", () => {
   if (!currentProduct) return;
-  cfgState = {};
+  cfgState     = {};
+  blockingState = {};
   renderConfigurator(currentProduct);
   applyConfiguratorToBOM(currentProduct);
 });
@@ -170,8 +176,30 @@ function unlockAndPopulate(product) {
     `SNK-${meta.abbr}-${TYPE_CODE[product.type] || "XX"}-${String(product.id).padStart(3,"0")}`;
   document.getElementById("meta-eyebrow").textContent =
     `${product.segment} · ${product.fitment}`;
-  document.getElementById("pp-label").textContent =
-    product.fitment === "OEM" ? "OEM Fitment" : "After-fit Conversion";
+
+  /* ── Product image (Snoeks conversion photo) ──────────────────── */
+  const productImgUrl = getProductImage(product);
+  const productPhotoEl = document.getElementById("product-photo");
+  const ppFallbackEl   = document.getElementById("pp-fallback");
+  const ppTypeEl       = document.getElementById("pp-type");
+  const ppLabelEl      = document.getElementById("pp-label");
+
+  ppTypeEl.textContent  = product.type;
+  ppLabelEl.textContent = product.fitment === "OEM" ? "OEM Fitment" : "After-fit Conversion";
+
+  if (productImgUrl) {
+    productPhotoEl.src = productImgUrl;
+    productPhotoEl.alt = `${product.brand} ${product.van} – ${product.type}`;
+    productPhotoEl.onerror = () => {
+      productPhotoEl.style.display = "none";
+      ppFallbackEl.style.display   = "flex";
+    };
+    productPhotoEl.style.display = "block";
+    ppFallbackEl.style.display   = "none";
+  } else {
+    productPhotoEl.style.display = "none";
+    ppFallbackEl.style.display   = "flex";
+  }
 
   populateMarket(product);
   populateBOM(product);
@@ -248,15 +276,55 @@ function populateMarket(product) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   BOM CONFIGURATOR
+   BOM CONFIGURATOR  (generic + vehicle-specific with blocking questions)
 ═══════════════════════════════════════════════════════════════════════ */
-let cfgState = {};
+let cfgState      = {};
+let blockingState = {};
 
 function renderConfigurator(product) {
-  const cfg = CONFIGURATOR[product.type];
-  const el  = document.getElementById("cfg-questions");
-  if (!cfg) { el.innerHTML = ""; return; }
+  const cfg      = getConfigurator(product);
+  const el       = document.getElementById("cfg-questions");
+  const blockSec = document.getElementById("cfg-blocking-section");
+  const bomCfg   = document.getElementById("bom-configurator");
 
+  if (!cfg) {
+    el.innerHTML = "";
+    blockSec.style.display = "none";
+    return;
+  }
+
+  /* ── Blocking questions ──────────────────────────────────────── */
+  const blocking = cfg.blockingQuestions || [];
+  if (blocking.length > 0) {
+    blockSec.style.display = "block";
+    const blockingQEl = document.getElementById("cfg-blocking-questions");
+
+    blockingQEl.innerHTML = blocking.map(q => `
+      <div class="cfg-question" data-q="${q.id}">
+        <div class="cfg-question-label">${q.label}</div>
+        <div class="cfg-options">
+          ${q.options.map(opt => `
+            <button class="cfg-opt-btn${blockingState[q.id] === opt.value ? " active" : ""}"
+                    data-q="${q.id}" data-val="${opt.value}">
+              ${opt.label}
+            </button>
+          `).join("")}
+        </div>
+      </div>
+    `).join("");
+
+    /* Wire click handler freshly (remove then add to avoid duplicates) */
+    blockingQEl.removeEventListener("click", _blockingClickHandler);
+    _blockingClickHandler = e => handleBlockingClick(e, product, cfg);
+    blockingQEl.addEventListener("click", _blockingClickHandler);
+
+    updateBlockingLock(product, cfg);
+  } else {
+    blockSec.style.display = "none";
+    bomCfg.classList.remove("cfg-blocked");
+  }
+
+  /* ── Regular questions ───────────────────────────────────────── */
   el.innerHTML = cfg.questions.map(q => `
     <div class="cfg-question" data-q="${q.id}">
       <div class="cfg-question-label">${q.label}</div>
@@ -271,11 +339,35 @@ function renderConfigurator(product) {
     </div>
   `).join("");
 
-  updateCfgStatus(product);
-  el.addEventListener("click", handleCfgClick);
+  /* Remove old listener, add fresh one */
+  el.removeEventListener("click", _cfgClickHandler);
+  _cfgClickHandler = e => handleCfgClick(e, product, cfg);
+  el.addEventListener("click", _cfgClickHandler);
+
+  updateCfgStatus(product, cfg);
 }
 
-function handleCfgClick(e) {
+/* Stored listener references so we can remove them cleanly */
+let _cfgClickHandler      = null;
+let _blockingClickHandler = null;
+
+function handleBlockingClick(e, product, cfg) {
+  const btn = e.target.closest(".cfg-opt-btn[data-q]");
+  if (!btn) return;
+
+  const qId = btn.dataset.q;
+  const val  = btn.dataset.val;
+  blockingState[qId] = val;
+
+  document.querySelectorAll(`#cfg-blocking-questions .cfg-opt-btn[data-q="${qId}"]`).forEach(b =>
+    b.classList.toggle("active", b.dataset.val === val)
+  );
+
+  updateBlockingLock(product, cfg);
+  applyConfiguratorToBOM(product);
+}
+
+function handleCfgClick(e, product, cfg) {
   const btn = e.target.closest(".cfg-opt-btn[data-q]");
   if (!btn || !currentProduct) return;
 
@@ -283,20 +375,27 @@ function handleCfgClick(e) {
   const val  = btn.dataset.val;
   cfgState[qId] = val;
 
-  document.querySelectorAll(`.cfg-opt-btn[data-q="${qId}"]`).forEach(b =>
+  document.querySelectorAll(`#cfg-questions .cfg-opt-btn[data-q="${qId}"]`).forEach(b =>
     b.classList.toggle("active", b.dataset.val === val)
   );
 
-  updateCfgStatus(currentProduct);
+  updateCfgStatus(currentProduct, cfg);
   applyConfiguratorToBOM(currentProduct);
 }
 
-function updateCfgStatus(product) {
-  const cfg = CONFIGURATOR[product.type];
+function updateBlockingLock(product, cfg) {
+  const blocking     = cfg.blockingQuestions || [];
+  const allAnswered  = blocking.every(q => blockingState[q.id] !== undefined);
+  document.getElementById("bom-configurator").classList.toggle("cfg-blocked", !allAnswered);
+}
+
+function updateCfgStatus(product, cfg) {
   if (!cfg) return;
-  const totalQ   = cfg.questions.length;
-  const answered = cfg.questions.filter(q => cfgState[q.id] !== undefined).length;
-  const statusEl = document.getElementById("cfg-status");
+  const blocking  = cfg.blockingQuestions || [];
+  const totalQ    = cfg.questions.length + blocking.length;
+  const answered  = cfg.questions.filter(q => cfgState[q.id] !== undefined).length
+                  + blocking.filter(q => blockingState[q.id] !== undefined).length;
+  const statusEl  = document.getElementById("cfg-status");
 
   if (answered === totalQ) {
     statusEl.textContent = "✓ Configuration complete – BOM updated";
@@ -308,11 +407,20 @@ function updateCfgStatus(product) {
 }
 
 function applyConfiguratorToBOM(product) {
-  const cfg = CONFIGURATOR[product.type];
+  const cfg = getConfigurator(product);
   if (!cfg) return;
 
-  const activeModules = new Set(cfg.alwaysActive);
+  const activeModules = new Set(cfg.alwaysActive || []);
 
+  /* Apply blocking question activations first */
+  (cfg.blockingQuestions || []).forEach(q => {
+    const val = blockingState[q.id];
+    if (val === undefined) return;
+    const opt = q.options.find(o => o.value === val);
+    if (opt) opt.activates.forEach(m => activeModules.add(m));
+  });
+
+  /* Apply regular question activations */
   cfg.questions.forEach(q => {
     const val = cfgState[q.id];
     if (val === undefined) return;
@@ -320,7 +428,7 @@ function applyConfiguratorToBOM(product) {
     if (opt) opt.activates.forEach(m => activeModules.add(m));
   });
 
-  const modules = BOM_MODULES[product.type] || [];
+  const modules = getBOMModules(product);
   modules.forEach(m => { bomState[m.id] = activeModules.has(m.id); });
 
   refreshModuleCheckboxes();
@@ -338,9 +446,10 @@ function refreshModuleCheckboxes() {
 
 /* ── BOM population ──────────────────────────────────────────────── */
 function populateBOM(product) {
-  const modules = BOM_MODULES[product.type] || [];
-  cfgState = {};
-  bomState = {};
+  const modules = getBOMModules(product);
+  cfgState      = {};
+  blockingState  = {};
+  bomState      = {};
   modules.forEach(m => { bomState[m.id] = false; });
 
   bomModulesEl.innerHTML = modules.map(m => `
@@ -358,15 +467,15 @@ function populateBOM(product) {
 
 function refreshBOMToggleBtn() {
   if (!currentProduct) return;
-  const modules = BOM_MODULES[currentProduct.type] || [];
+  const modules = getBOMModules(currentProduct);
   const allOn   = modules.length > 0 && modules.every(m => bomState[m.id]);
   document.getElementById("bom-toggle-all").textContent = allOn ? "Deselect All" : "Select All";
 }
 
 function renderBOMTable() {
   if (!currentProduct) return;
-  const modules  = BOM_MODULES[currentProduct.type] || [];
-  const allParts = BOM_DATA[currentProduct.type]    || [];
+  const modules  = getBOMModules(currentProduct);
+  const allParts = getBOMParts(currentProduct);
 
   const activeParts  = new Set();
   const partToModule = {};
@@ -405,7 +514,11 @@ function populateMarketingTools(product) {
   const tools = getMarketingTools(product);
   const el    = document.getElementById("marketing-tools-content");
 
-  const vehicleImgUrl = VAN_IMAGES[product.van] || "";
+  /* Prefer the Snoeks product conversion image; fall back to vehicle image */
+  const heroImgUrl   = getProductImage(product) || VAN_IMAGES[product.van] || "";
+  const heroImgLabel = getProductImage(product)
+    ? `${product.brand} ${product.van} – ${product.type} (${product.fitment})`
+    : `${product.brand} ${product.van}`;
 
   const docCard = (title, filename, type) => `
     <a class="mkt-doc-card" href="${filename}" target="_blank" rel="noopener">
@@ -441,15 +554,15 @@ function populateMarketingTools(product) {
       <div class="mkt-tools-images">
         <div class="mkt-tools-section-title">Product Photography</div>
         <div class="gallery-hero">
-          ${vehicleImgUrl
-            ? `<img src="${vehicleImgUrl}" alt="${product.brand} ${product.van}" loading="lazy"
+          ${heroImgUrl
+            ? `<img src="${heroImgUrl}" alt="${heroImgLabel}" loading="lazy"
                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
             : ""}
-          <div class="gallery-hero-fallback" style="background:linear-gradient(135deg,${meta.color} 0%,${meta.color}99 100%);${vehicleImgUrl ? "display:none" : ""}">
+          <div class="gallery-hero-fallback" style="background:linear-gradient(135deg,${meta.color} 0%,${meta.color}99 100%);${heroImgUrl ? "display:none" : ""}">
             <span style="font-size:3rem;font-weight:900;color:rgba(255,255,255,0.9)">${meta.abbr}</span>
-            <span style="font-size:0.75rem;color:rgba(255,255,255,0.6);letter-spacing:3px;text-transform:uppercase">${product.van}</span>
+            <span style="font-size:0.72rem;color:rgba(255,255,255,0.55);letter-spacing:3px;text-transform:uppercase">${product.van}</span>
           </div>
-          <div class="gallery-hero-label">${product.brand} ${product.van} – ${product.type} (${product.fitment})</div>
+          <div class="gallery-hero-label">${heroImgLabel}</div>
         </div>
         <div class="gallery-thumbs">
           ${["Interior – Cabin","Installation Diagram","Product Close-up"].map(lbl => `
@@ -461,7 +574,7 @@ function populateMarketingTools(product) {
             </div>
           `).join("")}
         </div>
-        <div class="gallery-footer" style="margin-top:16px">
+        <div class="gallery-footer">
           <button class="action-btn">Request Hi-Res Assets</button>
           <button class="action-btn action-btn--outline" onclick="window.print()">Print Sheet</button>
         </div>

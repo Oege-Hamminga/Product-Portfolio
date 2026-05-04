@@ -49,9 +49,12 @@
 
         <div class="image-card">
           <div class="image-label">Snoeks Product</div>
-          <div class="product-placeholder">
-            <div class="pp-type"  id="pp-type">Select Product</div>
-            <div class="pp-label" id="pp-label">Choose type &amp; fitment below</div>
+          <div class="product-placeholder" id="product-img">
+            <img id="product-photo" src="" alt="" loading="lazy" style="display:none" />
+            <div class="pp-fallback" id="pp-fallback">
+              <div class="pp-type"  id="pp-type">Select Product</div>
+              <div class="pp-label" id="pp-label">Choose type &amp; fitment below</div>
+            </div>
           </div>
         </div>
 
@@ -133,6 +136,16 @@
         <div class="tab-header">
           <h2>Bill of Materials</h2>
           <p>Answer the configurator questions to build your BOM. Fine-tune by toggling modules manually.</p>
+        </div>
+
+        <!-- Blocking questions (vehicle-specific, must be answered first) -->
+        <div class="cfg-blocking-section" id="cfg-blocking-section" style="display:none">
+          <div class="cfg-blocking-header">
+            <span class="cfg-blocking-tag">Vereist</span>
+            <span class="cfg-blocking-title">Voertuig Specificatie</span>
+            <span class="cfg-blocking-sub">Beantwoord eerst om de configurator te ontgrendelen</span>
+          </div>
+          <div class="cfg-blocking-questions" id="cfg-blocking-questions"></div>
         </div>
 
         <!-- BOM Configurator -->

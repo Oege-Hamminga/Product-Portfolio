@@ -1,4 +1,4 @@
-/* ── Vehicle image URLs ────────────────────────────────────────────── */
+/* ── Vehicle image URLs ────────────────────────────────────────────────────── */
 const VAN_IMAGES = {
   /* ── Volkswagen ─────────────────────────────────────────────────── */
   "Caddy":          "Caddy.png",
@@ -64,6 +64,18 @@ const VAN_IMAGES = {
   /* ── KIA ────────────────────────────────────────────────────────── */
   "PV5":            "PV5.jpg",
 };
+
+/* ── Product images (Snoeks conversion photos) ───────────────────────────── */
+const PRODUCT_IMAGES = {
+  "Citroën|Berlingo|Crew Cab": "Berlingo Crew Cab.jpg",
+  "Citroën|Jumpy|Crew Cab":    "Jumpy Crew Cab.jpg",
+  "Citroën|Jumpy|Flex Cab":    "Jumpy Flex Cab.jpg",
+  "Citroën|Jumper|Crew Cab":   "Jumper Crew Cab.jpg",
+};
+
+function getProductImage(product) {
+  return PRODUCT_IMAGES[`${product.brand}|${product.van}|${product.type}`] || null;
+}
 
 /* ── Brand meta (card colour + abbreviation) ─────────────────────────── */
 const BRAND_META = {
@@ -161,9 +173,9 @@ const products = [
   p("RAM","ProMaster","K2/3","OEM","Crew Cab"),
 
   /* ── RENAULT ─────────────────────────────────────────────────────── */
-  p("Renault","Trafic",        "K1",  "OEM",      "Crew Cab"),
-  p("Renault","Trafic E-Tech", "K1",  "OEM",      "Crew Cab"),
-  p("Renault","Master",        "K2/3","After-fit", "Crew Cab"),
+  p("Renault","Trafic",        "K1",  "OEM",       "Crew Cab"),
+  p("Renault","Trafic E-Tech", "K1",  "OEM",       "Crew Cab"),
+  p("Renault","Master",        "K2/3","After-fit",  "Crew Cab"),
 
   /* ── FORD ────────────────────────────────────────────────────────── */
   p("Ford","Transit Connect","F1",  "After-fit","Crew Cab"),
@@ -173,8 +185,8 @@ const products = [
   p("Ford","Transit Kombi",  "K1",  "After-fit","Partition Wall"),
 
   /* ── IVECO ───────────────────────────────────────────────────────── */
-  p("IVECO","Daily","K2/3","OEM",      "Crew Cab"),
-  p("IVECO","Daily","K2/3","After-fit","Crew Cab"),
+  p("IVECO","Daily","K2/3","OEM",       "Crew Cab"),
+  p("IVECO","Daily","K2/3","After-fit", "Crew Cab"),
 
   /* ── MERCEDES-BENZ ───────────────────────────────────────────────── */
   p("Mercedes-Benz","Vito",      "K1","After-fit","Crew Cab"),
@@ -190,7 +202,7 @@ const products = [
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
-   BOM DATA (expanded for configurator-driven modules)
+   BOM DATA
 ═══════════════════════════════════════════════════════════════════════ */
 const BOM_DATA = {
   "Crew Cab": [
@@ -210,7 +222,7 @@ const BOM_DATA = {
     /* Windows */
     { part:"SNK-CC-W00", description:"Factory Window Retention Bracket Set",              qty:1, unit:"set" },
     { part:"SNK-CC-W01", description:"Clear Glass Window Pack",                           qty:1, unit:"pcs" },
-    { part:"SNK-CC-W02", description:"Tinted Glass Window Pack (65 % VLT)",              qty:1, unit:"pcs" },
+    { part:"SNK-CC-W02", description:"Tinted Glass Window Pack (65 % VLT)",               qty:1, unit:"pcs" },
     { part:"SNK-CC-W03", description:"Opaque ABS Window Cover Pack",                     qty:1, unit:"pcs" },
     /* Upholstery */
     { part:"SNK-CC-U01", description:"Vinyl Upholstery Set",                              qty:1, unit:"set" },
@@ -222,63 +234,63 @@ const BOM_DATA = {
     /* Electrical & hardware */
     { part:"SNK-CC-E01", description:"Wiring Harness Extension",                          qty:1, unit:"pcs" },
     { part:"SNK-CC-HW1", description:"Fastener & Hardware Kit",                           qty:1, unit:"kit" },
+
+    /* ── Jumpy-specific parts ──────────────────────────────────────── */
+    { part:"SNK-JY-KL1", description:"Keyless Entry Wiring & Relay Adapter Kit – Jumpy", qty:1, unit:"kit" },
+    { part:"SNK-JY-DH1", description:"Door Handle Clearance Modification Bracket – Jumpy",qty:1, unit:"pcs" },
+    { part:"SNK-JY-SB1", description:"Front Bench Seat Bracket Modification Set – Jumpy", qty:1, unit:"set" },
+    { part:"SNK-JY-AT1", description:"Airbag B-Pillar Trim Integration Panel – Jumpy",    qty:1, unit:"pcs" },
+
+    /* ── Jumper-specific parts ─────────────────────────────────────── */
+    { part:"SNK-JP-F04", description:"Crew Cab Frame Assembly – Extra Long Body (L4) – Jumper", qty:1, unit:"pcs" },
+    { part:"SNK-JP-H01", description:"Height Adaptation Pack H1 – Low Roof – Jumper",    qty:1, unit:"kit" },
+    { part:"SNK-JP-H02", description:"Height Adaptation Pack H2 – Medium Roof – Jumper", qty:1, unit:"kit" },
+    { part:"SNK-JP-H03", description:"Height Adaptation Pack H3 – High Roof – Jumper",   qty:1, unit:"kit" },
+    { part:"SNK-JP-LD1", description:"LED Lighting Harness Adapter – Jumper",             qty:1, unit:"pcs" },
+    { part:"SNK-JP-VZ1", description:"Air Suspension Seat Interface Kit – Jumper",        qty:1, unit:"kit" },
+    { part:"SNK-JP-PW1", description:"Partition Wall Integration Bracket Kit – Jumper",   qty:1, unit:"kit" },
   ],
 
   "Flex Cab": [
-    /* Frame */
     { part:"SNK-FC-F01", description:"Flex Cab Frame Assembly – Short Body (L1)",        qty:1, unit:"pcs" },
     { part:"SNK-FC-F02", description:"Flex Cab Frame Assembly – Medium Body (L2)",       qty:1, unit:"pcs" },
     { part:"SNK-FC-F03", description:"Flex Cab Frame Assembly – Long Body (L3)",         qty:1, unit:"pcs" },
     { part:"SNK-FC-P01", description:"Modular Conversion Floor Panel",                   qty:1, unit:"pcs" },
-    /* Rail system */
     { part:"SNK-FC-R01", description:"Quick-Release Floor Rail System (pair)",           qty:2, unit:"pcs" },
     { part:"SNK-FC-R02", description:"Locking Rail End Stop Set (4 pcs)",               qty:4, unit:"pcs" },
-    /* Seating */
     { part:"SNK-FC-S01", description:"Folding Seat Assembly (fold-flat)",                qty:2, unit:"pcs" },
     { part:"SNK-FC-S02", description:"3-Point Inertia Reel Belt Set",                    qty:2, unit:"set" },
-    /* Sliding door kits */
     { part:"SNK-FC-DR1", description:"Single Sliding Door Reinforcement Kit",            qty:1, unit:"kit" },
     { part:"SNK-FC-DR2", description:"Double Sliding Door Reinforcement Kit",            qty:1, unit:"kit" },
-    /* Windows */
     { part:"SNK-FC-W01", description:"Clear Glass Window Pack",                          qty:1, unit:"pcs" },
-    { part:"SNK-FC-W02", description:"Tinted Glass Window Pack (65 % VLT)",             qty:1, unit:"pcs" },
-    /* Upholstery */
+    { part:"SNK-FC-W02", description:"Tinted Glass Window Pack (65 % VLT)",              qty:1, unit:"pcs" },
     { part:"SNK-FC-U01", description:"Vinyl Upholstery Set",                             qty:1, unit:"set" },
     { part:"SNK-FC-U02", description:"Fabric & Foam Upholstery Set",                    qty:1, unit:"set" },
-    /* Trim */
     { part:"SNK-FC-T01", description:"Base Trim Package",                                qty:1, unit:"pcs" },
     { part:"SNK-FC-T02", description:"Comfort Trim Package",                             qty:1, unit:"pcs" },
-    /* Hardware */
     { part:"SNK-FC-HW1", description:"Fastener & Hardware Kit",                          qty:1, unit:"kit" },
   ],
 
   "Partition Wall": [
-    /* Frame */
     { part:"SNK-PW-F01", description:"Steel Partition Frame – Standard Width",           qty:1, unit:"pcs" },
     { part:"SNK-PW-F02", description:"Steel Partition Frame – Extended Width",           qty:1, unit:"pcs" },
-    /* Mounting */
     { part:"SNK-PW-M01", description:"Side Mounting Bracket Set",                        qty:1, unit:"set" },
     { part:"SNK-PW-M02", description:"Rubber Edge Seal Strip",                           qty:2, unit:"m"   },
-    /* Window / infill */
     { part:"SNK-PW-W00", description:"Solid Steel Infill Panel",                         qty:1, unit:"pcs" },
     { part:"SNK-PW-W01", description:"Polycarbonate Window Panel",                       qty:1, unit:"pcs" },
     { part:"SNK-PW-W02", description:"Tempered Glass Window Panel",                      qty:1, unit:"pcs" },
     { part:"SNK-PW-W03", description:"Steel Mesh Window Panel",                          qty:1, unit:"pcs" },
-    /* Acoustic */
     { part:"SNK-PW-A01", description:"Acoustic Foam Insert",                             qty:1, unit:"pcs" },
-    /* Lining */
     { part:"SNK-PW-L01", description:"Vinyl Surface Lining Kit",                         qty:1, unit:"kit" },
-    /* Trim */
     { part:"SNK-PW-T01", description:"Base Finish Package",                              qty:1, unit:"pcs" },
     { part:"SNK-PW-T02", description:"Standard Finish Package",                          qty:1, unit:"pcs" },
     { part:"SNK-PW-T03", description:"Premium Finish Package",                           qty:1, unit:"pcs" },
-    /* Hardware */
     { part:"SNK-PW-HW1", description:"Fastener & Hardware Kit",                          qty:1, unit:"kit" },
   ],
 };
 
 /* ═══════════════════════════════════════════════════════════════════════
-   BOM MODULES  (all defaultOn: false – driven by configurator)
+   BOM MODULES (generic, by product type – all defaultOn: false)
 ═══════════════════════════════════════════════════════════════════════ */
 const BOM_MODULES = {
   "Crew Cab": [
@@ -335,13 +347,50 @@ const BOM_MODULES = {
 };
 
 /* ═══════════════════════════════════════════════════════════════════════
-   CONFIGURATOR QUESTIONS
-   Each question drives which BOM modules get activated.
-   alwaysActive: modules that are always on once a product is selected.
+   VEHICLE-SPECIFIC BOM MODULES (extend generic BOM_MODULES additively)
+   Keyed by "brand|van" → product type → extra modules array
+═══════════════════════════════════════════════════════════════════════ */
+const VEHICLE_BOM_MODULES = {
+  "Citroën|Jumpy": {
+    "Crew Cab": [
+      { id:"keyless",     label:"Keyless Entry Adapter Kit",             defaultOn:false, parts:["SNK-JY-KL1"] },
+      { id:"deurhendel",  label:"Deurhendel Modificatie Kit",            defaultOn:false, parts:["SNK-JY-DH1"] },
+      { id:"seat-bench",  label:"Voorbank Modificatie Set",              defaultOn:false, parts:["SNK-JY-SB1"] },
+      { id:"airbag-trim", label:"Airbag B-stijl Trim Afwerking",        defaultOn:false, parts:["SNK-JY-AT1"] },
+    ],
+  },
+  "Citroën|Jumper": {
+    "Crew Cab": [
+      { id:"frame-l4",    label:"Frame – L4 Extra Long Body",            defaultOn:false, parts:["SNK-JP-F04","SNK-CC-F10"] },
+      { id:"height-h1",   label:"Hoogtepakket H1 – Laag",               defaultOn:false, parts:["SNK-JP-H01"] },
+      { id:"height-h2",   label:"Hoogtepakket H2 – Middel",             defaultOn:false, parts:["SNK-JP-H02"] },
+      { id:"height-h3",   label:"Hoogtepakket H3 – Hoog",               defaultOn:false, parts:["SNK-JP-H03"] },
+      { id:"led",         label:"LED Verlichting Adapter",               defaultOn:false, parts:["SNK-JP-LD1"] },
+      { id:"veerzitting", label:"Veerzitting Modificatie Kit",           defaultOn:false, parts:["SNK-JP-VZ1"] },
+      { id:"partition",   label:"Separatiewand Integratiekit",           defaultOn:false, parts:["SNK-JP-PW1"] },
+    ],
+  },
+};
+
+/* ── BOM module helpers ──────────────────────────────────────────────── */
+function getBOMModules(product) {
+  const base  = BOM_MODULES[product.type] || [];
+  const vKey  = `${product.brand}|${product.van}`;
+  const extra = (VEHICLE_BOM_MODULES[vKey] || {})[product.type] || [];
+  return [...base, ...extra];
+}
+
+function getBOMParts(product) {
+  return BOM_DATA[product.type] || [];
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CONFIGURATOR (generic, English, keyed by product type)
 ═══════════════════════════════════════════════════════════════════════ */
 const CONFIGURATOR = {
   "Crew Cab": {
     alwaysActive: ["divider","seating","wiring","hardware"],
+    blockingQuestions: [],
     questions: [
       {
         id: "length", label: "Body Length",
@@ -394,6 +443,7 @@ const CONFIGURATOR = {
 
   "Flex Cab": {
     alwaysActive: ["rail","seating","hardware"],
+    blockingQuestions: [],
     questions: [
       {
         id: "length", label: "Body Length",
@@ -437,6 +487,7 @@ const CONFIGURATOR = {
 
   "Partition Wall": {
     alwaysActive: ["mounting","hardware"],
+    blockingQuestions: [],
     questions: [
       {
         id: "width", label: "Partition Width",
@@ -481,9 +532,240 @@ const CONFIGURATOR = {
 };
 
 /* ═══════════════════════════════════════════════════════════════════════
+   VEHICLE CONFIGURATOR (Dutch, vehicle-specific)
+   Keyed "brand|van" → product type → { alwaysActive, blockingQuestions, questions }
+   blockingQuestions must be answered BEFORE the main configurator unlocks.
+═══════════════════════════════════════════════════════════════════════ */
+const VEHICLE_CONFIGURATOR = {
+
+  /* ── Citroën Jumpy ─────────────────────────────────────────────── */
+  "Citroën|Jumpy": {
+    "Crew Cab": {
+      alwaysActive: ["divider","seating","wiring","hardware"],
+      blockingQuestions: [],
+      questions: [
+        {
+          id: "wielbasis", label: "Wielbasis",
+          options: [
+            { value:"kort",  label:"Kort (XS / S)",   activates:["frame-l1"] },
+            { value:"lang",  label:"Lang (M / L / XL)", activates:["frame-l2"] },
+          ]
+        },
+        {
+          id: "schuifdeur", label: "Schuifdeur configuratie",
+          options: [
+            { value:"enkel",  label:"Enkele schuifdeur",    activates:["door-single"] },
+            { value:"dubbel", label:"Dubbele schuifdeuren", activates:["door-double"] },
+          ]
+        },
+        {
+          id: "keyless", label: "Keyless entry & start",
+          options: [
+            { value:"ja",  label:"Aanwezig",      activates:["keyless"] },
+            { value:"nee", label:"Niet aanwezig", activates:[] },
+          ]
+        },
+        {
+          id: "deurhendel", label: "Heeft uw voertuig een deurhendel?",
+          options: [
+            { value:"ja",  label:"Ja",  activates:["deurhendel"] },
+            { value:"nee", label:"Nee", activates:[] },
+          ]
+        },
+        {
+          id: "ramen_b", label: "Ramen achter B-stijl",
+          options: [
+            { value:"geen",     label:"Geen ramen", activates:[] },
+            { value:"aanwezig", label:"Aanwezig",   activates:["win-retain"] },
+          ]
+        },
+        {
+          id: "glassoort", label: "Glassoort voor dubbele cabine",
+          options: [
+            { value:"helder",  label:"Helder glas",   activates:["win-clear"]  },
+            { value:"getint",  label:"Getint glas",   activates:["win-tinted"] },
+            { value:"opaque",  label:"Opaak paneel",  activates:["win-opaque"] },
+            { value:"geen",    label:"Geen",          activates:[] },
+          ]
+        },
+        {
+          id: "separatiewand", label: "Separatiewand aanwezig",
+          options: [
+            { value:"ja",  label:"Ja",  activates:[] },
+            { value:"nee", label:"Nee", activates:[] },
+          ]
+        },
+        {
+          id: "voorstoel", label: "Voorstoel / bank",
+          options: [
+            { value:"stoel", label:"Voorstoelen",  activates:[] },
+            { value:"bank",  label:"Voorbank",     activates:["seat-bench"] },
+          ]
+        },
+        {
+          id: "bekleding", label: "Bekleding voorstoelen",
+          options: [
+            { value:"stof",  label:"Stof",  activates:["uph-fabric"] },
+            { value:"vinyl", label:"Vinyl", activates:["uph-vinyl"]  },
+          ]
+        },
+        {
+          id: "airbags", label: "Airbags aanwezig in de bovenzijde van de B-stijl?",
+          options: [
+            { value:"ja",  label:"Ja",  activates:["airbag-trim"] },
+            { value:"nee", label:"Nee", activates:[] },
+          ]
+        },
+      ]
+    },
+
+    "Flex Cab": {
+      alwaysActive: ["rail","seating","hardware"],
+      blockingQuestions: [],
+      questions: [
+        {
+          id: "wielbasis", label: "Wielbasis",
+          options: [
+            { value:"kort", label:"Kort (XS / S)",    activates:["frame-l1"] },
+            { value:"lang", label:"Lang (M / L / XL)", activates:["frame-l2"] },
+          ]
+        },
+        {
+          id: "schuifdeur", label: "Schuifdeur configuratie",
+          options: [
+            { value:"enkel",  label:"Enkele schuifdeur",    activates:["door-single"] },
+            { value:"dubbel", label:"Dubbele schuifdeuren", activates:["door-double"] },
+          ]
+        },
+        {
+          id: "keyless", label: "Keyless entry & start",
+          options: [
+            { value:"ja",  label:"Aanwezig",      activates:[] },
+            { value:"nee", label:"Niet aanwezig", activates:[] },
+          ]
+        },
+        {
+          id: "ramen_b", label: "Ramen achter B-stijl",
+          options: [
+            { value:"geen",     label:"Geen ramen", activates:[] },
+            { value:"aanwezig", label:"Aanwezig",   activates:["win-retain"] },
+          ]
+        },
+        {
+          id: "glassoort", label: "Glassoort",
+          options: [
+            { value:"helder",  label:"Helder glas",  activates:["win-clear"]  },
+            { value:"getint",  label:"Getint glas",  activates:["win-tinted"] },
+            { value:"geen",    label:"Geen",         activates:[] },
+          ]
+        },
+        {
+          id: "bekleding", label: "Bekleding voorstoelen",
+          options: [
+            { value:"stof",  label:"Stof",  activates:["uph-fabric"] },
+            { value:"vinyl", label:"Vinyl", activates:["uph-vinyl"]  },
+          ]
+        },
+      ]
+    },
+  },
+
+  /* ── Citroën Jumper ────────────────────────────────────────────── */
+  "Citroën|Jumper": {
+    "Crew Cab": {
+      alwaysActive: ["divider","seating","wiring","hardware"],
+
+      /* These two questions are shown ABOVE the main configurator and must
+         be answered before the configurator becomes interactive. */
+      blockingQuestions: [
+        {
+          id: "led_verlichting", label: "LED Verlichting aanwezig",
+          options: [
+            { value:"ja",  label:"Ja",  activates:["led"] },
+            { value:"nee", label:"Nee", activates:[] },
+          ]
+        },
+        {
+          id: "veerzitting", label: "Veerzitting in bestuurdersstoel",
+          options: [
+            { value:"ja",  label:"Ja",  activates:["veerzitting"] },
+            { value:"nee", label:"Nee", activates:[] },
+          ]
+        },
+      ],
+
+      questions: [
+        {
+          id: "wielbasis", label: "Wielbasis",
+          options: [
+            { value:"kort",  label:"Kort (L1 / L2)", activates:["frame-l1"] },
+            { value:"middel",label:"Middel (L3)",    activates:["frame-l2"] },
+            { value:"lang",  label:"Lang (L4)",      activates:["frame-l4"] },
+          ]
+        },
+        {
+          id: "hoogte", label: "Hoogte",
+          options: [
+            { value:"h1", label:"H1 – Laag",   activates:["height-h1"] },
+            { value:"h2", label:"H2 – Middel", activates:["height-h2"] },
+            { value:"h3", label:"H3 – Hoog",   activates:["height-h3"] },
+          ]
+        },
+        {
+          id: "schuifdeur", label: "Schuifdeur configuratie",
+          options: [
+            { value:"enkel",  label:"Enkele schuifdeur",    activates:["door-single"] },
+            { value:"dubbel", label:"Dubbele schuifdeuren", activates:["door-double"] },
+          ]
+        },
+        {
+          id: "ramen_b", label: "Ramen achter B stijl",
+          options: [
+            { value:"geen",     label:"Geen ramen", activates:[] },
+            { value:"aanwezig", label:"Aanwezig",   activates:["win-retain"] },
+          ]
+        },
+        {
+          id: "glassoort", label: "Glassoort voor dubbele cabine",
+          options: [
+            { value:"helder",  label:"Helder glas",  activates:["win-clear"]  },
+            { value:"getint",  label:"Getint glas",  activates:["win-tinted"] },
+            { value:"opaque",  label:"Opaak paneel", activates:["win-opaque"] },
+            { value:"geen",    label:"Geen",         activates:[] },
+          ]
+        },
+        {
+          id: "separatiewand", label: "Separatiewand aanwezig",
+          options: [
+            { value:"ja",  label:"Ja",  activates:["partition"] },
+            { value:"nee", label:"Nee", activates:[] },
+          ]
+        },
+        {
+          id: "bekleding", label: "Bekleding voorstoelen",
+          options: [
+            { value:"stof",  label:"Stof",  activates:["uph-fabric"] },
+            { value:"vinyl", label:"Vinyl", activates:["uph-vinyl"]  },
+          ]
+        },
+      ]
+    },
+  },
+};
+
+/* ── Vehicle configurator lookup ─────────────────────────────────────── */
+function getVehicleConfigurator(product) {
+  const vKey = `${product.brand}|${product.van}`;
+  return (VEHICLE_CONFIGURATOR[vKey] || {})[product.type] || null;
+}
+
+/* Returns vehicle-specific cfg if available, otherwise generic by type */
+function getConfigurator(product) {
+  return getVehicleConfigurator(product) || CONFIGURATOR[product.type] || null;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
    MARKET DATA  (per product – key: "brand|van|type|fitment")
-   For After-fit: cocMarkets should mirror activeMarkets.
-   For OEM: cocMarkets is null (not applicable).
 ═══════════════════════════════════════════════════════════════════════ */
 const MARKET_DATA = {
   /* ── Citroën Jumpy ───────────────────────────────────────────────── */
@@ -518,6 +800,14 @@ const MARKET_DATA = {
     unitsFY25: "~60 units",
     activeMarkets: ["Netherlands","Belgium"],
     cocMarkets: ["Netherlands","Belgium"],
+  },
+
+  /* ── Citroën Berlingo ─────────────────────────────────────────────── */
+  "Citroën|Berlingo|Crew Cab|OEM": {
+    introYear: 2018, pricingNote: "Included in OEM vehicle build price",
+    unitsFY25: "~320 units",
+    activeMarkets: ["Netherlands","Belgium","Germany","France","Spain","Italy","United Kingdom"],
+    cocMarkets: null,
   },
 
   /* ── Citroën Jumper ──────────────────────────────────────────────── */
@@ -589,7 +879,6 @@ const MARKET_DATA = {
   },
 };
 
-/* ── Market data lookup helper ───────────────────────────────────────── */
 function getMarketData(product) {
   const specific = `${product.brand}|${product.van}|${product.type}|${product.fitment}`;
   const fallback  = `_|${product.type}|${product.fitment}`;
@@ -598,7 +887,6 @@ function getMarketData(product) {
 
 /* ═══════════════════════════════════════════════════════════════════════
    MARKETING TOOLS  (brochures + price lists per product)
-   Key: "brand|van|type|fitment"
 ═══════════════════════════════════════════════════════════════════════ */
 const MARKETING_TOOLS = {
   "Citroën|Jumpy|Crew Cab|OEM": {
@@ -643,7 +931,6 @@ const MARKETING_TOOLS = {
   },
 };
 
-/* ── Marketing tools lookup helper ──────────────────────────────────── */
 function getMarketingTools(product) {
   const key = `${product.brand}|${product.van}|${product.type}|${product.fitment}`;
   return MARKETING_TOOLS[key] || { brochures: [], priceLists: [] };
