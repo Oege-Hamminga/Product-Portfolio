@@ -1,15 +1,15 @@
 /* ── Vehicle image URLs ───────────────────────────────────────────────
-   Local images (images/ folder) for VW, Ford, MB, Renault, IVECO, KIA.
-   Wikimedia Commons thumbnails kept for Stellantis brands.
+   Local files in repo root for VW, Ford, MB, Renault, IVECO, KIA.
+   Wikimedia Commons kept for Stellantis brands.
 ── */
 const VAN_IMAGES = {
-  /* ── Volkswagen – local ─────────────────────────────────────────── */
-  "Caddy":          "images/caddy.jpg",
-  "Transporter":    "images/transporter.jpg",
-  "Crafter":        "images/crafter.jpg",
-  "Caravelle":      "images/transporter.jpg",
-  "ID Buzz":        "images/id-buzz.jpg",
-  "Multivan":       "images/multivan.jpg",
+  /* ── Volkswagen ─────────────────────────────────────────────────── */
+  "Caddy":          "Caddy.png",
+  "Transporter":    "Transporter.png",
+  "Crafter":        "Crafter.jpg",
+  "Caravelle":      "Caravelle.jpg",
+  "ID Buzz":        "ID buzz.jpg",
+  "Multivan":       "Multivan.jpg",
 
   /* ── Stellantis – Wikimedia ─────────────────────────────────────── */
   "Berlingo":       "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Citroen_Berlingo_2%2C0_HDi_DW10TD.JPG/640px-Citroen_Berlingo_2%2C0_HDi_DW10TD.JPG",
@@ -29,29 +29,29 @@ const VAN_IMAGES = {
   "Proace Max":     "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/2024_Toyota_Proace_Max_Electric_-_front.jpg/640px-2024_Toyota_Proace_Max_Electric_-_front.jpg",
   "ProMaster":      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/2014_Ram_ProMaster_van%2C_rear_left_NYC.jpg/640px-2014_Ram_ProMaster_van%2C_rear_left_NYC.jpg",
 
-  /* ── Renault – local ────────────────────────────────────────────── */
-  "Trafic":         "images/trafic.jpg",
-  "Trafic E-Tech":  "images/trafic-etech.jpg",
-  "Master":         "images/master.jpg",
+  /* ── Renault ────────────────────────────────────────────────────── */
+  "Trafic":         "Trafic.png",
+  "Trafic E-Tech":  "Trafic E-tech.jpg",
+  "Master":         "Master.jpg",
 
-  /* ── Ford – local ───────────────────────────────────────────────── */
-  "Transit Connect":"images/transit-connect.jpg",
-  "Transit Custom": "images/transit-custom.jpg",
-  "Transit":        "images/transit.jpg",
-  "Tourneo":        "images/tourneo.jpg",
-  "Transit Kombi":  "images/transit-kombi.jpg",
+  /* ── Ford ───────────────────────────────────────────────────────── */
+  "Transit Connect":"Connect.jpg",
+  "Transit Custom": "Custom.jpg",
+  "Transit":        "Transit.jpg",
+  "Tourneo":        "Tourneo.jpg",
+  "Transit Kombi":  "Kombi.jpg",
 
-  /* ── IVECO – local ──────────────────────────────────────────────── */
-  "Daily":          "images/daily.jpg",
+  /* ── IVECO ──────────────────────────────────────────────────────── */
+  "Daily":          "Daily.jpg",
 
-  /* ── Mercedes-Benz – local ──────────────────────────────────────── */
-  "Vito":           "images/vito.jpg",
-  "Vito Mixto":     "images/vito-mixto.jpg",
-  "V-Class":        "images/v-class.jpg",
-  "Sprinter":       "images/sprinter.jpg",
+  /* ── Mercedes-Benz ──────────────────────────────────────────────── */
+  "Vito":           "Vito.jpg",
+  "Vito Mixto":     "Vito Mixto.jpg",
+  "V-Class":        "V-class.jpg",
+  "Sprinter":       "Sprinter.jpg",
 
-  /* ── KIA – local ────────────────────────────────────────────────── */
-  "PV5":            "images/pv5.jpg",
+  /* ── KIA ────────────────────────────────────────────────────────── */
+  "PV5":            "PV5.jpg",
 };
 
 /* ── Brand meta (card colour + abbreviation) ─────────────────────────── */
