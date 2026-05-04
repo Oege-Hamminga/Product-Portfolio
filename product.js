@@ -58,7 +58,7 @@ const typeBtnsEl  = document.getElementById("type-selector-btns");
 const fitBtnsEl   = document.getElementById("fitment-selector-btns");
 
 typeBtnsEl.innerHTML = uniqueTypes.map(t =>
-  `<button class="sel-btn" data-type="${t}">${TYPE_ICON[t] || "📦"} ${t}</button>`
+  `<button class="sel-btn" data-type="${t}">${t}</button>`
 ).join("");
 
 let currentProduct = null;
@@ -81,7 +81,6 @@ typeBtnsEl.addEventListener("click", e => {
   ).join("");
 
   document.getElementById("step-fitment").classList.remove("selector-step--locked");
-  document.getElementById("pp-icon").textContent  = TYPE_ICON[type] || "📦";
   document.getElementById("pp-type").textContent  = type;
   document.getElementById("pp-label").textContent = "Choose fitment below";
   document.getElementById("m-type").textContent   = type;
@@ -199,11 +198,8 @@ function populateMarket(product) {
   const cocSection = isAfterfit ? `
     <div class="mkt-section">
       <div class="mkt-section-header">
-        <div class="mkt-section-icon">📋</div>
-        <div>
-          <div class="mkt-section-title">CoC Availability</div>
-          <div class="mkt-section-sub">Certificate of Conformity – aligned with active markets</div>
-        </div>
+        <div class="mkt-section-title">CoC Availability</div>
+        <div class="mkt-section-sub">Certificate of Conformity – aligned with active markets</div>
       </div>
       <div class="mkt-country-tags">
         ${md.cocMarkets && md.cocMarkets.length
@@ -236,11 +232,8 @@ function populateMarket(product) {
     <div class="mkt-sections">
       <div class="mkt-section">
         <div class="mkt-section-header">
-          <div class="mkt-section-icon">🌍</div>
-          <div>
-            <div class="mkt-section-title">Active Markets</div>
-            <div class="mkt-section-sub">Countries where this product is commercially available</div>
-          </div>
+          <div class="mkt-section-title">Active Markets</div>
+          <div class="mkt-section-sub">Countries where this product is commercially available</div>
         </div>
         <div class="mkt-country-tags">
           ${md.activeMarkets.length
@@ -414,9 +407,8 @@ function populateMarketingTools(product) {
 
   const vehicleImgUrl = VAN_IMAGES[product.van] || "";
 
-  const docCard = (icon, title, filename, type) => `
+  const docCard = (title, filename, type) => `
     <a class="mkt-doc-card" href="${filename}" target="_blank" rel="noopener">
-      <div class="mkt-doc-icon">${icon}</div>
       <div class="mkt-doc-info">
         <div class="mkt-doc-type">${type}</div>
         <div class="mkt-doc-title">${title}</div>
@@ -435,12 +427,11 @@ function populateMarketingTools(product) {
 
         ${hasDocuments ? `
           <div class="mkt-docs-list">
-            ${tools.brochures.map(b  => docCard("📄", b.title,  b.filename,  `Brochure · ${b.lang}`)).join("")}
-            ${tools.priceLists.map(pl=> docCard("💶", pl.title, pl.filename, `Price List · ${pl.lang}`)).join("")}
+            ${tools.brochures.map(b  => docCard(b.title,  b.filename,  `Brochure · ${b.lang}`)).join("")}
+            ${tools.priceLists.map(pl => docCard(pl.title, pl.filename, `Price List · ${pl.lang}`)).join("")}
           </div>
         ` : `
           <div class="mkt-no-docs">
-            <div class="mkt-no-docs-icon">📂</div>
             <p>No documents are available for this product yet.</p>
             <button class="action-btn" style="margin-top:12px">Request Documents</button>
           </div>

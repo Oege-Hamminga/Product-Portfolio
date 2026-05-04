@@ -84,9 +84,9 @@ const BRAND_META = {
 
 /* ── Product type icons ──────────────────────────────────────────────── */
 const TYPE_ICON = {
-  "Crew Cab":      "🚐",
-  "Flex Cab":      "🔄",
-  "Partition Wall":"🔩",
+  "Crew Cab":      "",
+  "Flex Cab":      "",
+  "Partition Wall":"",
 };
 
 /* ── Helper to build a product entry ────────────────────────────────── */
