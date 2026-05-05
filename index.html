@@ -68,201 +68,394 @@
           <p class="overview-card-sub">Product availability per vehicle platform — Snoeks vs. Durasotti</p>
         </div>
         <div class="overview-card-body">
+
+          <!-- Summary stats -->
+          <div class="market-summary-grid">
+            <div class="ms-stat">
+              <div class="ms-val-row"><span class="ms-val">38</span><span class="ms-of">/42</span></div>
+              <div class="ms-label">Models Covered</div>
+              <div class="ms-sub">90% of total LCV market</div>
+            </div>
+            <div class="ms-stat">
+              <div class="ms-val-row"><span class="ms-val">30</span></div>
+              <div class="ms-label">Crew Cab Models</div>
+              <div class="ms-sub">across F1 / K1 / K2·3</div>
+            </div>
+            <div class="ms-stat">
+              <div class="ms-val-row"><span class="ms-val">7</span></div>
+              <div class="ms-label">Flex Cab Models</div>
+              <div class="ms-sub">F1 · K1 platforms</div>
+            </div>
+            <div class="ms-stat">
+              <div class="ms-val-row"><span class="ms-val">12</span></div>
+              <div class="ms-label">Partition Wall Models</div>
+              <div class="ms-sub">panel &amp; passenger vans</div>
+            </div>
+          </div>
+
+          <div class="market-seg-summary">
+            <div class="mss-item">
+              <span class="mss-seg">F1</span>
+              <span class="mss-bar"><span class="mss-fill" style="width:70%"></span></span>
+              <span class="mss-pct">7 / 10 &nbsp;<em>70%</em></span>
+            </div>
+            <div class="mss-item">
+              <span class="mss-seg">K1</span>
+              <span class="mss-bar"><span class="mss-fill" style="width:100%"></span></span>
+              <span class="mss-pct">20 / 20 &nbsp;<em>100%</em></span>
+            </div>
+            <div class="mss-item">
+              <span class="mss-seg">K2/3</span>
+              <span class="mss-bar"><span class="mss-fill" style="width:92%"></span></span>
+              <span class="mss-pct">11 / 12 &nbsp;<em>92%</em></span>
+            </div>
+          </div>
+
+          <!-- Legend + toggle -->
           <div class="matrix-legend">
             <span class="matrix-badge matrix-badge--s">S</span><span>Snoeks</span>
             <span class="matrix-badge matrix-badge--d">D</span><span>Durasotti</span>
             <span class="matrix-fit-tag">OEM</span><span>Via manufacturer order</span>
             <span class="matrix-fit-tag matrix-fit-tag--af">AF</span><span>After-fit conversion</span>
           </div>
+
+          <button class="matrix-toggle-btn" id="matrix-toggle">
+            Show full vehicle matrix ↓
+          </button>
+
+          <!-- Collapsible full table -->
+          <div class="matrix-collapsible" id="matrix-collapsible">
           <div class="matrix-scroll">
           <table class="market-matrix">
             <thead>
               <tr>
                 <th class="mm-seg">Seg.</th>
-                <th class="mm-vehicle">Vehicle Platform</th>
+                <th class="mm-vehicle">Van Model</th>
                 <th class="mm-prod" colspan="2">Crew Cab</th>
                 <th class="mm-prod" colspan="2">Flex Cab</th>
                 <th class="mm-prod" colspan="2">Partition Wall</th>
               </tr>
               <tr class="mm-subhead">
-                <th></th>
-                <th></th>
+                <th></th><th></th>
                 <th>OEM</th><th>AF</th>
                 <th>OEM</th><th>AF</th>
                 <th>OEM</th><th>AF</th>
               </tr>
             </thead>
             <tbody>
-              <!-- F1 -->
-              <tr class="mm-group-label"><td colspan="8"><span class="mm-seg-badge">F1</span> Compact Van</td></tr>
+
+              <!-- ── F1 ──────────────────────────────────────────────── -->
+              <tr class="mm-group-label"><td colspan="8"><span class="mm-seg-badge">F1</span> Compact Van — Panel Vans</td></tr>
               <tr>
                 <td class="mm-seg-cell">F1</td>
-                <td class="mm-vehicle-cell">Citroën Berlingo / Peugeot Partner / Opel Combo<br><span class="mm-sub">/ Fiat Doblo / Toyota Proace City</span></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
+                <td class="mm-vehicle-cell">Citroën Berlingo</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">F1</td>
+                <td class="mm-vehicle-cell">Peugeot Partner</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">F1</td>
+                <td class="mm-vehicle-cell">Opel Combo</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">F1</td>
+                <td class="mm-vehicle-cell">Fiat Doblo</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">F1</td>
+                <td class="mm-vehicle-cell">Toyota Proace City</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
               </tr>
               <tr>
                 <td class="mm-seg-cell">F1</td>
                 <td class="mm-vehicle-cell">Volkswagen Caddy</td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
               </tr>
               <tr>
                 <td class="mm-seg-cell">F1</td>
                 <td class="mm-vehicle-cell">Ford Transit Connect</td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
               </tr>
-              <tr>
+              <tr class="mm-row--uncovered">
                 <td class="mm-seg-cell">F1</td>
-                <td class="mm-vehicle-cell">Mercedes-Benz Citan / Renault Kangoo / Nissan Townstar</td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--d">D</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
+                <td class="mm-vehicle-cell">Mercedes-Benz Citan</td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--d">D</span></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
               </tr>
-              <!-- K1 -->
-              <tr class="mm-group-label"><td colspan="8"><span class="mm-seg-badge">K1</span> Medium Van</td></tr>
+              <tr class="mm-row--uncovered">
+                <td class="mm-seg-cell">F1</td>
+                <td class="mm-vehicle-cell">Renault Kangoo</td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--d">D</span></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr class="mm-row--uncovered">
+                <td class="mm-seg-cell">F1</td>
+                <td class="mm-vehicle-cell">Nissan Townstar</td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--d">D</span></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+
+              <!-- ── K1 Panel ────────────────────────────────────────── -->
+              <tr class="mm-group-label"><td colspan="8"><span class="mm-seg-badge">K1</span> Medium Van — Panel Vans</td></tr>
               <tr>
                 <td class="mm-seg-cell">K1</td>
-                <td class="mm-vehicle-cell">Citroën Jumpy / Peugeot Expert / Opel Vivaro<br><span class="mm-sub">/ Fiat Scudo / Toyota Proace</span></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-              </tr>
-              <tr>
-                <td class="mm-seg-cell">K1</td>
-                <td class="mm-vehicle-cell">Renault Trafic / Trafic E-Tech</td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-              </tr>
-              <tr>
-                <td class="mm-seg-cell">K1</td>
-                <td class="mm-vehicle-cell">Volkswagen Transporter<br><span class="mm-sub">/ Caravelle / ID Buzz / Multivan</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-vehicle-cell">Citroën Jumpy</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
               </tr>
               <tr>
                 <td class="mm-seg-cell">K1</td>
-                <td class="mm-vehicle-cell">Ford Transit Custom<br><span class="mm-sub">/ Tourneo Custom / Transit Kombi</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-vehicle-cell">Peugeot Expert</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
               </tr>
               <tr>
                 <td class="mm-seg-cell">K1</td>
-                <td class="mm-vehicle-cell">Mercedes-Benz Vito / Sprinter<br><span class="mm-sub">/ Vito Mixto / V-Class</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-vehicle-cell">Opel Vivaro</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Fiat Scudo</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Toyota Proace</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Renault Trafic</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Renault Trafic E-Tech</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Ford Transit Custom</td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Volkswagen Transporter</td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Mercedes-Benz Vito</td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Mercedes-Benz Sprinter</td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
               </tr>
               <tr>
                 <td class="mm-seg-cell">K1</td>
                 <td class="mm-vehicle-cell">KIA PV5</td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
               </tr>
-              <!-- K2/3 -->
-              <tr class="mm-group-label"><td colspan="8"><span class="mm-seg-badge">K2/3</span> Large Van</td></tr>
+
+              <!-- ── K1 Passenger ────────────────────────────────────── -->
+              <tr class="mm-group-label"><td colspan="8"><span class="mm-seg-badge">K1</span> Medium Van — Passenger Vans</td></tr>
               <tr>
-                <td class="mm-seg-cell">K2/3</td>
-                <td class="mm-vehicle-cell">Citroën Jumper / Peugeot Boxer / Fiat Ducato<br><span class="mm-sub">/ Opel Movano / Toyota Proace Max</span></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span><span class="matrix-badge matrix-badge--d">D</span></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Citroën Jumpy Combi</td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
               </tr>
               <tr>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Volkswagen Caravelle</td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Volkswagen ID Buzz</td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Volkswagen Multivan</td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Mercedes-Benz Vito Mixto</td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Mercedes-Benz V-Class</td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Ford Tourneo Custom</td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K1</td>
+                <td class="mm-vehicle-cell">Ford Transit Kombi</td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+              </tr>
+
+              <!-- ── K2/3 ─────────────────────────────────────────────── -->
+              <tr class="mm-group-label"><td colspan="8"><span class="mm-seg-badge">K2/3</span> Large Van — Panel Vans</td></tr>
+              <tr>
                 <td class="mm-seg-cell">K2/3</td>
-                <td class="mm-vehicle-cell">Renault Master / Nissan Interstar</td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--d">D</span></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
+                <td class="mm-vehicle-cell">Citroën Jumper</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span><span class="matrix-badge matrix-badge--d">D</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
               </tr>
               <tr>
                 <td class="mm-seg-cell">K2/3</td>
-                <td class="mm-vehicle-cell">Volkswagen Crafter / MAN TGE</td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
+                <td class="mm-vehicle-cell">Peugeot Boxer</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span><span class="matrix-badge matrix-badge--d">D</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K2/3</td>
+                <td class="mm-vehicle-cell">Fiat Ducato</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span><span class="matrix-badge matrix-badge--d">D</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K2/3</td>
+                <td class="mm-vehicle-cell">Opel Movano</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span><span class="matrix-badge matrix-badge--d">D</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K2/3</td>
+                <td class="mm-vehicle-cell">Toyota Proace Max</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span><span class="matrix-badge matrix-badge--d">D</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K2/3</td>
+                <td class="mm-vehicle-cell">Renault Master</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--d">D</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr class="mm-row--uncovered">
+                <td class="mm-seg-cell">K2/3</td>
+                <td class="mm-vehicle-cell">Nissan Interstar</td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--d">D</span></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K2/3</td>
+                <td class="mm-vehicle-cell">Volkswagen Crafter</td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+              </tr>
+              <tr>
+                <td class="mm-seg-cell">K2/3</td>
+                <td class="mm-vehicle-cell">MAN TGE</td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
               </tr>
               <tr>
                 <td class="mm-seg-cell">K2/3</td>
                 <td class="mm-vehicle-cell">Ford Transit</td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
               </tr>
               <tr>
                 <td class="mm-seg-cell">K2/3</td>
                 <td class="mm-vehicle-cell">IVECO Daily</td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
               </tr>
               <tr>
                 <td class="mm-seg-cell">K2/3</td>
                 <td class="mm-vehicle-cell">RAM ProMaster</td>
-                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
-                <td class="mm-cell"></td>
+                <td class="mm-cell"><span class="matrix-badge matrix-badge--s">S</span></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
+                <td class="mm-cell"></td><td class="mm-cell"></td>
               </tr>
+
             </tbody>
           </table>
           </div>
-          <p class="ov-footnote">* Durasotti presence based on market estimates. S = Snoeks active product. D = Durasotti estimated presence.</p>
+          <p class="ov-footnote">* 42 van models tracked across F1 / K1 / K2·3. Durasotti figures are market estimates. Dimmed rows = no current Snoeks product (market opportunity). S = Snoeks. D = Durasotti.</p>
+          </div><!-- end matrix-collapsible -->
+
         </div>
       </div>
 
@@ -371,5 +564,16 @@
 
   <script src="data.js"></script>
   <script src="app.js"></script>
+  <script>
+    (function() {
+      var btn = document.getElementById('matrix-toggle');
+      var panel = document.getElementById('matrix-collapsible');
+      btn.addEventListener('click', function() {
+        var open = panel.classList.toggle('matrix-collapsible--open');
+        btn.textContent = open ? 'Hide vehicle matrix ↑' : 'Show full vehicle matrix ↓';
+        btn.classList.toggle('matrix-toggle-btn--open', open);
+      });
+    })();
+  </script>
 </body>
 </html>
