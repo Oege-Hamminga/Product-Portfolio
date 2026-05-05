@@ -179,6 +179,8 @@ const products = [
   /* ── RENAULT ─────────────────────────────────────────────────────── */
   p("Renault","Trafic",        "K1",  "OEM",       "Crew Cab"),
   p("Renault","Trafic E-Tech", "K1",  "OEM",       "Crew Cab"),
+  p("Renault","Trafic",        "K1",  "After-fit", "Crew Cab"),
+  p("Renault","Trafic E-Tech", "K1",  "After-fit", "Crew Cab"),
   p("Renault","Master",        "K2/3","After-fit",  "Crew Cab"),
 
   /* ── FORD ────────────────────────────────────────────────────────── */
@@ -196,13 +198,16 @@ const products = [
   p("Mercedes-Benz","Vito",      "K1","After-fit","Crew Cab"),
   p("Mercedes-Benz","Vito Mixto","K1","After-fit","Partition Wall"),
   p("Mercedes-Benz","V-Class",   "K1","After-fit","Partition Wall"),
-  p("Mercedes-Benz","Sprinter",  "K1","After-fit","Crew Cab"),
+  p("Mercedes-Benz","Sprinter",  "K2/3","After-fit","Crew Cab"),
 
   /* ── MAN ─────────────────────────────────────────────────────────── */
   p("MAN","TGE","K2/3","After-fit","Crew Cab"),
 
   /* ── KIA ─────────────────────────────────────────────────────────── */
   p("KIA","PV5","K1","After-fit","Crew Cab"),
+
+  /* ── NISSAN ─────────────────────────────────────────────────────── */
+  p("Nissan","Primastar","K1","After-fit","Crew Cab"),
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
