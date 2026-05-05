@@ -202,6 +202,67 @@ const products = [
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
+   VEHICLE META  –  van body type & market introduction per "brand|van"
+═══════════════════════════════════════════════════════════════════════ */
+const VEHICLE_META = {
+  /* Volkswagen */
+  "Volkswagen|Caddy":        { vanType: "Panel Van",     marketIntro: "" },
+  "Volkswagen|Transporter":  { vanType: "Panel Van",     marketIntro: "" },
+  "Volkswagen|Crafter":      { vanType: "Panel Van",     marketIntro: "" },
+  "Volkswagen|Caravelle":    { vanType: "Passenger Van", marketIntro: "" },
+  "Volkswagen|ID Buzz":      { vanType: "Passenger Van", marketIntro: "" },
+  "Volkswagen|Multivan":     { vanType: "Passenger Van", marketIntro: "" },
+  /* Citroën */
+  "Citroën|Berlingo":        { vanType: "Panel Van",     marketIntro: "" },
+  "Citroën|Jumpy":           { vanType: "Panel Van",     marketIntro: "" },
+  "Citroën|Jumpy Combi":     { vanType: "Passenger Van", marketIntro: "" },
+  "Citroën|Jumper":          { vanType: "Panel Van",     marketIntro: "" },
+  /* Peugeot */
+  "Peugeot|Partner":         { vanType: "Panel Van",     marketIntro: "" },
+  "Peugeot|Expert":          { vanType: "Panel Van",     marketIntro: "" },
+  "Peugeot|Boxer":           { vanType: "Panel Van",     marketIntro: "" },
+  /* Opel */
+  "Opel|Combo":              { vanType: "Panel Van",     marketIntro: "" },
+  "Opel|Vivaro":             { vanType: "Panel Van",     marketIntro: "" },
+  "Opel|Movano":             { vanType: "Panel Van",     marketIntro: "" },
+  /* Fiat */
+  "Fiat|Doblo":              { vanType: "Panel Van",     marketIntro: "" },
+  "Fiat|Scudo":              { vanType: "Panel Van",     marketIntro: "" },
+  "Fiat|Ducato":             { vanType: "Panel Van",     marketIntro: "" },
+  /* Toyota */
+  "Toyota|Proace City":      { vanType: "Panel Van",     marketIntro: "" },
+  "Toyota|Proace":           { vanType: "Panel Van",     marketIntro: "" },
+  "Toyota|Proace Max":       { vanType: "Panel Van",     marketIntro: "" },
+  /* Ford */
+  "Ford|Transit Connect":    { vanType: "Panel Van",     marketIntro: "" },
+  "Ford|Transit Custom":     { vanType: "Panel Van",     marketIntro: "" },
+  "Ford|Transit":            { vanType: "Panel Van",     marketIntro: "" },
+  "Ford|Tourneo":            { vanType: "Passenger Van", marketIntro: "" },
+  "Ford|Transit Kombi":      { vanType: "Passenger Van", marketIntro: "" },
+  /* Mercedes-Benz */
+  "Mercedes-Benz|Vito":      { vanType: "Panel Van",     marketIntro: "" },
+  "Mercedes-Benz|Vito Mixto":{ vanType: "Passenger Van", marketIntro: "" },
+  "Mercedes-Benz|V-Class":   { vanType: "Passenger Van", marketIntro: "" },
+  "Mercedes-Benz|Sprinter":  { vanType: "Panel Van",     marketIntro: "" },
+  /* Renault */
+  "Renault|Trafic":          { vanType: "Panel Van",     marketIntro: "" },
+  "Renault|Trafic E-Tech":   { vanType: "Panel Van",     marketIntro: "" },
+  "Renault|Master":          { vanType: "Panel Van",     marketIntro: "" },
+  /* IVECO */
+  "IVECO|Daily":             { vanType: "Panel Van",     marketIntro: "" },
+  /* MAN */
+  "MAN|TGE":                 { vanType: "Panel Van",     marketIntro: "" },
+  /* RAM */
+  "RAM|ProMaster":           { vanType: "Panel Van",     marketIntro: "" },
+  /* KIA */
+  "KIA|PV5":                 { vanType: "Panel Van",     marketIntro: "" },
+};
+
+function getVehicleMeta(brand, van) {
+  return VEHICLE_META[`${brand}|${van}`] || { vanType: "", marketIntro: "" };
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
    BOM DATA
 ═══════════════════════════════════════════════════════════════════════ */
 const BOM_DATA = {

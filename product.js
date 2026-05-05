@@ -52,6 +52,10 @@ document.getElementById("m-brand").textContent      = firstP.brand;
 document.getElementById("m-van").textContent        = firstP.van;
 document.getElementById("m-segment").textContent    = firstP.segment;
 
+const _vm = getVehicleMeta(firstP.brand, firstP.van);
+document.getElementById("m-vantype").textContent     = _vm.vanType     || "—";
+document.getElementById("m-marketintro").textContent = _vm.marketIntro || "—";
+
 /* ── Product Type Selector ────────────────────────────────────────── */
 const uniqueTypes = [...new Set(vehicleProducts.map(p => p.type))];
 const typeBtnsEl  = document.getElementById("type-selector-btns");
