@@ -126,39 +126,12 @@ document.querySelector(".tabs-bar").addEventListener("click", e => {
   document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
 });
 
-/* ── BOM module event listeners ──────────────────────────────────── */
-const bomModulesEl = document.getElementById("bom-modules-list");
-let bomState = {};
-
-bomModulesEl.addEventListener("change", e => {
-  const cb = e.target.closest("input[type=checkbox]");
-  if (!cb || !currentProduct) return;
-  bomState[cb.dataset.module] = cb.checked;
-  cb.closest("label").classList.toggle("active", cb.checked);
-  refreshBOMToggleBtn();
-  renderBOMTable();
-});
-
-document.getElementById("bom-toggle-all").addEventListener("click", () => {
-  if (!currentProduct) return;
-  const cbs   = [...bomModulesEl.querySelectorAll("input[type=checkbox]")];
-  const allOn = cbs.every(cb => cb.checked);
-  cbs.forEach(cb => {
-    cb.checked = !allOn;
-    bomState[cb.dataset.module] = !allOn;
-    cb.closest("label").classList.toggle("active", !allOn);
-  });
-  refreshBOMToggleBtn();
-  renderBOMTable();
-});
-
 /* ── Configurator reset ───────────────────────────────────────────── */
 document.getElementById("cfg-reset").addEventListener("click", () => {
   if (!currentProduct) return;
-  cfgState     = {};
+  cfgState      = {};
   blockingState = {};
-  renderConfigurator(currentProduct);
-  applyConfiguratorToBOM(currentProduct);
+  populateBOM(currentProduct);
 });
 
 /* ── Tabs lock / unlock ───────────────────────────────────────────── */
@@ -418,61 +391,24 @@ function populateMarket(product) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   BOM CONFIGURATOR  (generic + vehicle-specific with blocking questions)
+   BOM CONFIGURATOR — 3-section layout
 ═══════════════════════════════════════════════════════════════════════ */
-let cfgState      = {};
-let blockingState = {};
 
-function renderConfigurator(product) {
-  const cfg      = getConfigurator(product);
-  const el       = document.getElementById("cfg-questions");
-  const blockSec = document.getElementById("cfg-blocking-section");
-  const bomCfg   = document.getElementById("bom-configurator");
+// Question IDs that belong to the universal "Voertuig Configuratie" section
+const UNIVERSAL_Q_IDS = new Set([
+  "wielbasis","hoogte","schuifdeur","ramen_b","separatiewand","eerste_zitrij","bekleding"
+]);
 
-  if (!cfg) {
-    el.innerHTML = "";
-    blockSec.style.display = "none";
-    return;
-  }
+let cfgState      = {};  // answers for regular (universal + product) questions
+let blockingState = {};  // answers for vehicle-specific blocking questions
 
-  /* ── Blocking questions ──────────────────────────────────────── */
-  const blocking = cfg.blockingQuestions || [];
-  if (blocking.length > 0) {
-    blockSec.style.display = "block";
-    const blockingQEl = document.getElementById("cfg-blocking-questions");
-
-    blockingQEl.innerHTML = blocking.map(q => `
-      <div class="cfg-question" data-q="${q.id}">
-        <div class="cfg-question-label">${q.label}${q.note ? `<span class="cfg-q-note">${q.note}</span>` : ""}</div>
-        <div class="cfg-options">
-          ${q.options.map(opt => `
-            <button class="cfg-opt-btn${blockingState[q.id] === opt.value ? " active" : ""}${opt.incompatible ? " cfg-opt-incompatible" : ""}"
-                    data-q="${q.id}" data-val="${opt.value}">
-              ${opt.label}
-            </button>
-          `).join("")}
-        </div>
-      </div>
-    `).join("");
-
-    /* Wire click handler freshly (remove then add to avoid duplicates) */
-    blockingQEl.removeEventListener("click", _blockingClickHandler);
-    _blockingClickHandler = e => handleBlockingClick(e, product, cfg);
-    blockingQEl.addEventListener("click", _blockingClickHandler);
-
-    updateBlockingLock(product, cfg);
-  } else {
-    blockSec.style.display = "none";
-    bomCfg.classList.remove("cfg-blocked");
-  }
-
-  /* ── Regular questions ───────────────────────────────────────── */
-  el.innerHTML = cfg.questions.map(q => `
+function renderQBlock(questions, state, withIncompatible) {
+  return questions.map(q => `
     <div class="cfg-question" data-q="${q.id}">
-      <div class="cfg-question-label">${q.label}</div>
+      <div class="cfg-question-label">${q.label}${q.note ? `<span class="cfg-q-note">${q.note}</span>` : ""}</div>
       <div class="cfg-options">
         ${q.options.map(opt => `
-          <button class="cfg-opt-btn${cfgState[q.id] === opt.value ? " active" : ""}"
+          <button class="cfg-opt-btn${state[q.id] === opt.value ? " active" : ""}${opt.incompatible ? " cfg-opt-incompatible" : ""}"
                   data-q="${q.id}" data-val="${opt.value}">
             ${opt.label}
           </button>
@@ -480,54 +416,92 @@ function renderConfigurator(product) {
       </div>
     </div>
   `).join("");
-
-  /* Remove old listener, add fresh one */
-  el.removeEventListener("click", _cfgClickHandler);
-  _cfgClickHandler = e => handleCfgClick(e, product, cfg);
-  el.addEventListener("click", _cfgClickHandler);
-
-  updateCfgStatus(product, cfg);
 }
 
-/* Stored listener references so we can remove them cleanly */
-let _cfgClickHandler      = null;
-let _blockingClickHandler = null;
+let _vehicleClickHandler  = null;
+let _specificClickHandler = null;
+let _productClickHandler  = null;
 
-function handleBlockingClick(e, product, cfg) {
-  const btn = e.target.closest(".cfg-opt-btn[data-q]");
-  if (!btn) return;
+function attachClickHandler(elId, stateKey, product, cfg) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const prev = elId === "cfg-questions-vehicle"  ? "_vehicleClickHandler"
+             : elId === "cfg-questions-specific" ? "_specificClickHandler"
+             :                                     "_productClickHandler";
+  if (window[prev]) el.removeEventListener("click", window[prev]);
+  const handler = e => {
+    const btn = e.target.closest(".cfg-opt-btn[data-q]");
+    if (!btn) return;
+    const qId = btn.dataset.q;
+    const val  = btn.dataset.val;
+    if (stateKey === "blocking") blockingState[qId] = val;
+    else                          cfgState[qId]      = val;
+    el.querySelectorAll(`.cfg-opt-btn[data-q="${qId}"]`).forEach(b =>
+      b.classList.toggle("active", b.dataset.val === val)
+    );
+    applyConfiguratorToBOM(product);
+  };
+  window[prev] = handler;
+  el.addEventListener("click", handler);
+}
 
-  const qId = btn.dataset.q;
-  const val  = btn.dataset.val;
-  blockingState[qId] = val;
+function renderConfigurator(product) {
+  const cfg = getConfigurator(product);
 
-  document.querySelectorAll(`#cfg-blocking-questions .cfg-opt-btn[data-q="${qId}"]`).forEach(b =>
-    b.classList.toggle("active", b.dataset.val === val)
-  );
+  const qVehicle  = document.getElementById("cfg-questions-vehicle");
+  const secSpec   = document.getElementById("cfg-sec-specific");
+  const qSpecific = document.getElementById("cfg-questions-specific");
+  const qProduct  = document.getElementById("cfg-questions-product");
+  const secNum    = document.getElementById("cfg-sec-product-num");
 
-  updateBlockingLock(product, cfg);
+  if (!cfg) {
+    if (qVehicle)  qVehicle.innerHTML  = "<p style='color:rgba(0,0,0,0.4);font-size:0.8rem;padding:12px 0'>Geen configurator beschikbaar voor dit product.</p>";
+    if (qSpecific) qSpecific.innerHTML = "";
+    if (qProduct)  qProduct.innerHTML  = "";
+    if (secSpec)   secSpec.style.display = "none";
+    return;
+  }
+
+  const blocking   = cfg.blockingQuestions || [];
+  const universalQs = cfg.questions.filter(q => UNIVERSAL_Q_IDS.has(q.id));
+  const productQs   = cfg.questions.filter(q => !UNIVERSAL_Q_IDS.has(q.id));
+
+  // Section 1 — universal vehicle questions
+  if (qVehicle) qVehicle.innerHTML = renderQBlock(universalQs, cfgState);
+
+  // Section 2 — vehicle-specific blocking questions
+  if (secSpec) {
+    if (blocking.length > 0) {
+      secSpec.style.display = "block";
+      if (qSpecific) qSpecific.innerHTML = renderQBlock(blocking, blockingState);
+      if (secNum) secNum.textContent = "3";
+    } else {
+      secSpec.style.display = "none";
+      if (secNum) secNum.textContent = "2";
+    }
+  }
+
+  // Section 3 — Snoeks product questions
+  if (qProduct) qProduct.innerHTML = renderQBlock(productQs, cfgState);
+
+  // Attach click handlers
+  attachClickHandler("cfg-questions-vehicle",  "cfg",      product, cfg);
+  attachClickHandler("cfg-questions-specific", "blocking", product, cfg);
+  attachClickHandler("cfg-questions-product",  "cfg",      product, cfg);
+
   applyConfiguratorToBOM(product);
 }
 
-function handleCfgClick(e, product, cfg) {
-  const btn = e.target.closest(".cfg-opt-btn[data-q]");
-  if (!btn || !currentProduct) return;
+function applyConfiguratorToBOM(product) {
+  const cfg = getConfigurator(product);
+  if (!cfg) return;
 
-  const qId = btn.dataset.q;
-  const val  = btn.dataset.val;
-  cfgState[qId] = val;
+  const blocking    = cfg.blockingQuestions || [];
+  const universalQs = cfg.questions.filter(q => UNIVERSAL_Q_IDS.has(q.id));
+  const productQs   = cfg.questions.filter(q => !UNIVERSAL_Q_IDS.has(q.id));
+  const allRegularQs = [...universalQs, ...productQs];
 
-  document.querySelectorAll(`#cfg-questions .cfg-opt-btn[data-q="${qId}"]`).forEach(b =>
-    b.classList.toggle("active", b.dataset.val === val)
-  );
-
-  updateCfgStatus(currentProduct, cfg);
-  applyConfiguratorToBOM(currentProduct);
-}
-
-function updateBlockingLock(product, cfg) {
-  const blocking = cfg.blockingQuestions || [];
-  const allAnswered = blocking.every(q => blockingState[q.id] !== undefined);
+  // Incompatibility check
   const isIncompatible = blocking.some(q => {
     const val = blockingState[q.id];
     if (val === undefined) return false;
@@ -536,141 +510,102 @@ function updateBlockingLock(product, cfg) {
   });
   const incompatEl = document.getElementById("cfg-incompatible-msg");
   if (incompatEl) incompatEl.style.display = isIncompatible ? "block" : "none";
-  document.getElementById("bom-configurator").classList.toggle("cfg-blocked", !allAnswered || isIncompatible);
-}
 
-function updateCfgStatus(product, cfg) {
-  if (!cfg) return;
-  const blocking  = cfg.blockingQuestions || [];
-  const totalQ    = cfg.questions.length + blocking.length;
-  const answered  = cfg.questions.filter(q => cfgState[q.id] !== undefined).length
-                  + blocking.filter(q => blockingState[q.id] !== undefined).length;
+  // Completeness check
+  const allBlockAnswered = blocking.every(q => blockingState[q.id] !== undefined);
+  const allCfgAnswered   = allRegularQs.every(q => cfgState[q.id] !== undefined);
+  const allDone          = allBlockAnswered && allCfgAnswered && !isIncompatible;
+
+  // Status text
+  const totalQ    = blocking.length + allRegularQs.length;
+  const answeredQ = blocking.filter(q => blockingState[q.id] !== undefined).length +
+                    allRegularQs.filter(q => cfgState[q.id] !== undefined).length;
   const statusEl  = document.getElementById("cfg-status");
-
-  if (answered === totalQ) {
-    statusEl.textContent = "✓ Configuration complete – BOM updated";
-    statusEl.classList.add("cfg-status--done");
-  } else {
-    statusEl.textContent = `${answered} of ${totalQ} questions answered`;
-    statusEl.classList.remove("cfg-status--done");
-  }
-}
-
-function applyConfiguratorToBOM(product) {
-  const cfg = getConfigurator(product);
-  if (!cfg) return;
-
-  const activeModules = new Set(cfg.alwaysActive || []);
-
-  /* Apply blocking question activations first */
-  (cfg.blockingQuestions || []).forEach(q => {
-    const val = blockingState[q.id];
-    if (val === undefined) return;
-    const opt = q.options.find(o => o.value === val);
-    if (opt) opt.activates.forEach(m => activeModules.add(m));
-  });
-
-  /* Apply regular question activations */
-  cfg.questions.forEach(q => {
-    const val = cfgState[q.id];
-    if (val === undefined) return;
-    const opt = q.options.find(o => o.value === val);
-    if (opt) opt.activates.forEach(m => activeModules.add(m));
-  });
-
-  const modules = getBOMModules(product);
-  modules.forEach(m => { bomState[m.id] = activeModules.has(m.id); });
-
-  refreshModuleCheckboxes();
-  refreshBOMToggleBtn();
-  renderBOMTable();
-
-  // Update quickcode display
-  const allCfgAnswered = cfg.questions.every(q => cfgState[q.id] !== undefined);
-  const allBlockAnswered = (cfg.blockingQuestions||[]).every(q => blockingState[q.id] !== undefined);
-  const qcEl = document.getElementById("quickcode-display");
-  const qcVal = document.getElementById("quickcode-value");
-  if (qcEl && qcVal) {
-    if (allCfgAnswered && allBlockAnswered) {
-      const qc = computeQuickcode(currentProduct, cfgState, blockingState);
-      qcVal.textContent = qc || "—";
-      qcEl.classList.remove("quickcode-display--pending");
+  if (statusEl) {
+    if (isIncompatible) {
+      statusEl.textContent = "⚠ Configuratie niet mogelijk voor deze specificatie";
+      statusEl.classList.remove("cfg-status--done");
+    } else if (allDone) {
+      statusEl.textContent = "✓ Configuratie volledig — code gegenereerd";
+      statusEl.classList.add("cfg-status--done");
     } else {
-      qcVal.textContent = "Answer all questions to generate code";
-      qcEl.classList.add("quickcode-display--pending");
+      statusEl.textContent = `${answeredQ} van ${totalQ} vragen beantwoord`;
+      statusEl.classList.remove("cfg-status--done");
     }
   }
+
+  // Quickcode
+  const qcEl  = document.getElementById("quickcode-display");
+  const qcVal = document.getElementById("quickcode-value");
+  const bomResultEl = document.getElementById("bom-result");
+
+  if (allDone) {
+    const qc = computeQuickcode(product, cfgState, blockingState);
+    if (qcVal) qcVal.textContent = qc || "—";
+    if (qcEl)  qcEl.classList.remove("quickcode-display--pending");
+    if (bomResultEl) {
+      bomResultEl.style.display = "block";
+      renderBOMTable(product);
+    }
+  } else {
+    if (qcVal) qcVal.textContent = "Beantwoord alle vragen om de code te genereren";
+    if (qcEl)  qcEl.classList.add("quickcode-display--pending");
+    if (bomResultEl) bomResultEl.style.display = "none";
+  }
 }
 
-function refreshModuleCheckboxes() {
-  bomModulesEl.querySelectorAll("input[type=checkbox]").forEach(cb => {
-    const isOn = bomState[cb.dataset.module] === true;
-    cb.checked = isOn;
-    cb.closest("label").classList.toggle("active", isOn);
-  });
-}
+function renderBOMTable(product) {
+  const parts   = getBOMParts(product);
+  const bodyEl  = document.getElementById("bom-body");
+  const countEl = document.getElementById("bom-part-count");
+  if (!bodyEl) return;
 
-/* ── BOM population ──────────────────────────────────────────────── */
-function populateBOM(product) {
-  const modules = getBOMModules(product);
-  cfgState      = {};
-  blockingState  = {};
-  bomState      = {};
-  modules.forEach(m => { bomState[m.id] = false; });
-
-  bomModulesEl.innerHTML = modules.map(m => `
-    <label class="bom-module-check">
-      <input type="checkbox" data-module="${m.id}">
-      <span class="bom-module-label">${m.label}</span>
-      <span class="bom-module-count">${m.parts.length} part${m.parts.length !== 1 ? "s" : ""}</span>
-    </label>
-  `).join("");
-
-  renderConfigurator(product);
-  refreshBOMToggleBtn();
-  renderBOMTable();
-}
-
-function refreshBOMToggleBtn() {
-  if (!currentProduct) return;
-  const modules = getBOMModules(currentProduct);
-  const allOn   = modules.length > 0 && modules.every(m => bomState[m.id]);
-  document.getElementById("bom-toggle-all").textContent = allOn ? "Deselect All" : "Select All";
-}
-
-function renderBOMTable() {
-  if (!currentProduct) return;
-  const modules  = getBOMModules(currentProduct);
-  const allParts = getBOMParts(currentProduct);
-
-  const activeParts  = new Set();
-  const partToModule = {};
-  modules.forEach(m => {
-    if (bomState[m.id]) m.parts.forEach(pid => { activeParts.add(pid); partToModule[pid] = m.label; });
-  });
-
-  const visible = allParts.filter(r => activeParts.has(r.part));
-
-  if (visible.length === 0) {
-    document.getElementById("bom-body").innerHTML =
-      `<tr><td colspan="5" class="bom-empty-row">
-        Answer the configurator questions above to generate your parts list.
-       </td></tr>`;
-    document.getElementById("bom-part-count").textContent = "No parts in configuration";
+  if (!parts || parts.length === 0) {
+    bodyEl.innerHTML = `<tr><td colspan="4" class="bom-empty-row">Geen onderdelen beschikbaar voor dit product.</td></tr>`;
+    if (countEl) countEl.textContent = "";
     return;
   }
 
-  document.getElementById("bom-body").innerHTML = visible.map(r => `
+  bodyEl.innerHTML = parts.map(r => `
     <tr>
-      <td>${r.part}</td>
+      <td class="bom-part-code">${r.part}</td>
       <td>${r.description}</td>
       <td>${r.qty}</td>
       <td>${r.unit}</td>
-      <td><span class="bom-module-badge">${partToModule[r.part] || ""}</span></td>
     </tr>`).join("");
 
-  document.getElementById("bom-part-count").textContent =
-    `${visible.length} part${visible.length !== 1 ? "s" : ""} in configuration`;
+  if (countEl) countEl.textContent = `${parts.length} onderdeel${parts.length !== 1 ? "en" : ""}`;
+}
+
+function populateBOM(product) {
+  cfgState      = {};
+  blockingState = {};
+
+  // Show product image at top of BOM tab
+  const heroWrap = document.getElementById("bom-product-hero");
+  const heroImg  = document.getElementById("bom-product-hero-img");
+  const imgUrl   = getProductImage(product);
+  if (heroWrap && heroImg) {
+    if (imgUrl) {
+      heroImg.src = imgUrl;
+      heroImg.alt = `${product.brand} ${product.van} – ${product.type}`;
+      heroWrap.style.display = "block";
+    } else {
+      heroWrap.style.display = "none";
+    }
+  }
+
+  // Hide BOM result until code is generated
+  const bomResultEl = document.getElementById("bom-result");
+  if (bomResultEl) bomResultEl.style.display = "none";
+
+  // Reset quickcode to pending
+  const qcEl  = document.getElementById("quickcode-display");
+  const qcVal = document.getElementById("quickcode-value");
+  if (qcEl)  qcEl.classList.add("quickcode-display--pending");
+  if (qcVal) qcVal.textContent = "Beantwoord alle vragen om de code te genereren";
+
+  renderConfigurator(product);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
