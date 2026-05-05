@@ -753,7 +753,7 @@ header {
 .product-card:hover::after { transform: scaleX(1); }
 
 .card-image {
-  aspect-ratio: 4/3;
+  aspect-ratio: 3/4;
   position: relative;
   overflow: hidden;
   background: #0D0D0D;
@@ -979,7 +979,7 @@ footer {
 }
 
 .vehicle-placeholder {
-  aspect-ratio: 4/3;
+  aspect-ratio: 3/4;
   position: relative;
   overflow: hidden;
   background: #0D0D0D;
@@ -1006,7 +1006,7 @@ footer {
 .vp-van   { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
 
 .product-placeholder {
-  aspect-ratio: 4/3;
+  aspect-ratio: 3/4;
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #111111 0%, #222222 100%);
