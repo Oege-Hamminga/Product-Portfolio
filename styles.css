@@ -2211,8 +2211,9 @@ footer {
 .country-table-wrap {
   overflow-x: auto;
   margin-top: 10px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid var(--grey-2);
   border-radius: var(--radius);
+  background: var(--white);
 }
 
 .country-table {
@@ -2228,22 +2229,22 @@ footer {
   font-weight: 800;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.55);
-  background: rgba(255,255,255,0.05);
-  border-bottom: 1px solid rgba(255,255,255,0.12);
+  color: rgba(0,0,0,0.45);
+  background: var(--grey-1);
+  border-bottom: 1px solid var(--grey-2);
 }
 
 .country-table td {
   padding: 7px 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  color: rgba(255,255,255,0.82);
+  border-bottom: 1px solid var(--grey-2);
+  color: rgba(0,0,0,0.75);
 }
 
 .country-table tr:last-child td { border-bottom: none; }
-.country-table tr:hover td { background: rgba(255,255,255,0.025); }
+.country-table tr:hover td { background: var(--grey-1); }
 
-.ct-code { font-weight: 800; font-size: 0.65rem; letter-spacing: 1px; color: rgba(255,255,255,0.5) !important; }
-.ct-name { color: rgba(255,255,255,0.9) !important; font-weight: 500; }
+.ct-code { font-weight: 800; font-size: 0.65rem; letter-spacing: 1px; color: rgba(0,0,0,0.4) !important; }
+.ct-name { color: rgba(0,0,0,0.85) !important; font-weight: 500; }
 
 .country-status {
   display: inline-block;
@@ -2254,12 +2255,12 @@ footer {
   text-transform: uppercase;
   border-radius: 2px;
 }
-.country-status--active   { background: rgba(80,200,120,0.2); color: #60d888; border: 1px solid rgba(80,200,120,0.35); }
-.country-status--inactive { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.1); }
+.country-status--active   { background: rgba(40,160,80,0.12); color: #1a8040; border: 1px solid rgba(40,160,80,0.3); }
+.country-status--inactive { background: rgba(0,0,0,0.04); color: rgba(0,0,0,0.4); border: 1px solid rgba(0,0,0,0.1); }
 
 .mkt-homol-note {
   font-size: 0.62rem;
-  color: rgba(255,255,255,0.4);
+  color: rgba(0,0,0,0.4);
   margin-top: 12px;
   line-height: 1.6;
   font-style: italic;
@@ -2358,17 +2359,17 @@ footer {
 .pt-img--placeholder { display: flex; align-items: center; justify-content: center; }
 .pt-img--placeholder span { font-size: 2rem; font-weight: 700; color: var(--text-muted); letter-spacing: 2px; }
 
-/* ── Map image frame (replaces CSS world-map-frame) ─────────────────── */
+/* ── Map image frame ─────────────────────────────────────────────────── */
 .map-img-frame {
   position: relative;
   width: 100%;
   aspect-ratio: 16/9;
   border-radius: var(--radius);
   overflow: hidden;
-  background: #0d1e2e;
+  background: #2a2a2a;
   margin-top: 12px;
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.04);
+  border: 1px solid rgba(0,0,0,0.2);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
 }
 .map-img-frame--eu { aspect-ratio: 5/3; }
 .map-bg-img {
@@ -2376,8 +2377,7 @@ footer {
   height: 100%;
   object-fit: cover;
   display: block;
-  opacity: 0.92;
-  filter: saturate(0.8) contrast(1.05);
+  filter: grayscale(1) brightness(0.22) contrast(1.6);
 }
 .map-empty {
   position: absolute;
@@ -2385,7 +2385,7 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-muted);
+  color: rgba(255,255,255,0.4);
   font-size: 0.85rem;
 }
 
@@ -2462,20 +2462,19 @@ body.matrix-edit-active td.mm-cell {
 
 /* ── Country table select dropdowns ─────────────────────────────────── */
 .ct-select {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.18);
-  color: rgba(255,255,255,0.9);
+  background: var(--white);
+  border: 1px solid var(--grey-2);
+  color: rgba(0,0,0,0.8);
   border-radius: var(--radius);
   padding: 4px 8px;
   font-size: 0.78rem;
   cursor: pointer;
   transition: border-color 0.15s;
 }
-.ct-select:hover  { border-color: rgba(255,255,255,0.35); }
+.ct-select:hover  { border-color: rgba(0,0,0,0.3); }
 .ct-select--status { min-width: 110px; }
 .ct-select--homol  { min-width: 90px; }
-.ct-select:focus   { outline: none; border-color: var(--red); box-shadow: 0 0 0 2px rgba(204,0,0,0.2); }
-.ct-select option  { background: #1a1a24; color: #fff; }
+.ct-select:focus   { outline: none; border-color: var(--red); box-shadow: 0 0 0 2px rgba(204,0,0,0.15); }
 
 /* ── Incompatible blocking message ──────────────────────────────────── */
 .cfg-incompatible-msg {

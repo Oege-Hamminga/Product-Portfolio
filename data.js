@@ -77,6 +77,7 @@ const PRODUCT_IMAGES = {
 };
 
 function getProductImage(product) {
+  if (product.type === "Partition Wall") return "Partition wall.jpg";
   return PRODUCT_IMAGES[`${product.brand}|${product.van}|${product.type}`] || null;
 }
 
@@ -873,12 +874,25 @@ const VEHICLE_CONFIGURATOR = {
   },
 };
 
-// ── Peugeot Boxer / Fiat Ducato / Opel Movano / Toyota ProAce Max ──
+// ── Peugeot Boxer / Fiat Ducato / Opel Movano ──────────────────────
 // Same platform & questions as Citroën Jumper K2/3
 VEHICLE_CONFIGURATOR["Peugeot|Boxer"]     = { "Crew Cab": Object.assign({}, (VEHICLE_CONFIGURATOR["Citroën|Jumper"]||{})["Crew Cab"], {vehicleCode:"BX"}) };
 VEHICLE_CONFIGURATOR["Fiat|Ducato"]       = { "Crew Cab": Object.assign({}, (VEHICLE_CONFIGURATOR["Citroën|Jumper"]||{})["Crew Cab"], {vehicleCode:"DC"}) };
 VEHICLE_CONFIGURATOR["Opel|Movano"]       = { "Crew Cab": Object.assign({}, (VEHICLE_CONFIGURATOR["Citroën|Jumper"]||{})["Crew Cab"], {vehicleCode:"MV"}) };
-VEHICLE_CONFIGURATOR["Toyota|Proace Max"] = { "Crew Cab": Object.assign({}, (VEHICLE_CONFIGURATOR["Citroën|Jumper"]||{})["Crew Cab"], {vehicleCode:"PM"}) };
+
+// Toyota ProAce Max — same platform as Jumper but trimlevel is Comfort / Luxe only
+VEHICLE_CONFIGURATOR["Toyota|Proace Max"] = {
+  "Crew Cab": Object.assign({}, (VEHICLE_CONFIGURATOR["Citroën|Jumper"]||{})["Crew Cab"], {
+    vehicleCode: "PM",
+    questions: (VEHICLE_CONFIGURATOR["Citroën|Jumper"]["Crew Cab"].questions||[]).map(q => {
+      if (q.id !== "trimlevel") return q;
+      return Object.assign({}, q, { options: [
+        {value:"comfort",label:"Comfort",code:"T2",activates:["trim-com"]},
+        {value:"luxe",   label:"Luxe",   code:"T3",activates:["trim-lux"]},
+      ]});
+    })
+  })
+};
 
 // ── Peugeot Expert / Fiat Scudo / Opel Vivaro / Toyota ProAce ─────
 // Same platform & questions as Citroën Jumpy K1
@@ -891,7 +905,22 @@ VEHICLE_CONFIGURATOR["Ford|Transit Custom"] = {
   "Crew Cab": {
     vehicleCode: "TC",
       alwaysActive: ["divider","seating","wiring","hardware"],
-      blockingQuestions: [],
+      blockingQuestions: [
+        {
+          id:"elect_schuifdeur", label:"Elektrische en/of softclose schuifdeuren",
+          options:[
+            {value:"yes",label:"Ja", code:"ES",activates:["elec-door"]},
+            {value:"no", label:"Nee",code:"NS",activates:[]},
+          ]
+        },
+        {
+          id:"bo_sound", label:"B&O Sound System",
+          options:[
+            {value:"yes",label:"Ja", code:"BO",activates:["bo-sound"]},
+            {value:"no", label:"Nee",code:"NB",activates:[]},
+          ]
+        },
+      ],
       questions: [
         {
           id:"wielbasis", label:"Wielbasis",
@@ -947,20 +976,6 @@ VEHICLE_CONFIGURATOR["Ford|Transit Custom"] = {
             {value:"limited", label:"Limited", code:"LT",activates:[]},
             {value:"sport",   label:"Sport",   code:"SP",activates:[]},
             {value:"msrt",    label:"MS-RT",   code:"MS",activates:[]},
-          ]
-        },
-        {
-          id:"elect_schuifdeur", label:"Elektrische en/of softclose schuifdeuren",
-          options:[
-            {value:"yes",label:"Ja", code:"ES",activates:["elec-door"]},
-            {value:"no", label:"Nee",code:"NS",activates:[]},
-          ]
-        },
-        {
-          id:"bo_sound", label:"B&O Sound System",
-          options:[
-            {value:"yes",label:"Ja", code:"BO",activates:["bo-sound"]},
-            {value:"no", label:"Nee",code:"NB",activates:[]},
           ]
         },
         {
