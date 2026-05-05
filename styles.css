@@ -2127,6 +2127,152 @@ footer {
   transform: translateY(-1px);
 }
 
+/* ── mm-seg-badge--new ────────────────────────────────────────────── */
+.mm-seg-badge--new {
+  background: rgba(80,180,120,0.12);
+  border-color: rgba(80,180,120,0.3);
+  color: #50b478;
+}
+
+/* ── World map ────────────────────────────────────────────────────── */
+.world-map-frame {
+  position: relative;
+  aspect-ratio: 2/1;
+  background: #080c10;
+  border: 1px solid rgba(255,255,255,0.06);
+  overflow: hidden;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 12.5% 16.67%;
+}
+
+.map-dot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.map-dot-ring {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 0 3px rgba(204,0,0,0.25), 0 0 12px rgba(204,0,0,0.4);
+}
+
+.map-dot-label {
+  display: block;
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: rgba(255,255,255,0.7);
+  white-space: nowrap;
+  background: rgba(0,0,0,0.6);
+  padding: 1px 4px;
+  backdrop-filter: blur(4px);
+}
+
+/* ── Country table (after-fit) ────────────────────────────────────── */
+.country-table-wrap {
+  overflow-x: auto;
+  margin-top: 10px;
+}
+
+.country-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.72rem;
+}
+
+.country-table th {
+  padding: 5px 10px;
+  text-align: left;
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.country-table td {
+  padding: 5px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.6);
+}
+
+.ct-code { font-weight: 800; font-size: 0.6rem; letter-spacing: 1px; color: rgba(255,255,255,0.35) !important; }
+.ct-name { color: rgba(255,255,255,0.7) !important; }
+
+.country-status {
+  display: inline-block;
+  padding: 2px 7px;
+  font-size: 0.52rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-radius: 2px;
+}
+.country-status--active   { background: rgba(80,200,120,0.15); color: #50c878; border: 1px solid rgba(80,200,120,0.25); }
+.country-status--inactive { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.07); }
+
+.mkt-homol-note {
+  font-size: 0.58rem;
+  color: rgba(255,255,255,0.25);
+  margin-top: 10px;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ── Quickcode display ────────────────────────────────────────────── */
+.quickcode-display {
+  margin: 16px 0;
+  padding: 16px 20px;
+  background: rgba(204,0,0,0.07);
+  border: 1px solid rgba(204,0,0,0.25);
+  position: relative;
+}
+
+.quickcode-display--pending {
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.1);
+}
+
+.qc-label {
+  font-size: 0.5rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin-bottom: 6px;
+}
+
+.qc-value {
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--white);
+  font-variant-numeric: tabular-nums;
+}
+
+.quickcode-display--pending .qc-value {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: rgba(255,255,255,0.3);
+}
+
+.qc-hint {
+  font-size: 0.57rem;
+  color: rgba(255,255,255,0.25);
+  margin-top: 5px;
+}
+
 /* ═══════════════════════════════════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════════════════════════════════ */

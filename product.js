@@ -88,8 +88,7 @@ typeBtnsEl.addEventListener("click", e => {
   document.getElementById("pp-type").textContent  = type;
   document.getElementById("pp-label").textContent = "Choose fitment below";
   document.getElementById("m-type").textContent   = type;
-  document.getElementById("m-fitment").innerHTML  = "—";
-  document.getElementById("m-part").textContent   = "—";
+  /* fitment and part series removed */
   document.getElementById("meta-eyebrow").textContent = firstP.segment;
 
   /* Reset product image placeholder */
@@ -170,14 +169,7 @@ function lockTabs() {
 function unlockAndPopulate(product) {
   currentProduct = product;
 
-  const TYPE_CODE = { "Crew Cab":"CC", "Flex Cab":"FC", "Partition Wall":"PW" };
-  const fitCls = product.fitment === "OEM" ? "fitment-badge--oem" : "fitment-badge--afterfit";
-
-  document.getElementById("m-fitment").innerHTML =
-    `<span class="fitment-badge ${fitCls}">${product.fitment}</span>`;
   document.getElementById("m-type").textContent = product.type;
-  document.getElementById("m-part").textContent =
-    `SNK-${meta.abbr}-${TYPE_CODE[product.type] || "XX"}-${String(product.id).padStart(3,"0")}`;
   document.getElementById("meta-eyebrow").textContent =
     `${product.segment} · ${product.fitment}`;
 
@@ -224,59 +216,108 @@ function populateMarket(product) {
     return;
   }
 
-  const isAfterfit   = product.fitment === "After-fit";
-  const countryTag   = c => `<span class="mkt-country-tag">${c}</span>`;
+  const isOEM = product.fitment === "OEM";
 
-  const cocSection = isAfterfit ? `
-    <div class="mkt-section">
-      <div class="mkt-section-header">
-        <div class="mkt-section-title">CoC Availability</div>
-        <div class="mkt-section-sub">Certificate of Conformity – aligned with active markets</div>
-      </div>
-      <div class="mkt-country-tags">
-        ${md.cocMarkets && md.cocMarkets.length
-          ? md.cocMarkets.map(countryTag).join("")
-          : `<span class="mkt-empty">Not yet available</span>`}
-      </div>
-    </div>
-  ` : "";
+  if (isOEM) {
+    /* ── OEM: intro year + shipping destination map ── */
+    const destinations = md.shippingDestinations || [];
+    const destDots = destinations.map(d => {
+      const x = ((d.lng + 180) / 360 * 100).toFixed(1);
+      const y = ((90 - d.lat) / 180 * 100).toFixed(1);
+      return `<div class="map-dot" style="left:${x}%;top:${y}%" title="${d.country}">
+        <span class="map-dot-ring"></span>
+        <span class="map-dot-label">${d.country}</span>
+      </div>`;
+    }).join("");
 
-  el.innerHTML = `
-    <div class="mkt-overview-row">
-      <div class="mkt-stat-card">
-        <div class="mkt-stat-label">Market Introduction</div>
-        <div class="mkt-stat-value">${md.introYear}</div>
+    el.innerHTML = `
+      <div class="mkt-overview-row">
+        <div class="mkt-stat-card">
+          <div class="mkt-stat-label">Market Introduction</div>
+          <div class="mkt-stat-value">${md.introYear || "—"}</div>
+        </div>
+        <div class="mkt-stat-card">
+          <div class="mkt-stat-label">Fitment</div>
+          <div class="mkt-stat-value">OEM — via vehicle manufacturer</div>
+        </div>
+        <div class="mkt-stat-card">
+          <div class="mkt-stat-label">Shipping Destinations</div>
+          <div class="mkt-stat-value">${destinations.length > 0 ? destinations.map(d=>d.country).join(", ") : "—"}</div>
+        </div>
       </div>
-      <div class="mkt-stat-card">
-        <div class="mkt-stat-label">Starting Price</div>
-        <div class="mkt-stat-value">${md.pricingNote}</div>
-      </div>
-      <div class="mkt-stat-card">
-        <div class="mkt-stat-label">FY25 Volume</div>
-        <div class="mkt-stat-value">${md.unitsFY25}</div>
-      </div>
-      <div class="mkt-stat-card">
-        <div class="mkt-stat-label">Fitment Type</div>
-        <div class="mkt-stat-value">${product.fitment}</div>
-      </div>
-    </div>
-
-    <div class="mkt-sections">
       <div class="mkt-section">
         <div class="mkt-section-header">
-          <div class="mkt-section-title">Active Markets</div>
-          <div class="mkt-section-sub">Countries where this product is commercially available</div>
+          <div class="mkt-section-title">Shipping Destinations</div>
+          <div class="mkt-section-sub">Countries where OEM-configured vehicles are delivered</div>
         </div>
-        <div class="mkt-country-tags">
-          ${md.activeMarkets.length
-            ? md.activeMarkets.map(countryTag).join("")
-            : `<span class="mkt-empty">No active markets listed</span>`}
+        <div class="world-map-frame" id="world-map-frame">
+          ${destDots || `<span class="mkt-empty" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">No shipping destinations defined</span>`}
         </div>
       </div>
+    `;
+  } else {
+    /* ── After-fit: intro year + 22-country homologation table ── */
+    const ALL_COUNTRIES = [
+      {code:"NL",name:"Netherlands"},{code:"BE",name:"Belgium"},{code:"DE",name:"Germany"},
+      {code:"FR",name:"France"},{code:"ES",name:"Spain"},{code:"GB",name:"United Kingdom"},
+      {code:"IT",name:"Italy"},{code:"CZ",name:"Czech Republic"},{code:"DK",name:"Denmark"},
+      {code:"AT",name:"Austria"},{code:"PL",name:"Poland"},{code:"SE",name:"Sweden"},
+      {code:"FI",name:"Finland"},{code:"PT",name:"Portugal"},{code:"HU",name:"Hungary"},
+      {code:"EE",name:"Estonia"},{code:"LT",name:"Lithuania"},{code:"LV",name:"Latvia"},
+      {code:"RO",name:"Romania"},{code:"SI",name:"Slovenia"},{code:"SK",name:"Slovakia"},
+      {code:"BG",name:"Bulgaria"}
+    ];
+    const cd = md.countryData || {};
+    const rows = ALL_COUNTRIES.map(c => {
+      const info = cd[c.code] || { active: false, homologation: "—" };
+      const activeCell = info.active
+        ? `<span class="country-status country-status--active">Active</span>`
+        : `<span class="country-status country-status--inactive">Not active</span>`;
+      return `<tr>
+        <td class="ct-code">${c.code}</td>
+        <td class="ct-name">${c.name}</td>
+        <td class="ct-active">${activeCell}</td>
+        <td class="ct-homol">${info.homologation || "—"}</td>
+      </tr>`;
+    }).join("");
 
-      ${cocSection}
-    </div>
-  `;
+    el.innerHTML = `
+      <div class="mkt-overview-row">
+        <div class="mkt-stat-card">
+          <div class="mkt-stat-label">Market Introduction</div>
+          <div class="mkt-stat-value">${md.introYear || "—"}</div>
+        </div>
+        <div class="mkt-stat-card">
+          <div class="mkt-stat-label">Fitment</div>
+          <div class="mkt-stat-value">After-fit conversion</div>
+        </div>
+        <div class="mkt-stat-card">
+          <div class="mkt-stat-label">Active Markets</div>
+          <div class="mkt-stat-value">${Object.values(cd).filter(v=>v.active).length} countries</div>
+        </div>
+      </div>
+      <div class="mkt-section">
+        <div class="mkt-section-header">
+          <div class="mkt-section-title">Market &amp; Homologation Overview</div>
+          <div class="mkt-section-sub">Active status and registration homologation method per country</div>
+        </div>
+        <div class="country-table-wrap">
+          <table class="country-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Country</th>
+                <th>Status</th>
+                <th>Homologation</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+        <p class="mkt-homol-note">CoC = Certificate of Conformity (EU type approval). GSW = General Small-Series Whole Vehicle (national approval). Both = CoC primary, GSW fallback available.</p>
+      </div>
+    `;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -438,6 +479,22 @@ function applyConfiguratorToBOM(product) {
   refreshModuleCheckboxes();
   refreshBOMToggleBtn();
   renderBOMTable();
+
+  // Update quickcode display
+  const allCfgAnswered = cfg.questions.every(q => cfgState[q.id] !== undefined);
+  const allBlockAnswered = (cfg.blockingQuestions||[]).every(q => blockingState[q.id] !== undefined);
+  const qcEl = document.getElementById("quickcode-display");
+  const qcVal = document.getElementById("quickcode-value");
+  if (qcEl && qcVal) {
+    if (allCfgAnswered && allBlockAnswered) {
+      const qc = computeQuickcode(currentProduct, cfgState, blockingState);
+      qcVal.textContent = qc || "—";
+      qcEl.classList.remove("quickcode-display--pending");
+    } else {
+      qcVal.textContent = "Answer all questions to generate code";
+      qcEl.classList.add("quickcode-display--pending");
+    }
+  }
 }
 
 function refreshModuleCheckboxes() {

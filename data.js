@@ -450,120 +450,129 @@ function getBOMParts(product) {
 ═══════════════════════════════════════════════════════════════════════ */
 const CONFIGURATOR = {
   "Crew Cab": {
+    vehicleCode: "",
     alwaysActive: ["divider","seating","wiring","hardware"],
     blockingQuestions: [],
     questions: [
       {
         id: "length", label: "Body Length",
         options: [
-          { value:"l1", label:"L1 – Short Body",  activates:["frame-l1"] },
-          { value:"l2", label:"L2 – Medium Body", activates:["frame-l2"] },
-          { value:"l3", label:"L3 – Long Body",   activates:["frame-l3"] },
+          { value:"l1", label:"L1 – Short Body",  code:"L1", activates:["frame-l1"] },
+          { value:"l2", label:"L2 – Medium Body", code:"L2", activates:["frame-l2"] },
+          { value:"l3", label:"L3 – Long Body",   code:"L3", activates:["frame-l3"] },
         ]
       },
       {
         id: "sliding_doors", label: "Sliding Doors",
         options: [
-          { value:"single", label:"Single Sliding Door",   activates:["door-single"] },
-          { value:"double", label:"Double Sliding Doors",  activates:["door-double"] },
+          { value:"single", label:"Single Sliding Door",   code:"1D", activates:["door-single"] },
+          { value:"double", label:"Double Sliding Doors",  code:"2D", activates:["door-double"] },
         ]
       },
       {
         id: "factory_windows", label: "Factory Windows",
         options: [
-          { value:"yes", label:"With Factory Windows", activates:["win-retain"] },
-          { value:"no",  label:"No Factory Windows",   activates:[] },
+          { value:"yes", label:"With Factory Windows", code:"FW", activates:["win-retain"] },
+          { value:"no",  label:"No Factory Windows",   code:"NW", activates:[] },
         ]
       },
       {
         id: "window_type", label: "Window Type",
         options: [
-          { value:"clear",  label:"Clear Glass",    activates:["win-clear"] },
-          { value:"tinted", label:"Tinted Glass",   activates:["win-tinted"] },
-          { value:"opaque", label:"Opaque Panel",   activates:["win-opaque"] },
-          { value:"none",   label:"No Window",      activates:[] },
+          { value:"clear",  label:"Clear Glass",    code:"CG", activates:["win-clear"] },
+          { value:"tinted", label:"Tinted Glass",   code:"TG", activates:["win-tinted"] },
+          { value:"opaque", label:"Opaque Panel",   code:"OP", activates:["win-opaque"] },
+          { value:"none",   label:"No Window",      code:"N0", activates:[] },
         ]
       },
       {
         id: "upholstery", label: "Upholstery Type",
         options: [
-          { value:"vinyl",  label:"Vinyl",   activates:["uph-vinyl"] },
-          { value:"fabric", label:"Fabric",  activates:["uph-fabric"] },
+          { value:"vinyl",  label:"Vinyl",   code:"VY", activates:["uph-vinyl"] },
+          { value:"fabric", label:"Fabric",  code:"FB", activates:["uph-fabric"] },
         ]
       },
       {
         id: "trim_level", label: "Trim Level",
         options: [
-          { value:"base",    label:"Base",    activates:["trim-base"] },
-          { value:"comfort", label:"Comfort", activates:["trim-comf"] },
-          { value:"premium", label:"Premium", activates:["trim-prem"] },
+          { value:"base",    label:"Base",    code:"BS", activates:["trim-base"] },
+          { value:"comfort", label:"Comfort", code:"CF", activates:["trim-comf"] },
+          { value:"premium", label:"Premium", code:"PM", activates:["trim-prem"] },
         ]
       },
     ]
   },
 
   "Flex Cab": {
+    vehicleCode: "",
     alwaysActive: ["rail","seating","hardware"],
     blockingQuestions: [],
     questions: [
       {
         id: "length", label: "Body Length",
         options: [
-          { value:"l1", label:"L1 – Short Body",  activates:["frame-l1"] },
-          { value:"l2", label:"L2 – Medium Body", activates:["frame-l2"] },
-          { value:"l3", label:"L3 – Long Body",   activates:["frame-l3"] },
+          { value:"l1", label:"L1 – Short Body",  code:"L1", activates:["frame-l1"] },
+          { value:"l2", label:"L2 – Medium Body", code:"L2", activates:["frame-l2"] },
         ]
       },
       {
         id: "sliding_doors", label: "Sliding Doors",
         options: [
-          { value:"single", label:"Single Sliding Door",  activates:["door-single"] },
-          { value:"double", label:"Double Sliding Doors", activates:["door-double"] },
+          { value:"single", label:"Single Sliding Door",  code:"1D", activates:["door-single"] },
+          { value:"double", label:"Double Sliding Doors", code:"2D", activates:["door-double"] },
+        ]
+      },
+      {
+        id: "fold", label: "Fold-forward Option",
+        options: [
+          { value:"yes", label:"With Fold-forward", code:"FD", activates:[] },
+          { value:"no",  label:"Without Fold-forward", code:"NF", activates:[] },
         ]
       },
       {
         id: "window_type", label: "Window Type",
         options: [
-          { value:"none",   label:"No Window",    activates:[] },
-          { value:"clear",  label:"Clear Glass",  activates:["win-clear"] },
-          { value:"tinted", label:"Tinted Glass", activates:["win-tinted"] },
+          { value:"none",   label:"No Window",    code:"N0", activates:[] },
+          { value:"clear",  label:"Clear Glass",  code:"CG", activates:["win-clear"] },
+          { value:"tinted", label:"Tinted Glass", code:"TG", activates:["win-tinted"] },
         ]
       },
       {
         id: "upholstery", label: "Upholstery Type",
         options: [
-          { value:"vinyl",  label:"Vinyl",   activates:["uph-vinyl"] },
-          { value:"fabric", label:"Fabric",  activates:["uph-fabric"] },
+          { value:"vinyl",  label:"Vinyl",   code:"VY", activates:["uph-vinyl"] },
+          { value:"fabric", label:"Fabric",  code:"FB", activates:["uph-fabric"] },
         ]
       },
       {
         id: "trim_level", label: "Trim Level",
         options: [
-          { value:"base",    label:"Base",    activates:["trim-base"] },
-          { value:"comfort", label:"Comfort", activates:["trim-comf"] },
+          { value:"base",    label:"Base",    code:"BS", activates:["trim-base"] },
+          { value:"comfort", label:"Comfort", code:"CF", activates:["trim-comf"] },
         ]
       },
     ]
   },
 
   "Partition Wall": {
+    vehicleCode: "",
     alwaysActive: ["mounting","hardware"],
     blockingQuestions: [],
     questions: [
       {
         id: "width", label: "Partition Width",
         options: [
-          { value:"standard", label:"Standard Width",  activates:["frame-std"] },
-          { value:"extended", label:"Extended Width",  activates:["frame-ext"] },
+          { value:"standard", label:"Standard Width",  code:"SW", activates:["frame-std"] },
+          { value:"extended", label:"Extended Width",  code:"EW", activates:["frame-ext"] },
         ]
       },
       {
         id: "window_type", label: "Window Type",
         options: [
-          { value:"none",  label:"No Window (Solid)",    activates:["win-solid"] },
-          { value:"poly",  label:"Polycarbonate Panel",  activates:["win-poly"] },
-          { value:"glass", label:"Tempered Glass",       activates:["win-glass"] },
-          { value:"mesh",  label:"Steel Mesh",           activates:["win-mesh"] },
+          { value:"none",  label:"No Window (Solid)",    code:"ST", activates:["win-solid"] },
+          { value:"poly",  label:"Polycarbonate Panel",  code:"GL", activates:["win-poly"] },
+          { value:"glass", label:"Tempered Glass",       code:"GL", activates:["win-glass"] },
+          { value:"mesh",  label:"Steel Mesh",           code:"MS", activates:["win-mesh"] },
         ]
       },
       {
@@ -602,6 +611,7 @@ const VEHICLE_CONFIGURATOR = {
   /* ── Citroën Jumpy ─────────────────────────────────────────────── */
   "Citroën|Jumpy": {
     "Crew Cab": {
+      vehicleCode: "JY",
       alwaysActive: ["divider","seating","wiring","hardware"],
       blockingQuestions: [],
       questions: [
@@ -681,6 +691,7 @@ const VEHICLE_CONFIGURATOR = {
     },
 
     "Flex Cab": {
+      vehicleCode: "JY",
       alwaysActive: ["rail","seating","hardware"],
       blockingQuestions: [],
       questions: [
@@ -734,6 +745,7 @@ const VEHICLE_CONFIGURATOR = {
   /* ── Citroën Jumper ────────────────────────────────────────────── */
   "Citroën|Jumper": {
     "Crew Cab": {
+      vehicleCode: "JP",
       alwaysActive: ["divider","seating","wiring","hardware"],
 
       /* These two questions are shown ABOVE the main configurator and must
@@ -825,118 +837,252 @@ function getConfigurator(product) {
   return getVehicleConfigurator(product) || CONFIGURATOR[product.type] || null;
 }
 
+function computeQuickcode(product, cfgState, blockingState) {
+  const cfg = getConfigurator(product);
+  if (!cfg) return null;
+  const vCode = cfg.vehicleCode || product.van.replace(/\s/g,"").substring(0,3).toUpperCase();
+  const tCode = {"Crew Cab":"CC","Flex Cab":"FC","Partition Wall":"PW"}[product.type] || "XX";
+  const fCode = product.fitment === "OEM" ? "OEM" : "AF";
+  const allQ = [...(cfg.blockingQuestions||[]), ...cfg.questions];
+  const allState = Object.assign({}, blockingState||{}, cfgState||{});
+  const codes = allQ.map(q => {
+    const opt = (q.options||[]).find(o => o.value === allState[q.id]);
+    return opt && opt.code ? opt.code : null;
+  }).filter(Boolean);
+  return `SNK-${vCode}-${tCode}-${fCode}${codes.length ? "-"+codes.join("-") : ""}`;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════
    MARKET DATA  (per product – key: "brand|van|type|fitment")
 ═══════════════════════════════════════════════════════════════════════ */
 const MARKET_DATA = {
   /* ── Citroën Jumpy ───────────────────────────────────────────────── */
   "Citroën|Jumpy|Crew Cab|OEM": {
-    introYear: 2019, pricingNote: "Included in OEM vehicle build price",
-    unitsFY25: "~280 units",
+    introYear: 2019,
     activeMarkets: ["Netherlands","Belgium","Germany","France","Spain","Italy"],
-    cocMarkets: null,
+    shippingDestinations: [
+      {country:"Turkey",lat:39,lng:35},
+      {country:"France",lat:46,lng:2},
+      {country:"Uruguay",lat:-33,lng:-56},
+    ],
   },
   "Citroën|Jumpy|Crew Cab|After-fit": {
-    introYear: 2020, pricingNote: "From €3,490 excl. VAT",
-    unitsFY25: "~140 units",
+    introYear: 2020,
     activeMarkets: ["Netherlands","Belgium","Germany","France","United Kingdom"],
-    cocMarkets: ["Netherlands","Belgium","Germany","France","United Kingdom"],
+    countryData: {
+      NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
+      DE:{active:true,homologation:"CoC"},FR:{active:true,homologation:"CoC"},
+      ES:{active:false,homologation:"CoC"},GB:{active:true,homologation:"CoC"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
+      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
+      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
+      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+    },
   },
   "Citroën|Jumpy|Flex Cab|OEM": {
-    introYear: 2021, pricingNote: "Included in OEM vehicle build price",
-    unitsFY25: "~95 units",
+    introYear: 2021,
     activeMarkets: ["Netherlands","Belgium","Germany","France"],
-    cocMarkets: null,
+    shippingDestinations: [
+      {country:"Turkey",lat:39,lng:35},
+      {country:"France",lat:46,lng:2},
+    ],
   },
   "Citroën|Jumpy|Flex Cab|After-fit": {
-    introYear: 2021, pricingNote: "From €3,990 excl. VAT",
-    unitsFY25: "~45 units",
+    introYear: 2021,
     activeMarkets: ["Netherlands","Belgium","Germany","France"],
-    cocMarkets: ["Netherlands","Belgium","Germany","France"],
+    countryData: {
+      NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
+      DE:{active:true,homologation:"CoC"},FR:{active:true,homologation:"CoC"},
+      ES:{active:false,homologation:"CoC"},GB:{active:false,homologation:"CoC"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
+      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
+      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
+      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+    },
   },
 
   /* ── Citroën Jumpy Combi ─────────────────────────────────────────── */
   "Citroën|Jumpy Combi|Partition Wall|After-fit": {
-    introYear: 2024, pricingNote: "From €680 excl. VAT",
-    unitsFY25: "~60 units",
+    introYear: 2024,
     activeMarkets: ["Netherlands","Belgium"],
-    cocMarkets: ["Netherlands","Belgium"],
+    countryData: {
+      NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
+      DE:{active:false,homologation:"CoC"},FR:{active:false,homologation:"CoC"},
+      ES:{active:false,homologation:"CoC"},GB:{active:false,homologation:"CoC"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
+      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
+      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
+      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+    },
   },
 
   /* ── Citroën Berlingo ─────────────────────────────────────────────── */
   "Citroën|Berlingo|Crew Cab|OEM": {
-    introYear: 2018, pricingNote: "Included in OEM vehicle build price",
-    unitsFY25: "~320 units",
+    introYear: 2018,
     activeMarkets: ["Netherlands","Belgium","Germany","France","Spain","Italy","United Kingdom"],
-    cocMarkets: null,
+    shippingDestinations: [
+      {country:"Turkey",lat:39,lng:35},
+      {country:"France",lat:46,lng:2},
+      {country:"Uruguay",lat:-33,lng:-56},
+    ],
   },
 
   /* ── Citroën Jumper ──────────────────────────────────────────────── */
   "Citroën|Jumper|Crew Cab|OEM": {
-    introYear: 2019, pricingNote: "Included in OEM vehicle build price",
-    unitsFY25: "~320 units",
+    introYear: 2019,
     activeMarkets: ["Netherlands","Belgium","Germany","France","Spain","Italy"],
-    cocMarkets: null,
+    shippingDestinations: [
+      {country:"Turkey",lat:39,lng:35},
+      {country:"France",lat:46,lng:2},
+      {country:"Uruguay",lat:-33,lng:-56},
+    ],
   },
   "Citroën|Jumper|Crew Cab|After-fit": {
-    introYear: 2020, pricingNote: "From €4,190 excl. VAT",
-    unitsFY25: "~110 units",
+    introYear: 2020,
     activeMarkets: ["Netherlands","Belgium","Germany","France","United Kingdom"],
-    cocMarkets: ["Netherlands","Belgium","Germany","France","United Kingdom"],
+    countryData: {
+      NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
+      DE:{active:true,homologation:"CoC"},FR:{active:true,homologation:"CoC"},
+      ES:{active:false,homologation:"CoC"},GB:{active:true,homologation:"CoC"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
+      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
+      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
+      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+    },
   },
 
   /* ── MAN TGE ─────────────────────────────────────────────────────── */
   "MAN|TGE|Crew Cab|After-fit": {
-    introYear: 2022, pricingNote: "From €4,490 excl. VAT",
-    unitsFY25: "~85 units",
+    introYear: 2022,
     activeMarkets: ["Netherlands","Belgium","Germany"],
-    cocMarkets: ["Netherlands","Belgium","Germany"],
+    countryData: {
+      NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
+      DE:{active:true,homologation:"CoC"},FR:{active:false,homologation:"CoC"},
+      ES:{active:false,homologation:"CoC"},GB:{active:false,homologation:"CoC"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
+      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
+      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
+      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+    },
   },
 
   /* ── Volkswagen ──────────────────────────────────────────────────── */
   "Volkswagen|Transporter|Crew Cab|After-fit": {
-    introYear: 2019, pricingNote: "From €3,590 excl. VAT",
-    unitsFY25: "~165 units",
+    introYear: 2019,
     activeMarkets: ["Netherlands","Belgium","Germany","United Kingdom"],
-    cocMarkets: ["Netherlands","Belgium","Germany","United Kingdom"],
+    countryData: {
+      NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
+      DE:{active:true,homologation:"CoC"},FR:{active:false,homologation:"CoC"},
+      ES:{active:false,homologation:"CoC"},GB:{active:true,homologation:"CoC"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
+      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
+      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
+      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+    },
   },
   "Volkswagen|Crafter|Crew Cab|After-fit": {
-    introYear: 2020, pricingNote: "From €4,250 excl. VAT",
-    unitsFY25: "~90 units",
+    introYear: 2020,
     activeMarkets: ["Netherlands","Belgium","Germany"],
-    cocMarkets: ["Netherlands","Belgium","Germany"],
+    countryData: {
+      NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
+      DE:{active:true,homologation:"CoC"},FR:{active:false,homologation:"CoC"},
+      ES:{active:false,homologation:"CoC"},GB:{active:false,homologation:"CoC"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
+      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
+      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
+      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+    },
   },
 
   /* ── Fallback entries by type+fitment ───────────────────────────── */
   "_|Crew Cab|OEM": {
-    introYear: 2019, pricingNote: "Included in OEM vehicle build price",
-    unitsFY25: "—",
+    introYear: 2019,
     activeMarkets: ["Netherlands","Belgium","Germany","France"],
-    cocMarkets: null,
+    shippingDestinations: [],
   },
   "_|Crew Cab|After-fit": {
-    introYear: 2020, pricingNote: "From €3,490 excl. VAT",
-    unitsFY25: "—",
+    introYear: 2020,
     activeMarkets: ["Netherlands","Belgium","Germany","France","United Kingdom"],
-    cocMarkets: ["Netherlands","Belgium","Germany","France","United Kingdom"],
+    countryData: {
+      NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
+      DE:{active:true,homologation:"CoC"},FR:{active:true,homologation:"CoC"},
+      ES:{active:false,homologation:"CoC"},GB:{active:true,homologation:"CoC"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
+      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
+      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
+      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+    },
   },
   "_|Flex Cab|OEM": {
-    introYear: 2021, pricingNote: "Included in OEM vehicle build price",
-    unitsFY25: "—",
+    introYear: 2021,
     activeMarkets: ["Netherlands","Belgium","Germany","France"],
-    cocMarkets: null,
+    shippingDestinations: [],
   },
   "_|Flex Cab|After-fit": {
-    introYear: 2021, pricingNote: "From €3,990 excl. VAT",
-    unitsFY25: "—",
+    introYear: 2021,
     activeMarkets: ["Netherlands","Belgium","Germany","France"],
-    cocMarkets: ["Netherlands","Belgium","Germany","France"],
+    countryData: {
+      NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
+      DE:{active:true,homologation:"CoC"},FR:{active:true,homologation:"CoC"},
+      ES:{active:false,homologation:"CoC"},GB:{active:false,homologation:"CoC"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
+      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
+      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
+      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+    },
   },
   "_|Partition Wall|After-fit": {
-    introYear: 2017, pricingNote: "From €680 excl. VAT",
-    unitsFY25: "—",
+    introYear: 2017,
     activeMarkets: ["Netherlands","Belgium","Germany","France","Spain","United Kingdom"],
-    cocMarkets: ["Netherlands","Belgium","Germany","France","Spain","United Kingdom"],
+    countryData: {
+      NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
+      DE:{active:true,homologation:"CoC"},FR:{active:true,homologation:"CoC"},
+      ES:{active:true,homologation:"CoC"},GB:{active:true,homologation:"CoC"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
+      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
+      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
+      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+    },
   },
 };
 
