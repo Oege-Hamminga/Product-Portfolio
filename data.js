@@ -853,8 +853,7 @@ VEHICLE_CONFIGURATOR["Toyota|Proace"]  = { "Crew Cab": Object.assign({}, (VEHICL
 
 VEHICLE_CONFIGURATOR["Ford|Transit Custom"] = {
   "Crew Cab": {
-    "Crew Cab": {
-      vehicleCode: "TC",
+    vehicleCode: "TC",
       alwaysActive: ["divider","seating","wiring","hardware"],
       blockingQuestions: [],
       questions: [
@@ -948,7 +947,6 @@ VEHICLE_CONFIGURATOR["Ford|Transit Custom"] = {
           ]
         },
       ]
-    }
   }
 };
 
@@ -1688,7 +1686,6 @@ VEHICLE_CONFIGURATOR["Nissan|Primastar"] = {
         },
       ]
     }
-  },
 };
 
 // Renault Trafic E-Tech shares Trafic configurator
