@@ -495,13 +495,13 @@ header {
 
 /* Product type list */
 .product-type-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
 }
 
 .product-type-item {
-  padding: 13px 16px;
+  padding: 18px 18px;
   background: rgba(0,0,0,0.25);
   border-left: 2px solid var(--red);
   transition: background var(--transition);
@@ -753,7 +753,7 @@ header {
 .product-card:hover::after { transform: scaleX(1); }
 
 .card-image {
-  aspect-ratio: 3/4;
+  aspect-ratio: 4/3;
   position: relative;
   overflow: hidden;
   background: #0D0D0D;
@@ -979,7 +979,7 @@ footer {
 }
 
 .vehicle-placeholder {
-  aspect-ratio: 3/4;
+  aspect-ratio: 4/3;
   position: relative;
   overflow: hidden;
   background: #0D0D0D;
@@ -1991,6 +1991,7 @@ footer {
   .cfg-questions     { grid-template-columns: 1fr 1fr; }
   .cfg-blocking-questions { grid-template-columns: 1fr 1fr; }
   .overview-stats-row { grid-template-columns: repeat(2, 1fr); }
+  .product-type-list { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 640px) {
