@@ -762,7 +762,7 @@ header {
 .card-image > img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
   transition: transform 0.4s ease;
 }
@@ -958,7 +958,6 @@ footer {
   display: grid;
   grid-template-columns: 20fr 9fr;
   gap: 14px;
-  align-items: start;
 }
 
 .image-card {
@@ -966,6 +965,8 @@ footer {
   border: 1px solid var(--grey-2);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .image-label {
@@ -981,6 +982,7 @@ footer {
 
 .vehicle-placeholder {
   aspect-ratio: 5/3;
+  flex-shrink: 0;
   position: relative;
   overflow: hidden;
   background: #0D0D0D;
@@ -989,7 +991,7 @@ footer {
 .vehicle-placeholder > img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 
@@ -1007,7 +1009,7 @@ footer {
 .vp-van   { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
 
 .product-placeholder {
-  aspect-ratio: 3/4;
+  flex: 1;
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #111111 0%, #222222 100%);
