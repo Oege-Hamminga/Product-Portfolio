@@ -373,14 +373,7 @@
   (function(){
     const STORAGE_KEY = 'snoeks_matrix_state';
 
-    // Badge options: S=Snoeks, D=Durasotti, O=Other
-    const BADGE_DEFS = [
-      { key:'S', label:'Snoeks',    cls:'matrix-badge--s' },
-      { key:'D', label:'Durasotti', cls:'matrix-badge--d' },
-      { key:'O', label:'Other',     cls:'matrix-badge--o' },
-    ];
-
-    // Build initial state from current HTML
+    // Build initial state from current HTML — values: 'S', 'D', 'SD', ''
     function buildInitialState() {
       const state = {};
       document.querySelectorAll('#matrix-collapsible tbody tr[data-row]').forEach(tr => {
@@ -388,23 +381,38 @@
         state[row] = {};
         tr.querySelectorAll('td[data-col]').forEach(td => {
           const col = td.dataset.col;
-          state[row][col] = [];
-          td.querySelectorAll('.matrix-badge').forEach(badge => {
-            if (badge.classList.contains('matrix-badge--s')) state[row][col].push('S');
-            else if (badge.classList.contains('matrix-badge--d')) state[row][col].push('D');
-            else state[row][col].push('O');
-          });
+          const hasS = !!td.querySelector('.matrix-badge--s');
+          const hasD = !!td.querySelector('.matrix-badge--d');
+          state[row][col] = hasS && hasD ? 'SD' : hasS ? 'S' : hasD ? 'D' : '';
         });
       });
       return state;
     }
 
-    // Render badges from state
-    function renderCell(td, badges) {
-      td.innerHTML = badges.map(b => {
-        const def = BADGE_DEFS.find(d=>d.key===b);
-        return def ? `<span class="matrix-badge ${def.cls}">${def.key}</span>` : '';
-      }).join('');
+    function renderCell(td, key) {
+      if (key === 'SD')     td.innerHTML = '<span class="matrix-badge matrix-badge--s">S</span><span class="matrix-badge matrix-badge--d">D</span>';
+      else if (key === 'S') td.innerHTML = '<span class="matrix-badge matrix-badge--s">S</span>';
+      else if (key === 'D') td.innerHTML = '<span class="matrix-badge matrix-badge--d">D</span>';
+      else                  td.innerHTML = '';
+    }
+
+    // Migrate old array format → new string format
+    function maybesMigrate(s) {
+      const firstRow = Object.values(s)[0];
+      if (!firstRow) return s;
+      const firstCell = Object.values(firstRow)[0];
+      if (!Array.isArray(firstCell)) return s;
+      const n = {};
+      Object.keys(s).forEach(row => {
+        n[row] = {};
+        Object.keys(s[row]).forEach(col => {
+          const v = s[row][col];
+          const hasS = Array.isArray(v) && v.includes('S');
+          const hasD = Array.isArray(v) && v.includes('D');
+          n[row][col] = hasS && hasD ? 'SD' : hasS ? 'S' : hasD ? 'D' : '';
+        });
+      });
+      return n;
     }
 
     // Load or init state
@@ -414,6 +422,7 @@
       matrixState = buildInitialState();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(matrixState));
     } else {
+      matrixState = maybesMigrate(matrixState);
       // Apply saved state to cells
       document.querySelectorAll('#matrix-collapsible tbody tr[data-row]').forEach(tr => {
         const row = tr.dataset.row;
@@ -425,7 +434,6 @@
       });
     }
 
-    // Edit mode toggle
     let editMode = false;
     let activePopover = null;
 
@@ -433,15 +441,74 @@
       if (activePopover) { activePopover.remove(); activePopover = null; }
     }
 
+    // Edit mode — password-gated
+    let editMode = false;
+    let unlocked = false;
+
+    function activateEditMode(btn) {
+      editMode = true;
+      btn.textContent = 'Done';
+      btn.classList.add('matrix-edit-btn--active');
+      document.body.classList.add('matrix-edit-active');
+    }
+
     document.getElementById('matrix-edit-btn').addEventListener('click', function() {
-      editMode = !editMode;
-      this.textContent = editMode ? 'Done' : 'Edit';
-      this.classList.toggle('matrix-edit-btn--active', editMode);
-      document.body.classList.toggle('matrix-edit-active', editMode);
-      closePopover();
+      if (editMode) {
+        editMode = false;
+        this.textContent = 'Edit';
+        this.classList.remove('matrix-edit-btn--active');
+        document.body.classList.remove('matrix-edit-active');
+        closePopover();
+        return;
+      }
+      if (unlocked) { activateEditMode(this); return; }
+      // Show password popover
+      if (activePopover) { closePopover(); return; }
+      const btn = this;
+      const pop = document.createElement('div');
+      pop.className = 'matrix-cell-popover';
+      pop.style.minWidth = '200px';
+      pop.innerHTML = `
+        <div style="font-size:0.72rem;color:rgba(255,255,255,0.5);margin-bottom:6px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">Password required</div>
+        <div class="mcp-pw-form">
+          <input class="mcp-pw-input" type="password" placeholder="Enter password" />
+          <button class="mcp-pw-submit">OK</button>
+        </div>
+        <div class="mcp-pw-error" style="display:none">Incorrect password</div>
+      `;
+      pop.addEventListener('click', e => e.stopPropagation());
+
+      function tryUnlock() {
+        const val = pop.querySelector('.mcp-pw-input').value;
+        if (val === 'PM26') {
+          unlocked = true;
+          closePopover();
+          activateEditMode(btn);
+        } else {
+          pop.querySelector('.mcp-pw-error').style.display = 'block';
+          pop.querySelector('.mcp-pw-input').value = '';
+          pop.querySelector('.mcp-pw-input').focus();
+        }
+      }
+      pop.querySelector('.mcp-pw-submit').addEventListener('click', tryUnlock);
+      pop.querySelector('.mcp-pw-input').addEventListener('keydown', e => { if (e.key==='Enter') tryUnlock(); });
+
+      const rect = btn.getBoundingClientRect();
+      pop.style.position = 'fixed';
+      pop.style.top  = (rect.bottom + 6) + 'px';
+      pop.style.left = (rect.right - 210) + 'px';
+      pop.style.zIndex = '9999';
+      document.body.appendChild(pop);
+      activePopover = pop;
+      setTimeout(() => pop.querySelector('.mcp-pw-input').focus(), 50);
     });
 
     document.addEventListener('click', function(e) {
+      // Close password popover when clicking outside
+      if (!editMode && activePopover && !activePopover.contains(e.target) && e.target.id !== 'matrix-edit-btn') {
+        closePopover();
+        return;
+      }
       if (!editMode) return;
       const td = e.target.closest('td[data-col]');
       if (!td) { closePopover(); return; }
@@ -452,33 +519,48 @@
 
       const row = tr.dataset.row;
       const col = td.dataset.col;
-      const current = (matrixState[row] && matrixState[row][col]) || [];
+      const current = (matrixState[row] && matrixState[row][col]) || '';
+
+      // Presence options: S, D, SD, None
+      const OPTS = [
+        { key:'S',  label:'Snoeks',            html:'<span class="matrix-badge matrix-badge--s">S</span>' },
+        { key:'D',  label:'Durasotti',          html:'<span class="matrix-badge matrix-badge--d">D</span>' },
+        { key:'SD', label:'Snoeks & Durasotti', html:'<span class="matrix-badge matrix-badge--s">S</span><span class="matrix-badge matrix-badge--d">D</span>' },
+        { key:'',   label:'None',               html:'' },
+      ];
 
       const pop = document.createElement('div');
       pop.className = 'matrix-cell-popover';
-      pop.innerHTML = BADGE_DEFS.map(def => `
-        <label class="mcp-item">
-          <input type="checkbox" value="${def.key}" ${current.includes(def.key)?'checked':''}>
-          <span class="matrix-badge ${def.cls}">${def.key}</span> ${def.label}
+      pop.innerHTML = OPTS.map(opt => `
+        <label class="mcp-item${current === opt.key ? ' mcp-item--active' : ''}">
+          <input type="radio" name="mcp-p" value="${opt.key}" ${current === opt.key ? 'checked' : ''}>
+          ${opt.html || '<span style="color:rgba(255,255,255,0.35);font-size:0.75rem">—</span>'}
+          <span>${opt.label}</span>
         </label>
       `).join('');
 
-      pop.addEventListener('change', function() {
-        const checked = [...pop.querySelectorAll('input:checked')].map(i=>i.value);
+      pop.addEventListener('change', function(ev) {
+        const val = ev.target.value;
         if (!matrixState[row]) matrixState[row] = {};
-        matrixState[row][col] = checked;
-        renderCell(td, checked);
-        // Update uncovered class
-        const hasAny = Object.values(matrixState[row]).some(v=>v.length>0);
+        matrixState[row][col] = val;
+        // Render cell
+        if (val === 'SD')     td.innerHTML = '<span class="matrix-badge matrix-badge--s">S</span><span class="matrix-badge matrix-badge--d">D</span>';
+        else if (val === 'S') td.innerHTML = '<span class="matrix-badge matrix-badge--s">S</span>';
+        else if (val === 'D') td.innerHTML = '<span class="matrix-badge matrix-badge--d">D</span>';
+        else                  td.innerHTML = '';
+        const hasAny = Object.values(matrixState[row]).some(v => v !== '');
         tr.classList.toggle('mm-row--uncovered', !hasAny);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(matrixState));
+        pop.querySelectorAll('.mcp-item').forEach(l => {
+          l.classList.toggle('mcp-item--active', l.querySelector('input').value === val);
+        });
       });
 
       pop.addEventListener('click', e => e.stopPropagation());
 
       const rect = td.getBoundingClientRect();
       pop.style.position = 'fixed';
-      pop.style.top = (rect.bottom + 4) + 'px';
+      pop.style.top  = (rect.bottom + 4) + 'px';
       pop.style.left = rect.left + 'px';
       pop.style.zIndex = '9999';
       document.body.appendChild(pop);

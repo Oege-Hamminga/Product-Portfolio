@@ -443,10 +443,10 @@ function renderConfigurator(product) {
 
     blockingQEl.innerHTML = blocking.map(q => `
       <div class="cfg-question" data-q="${q.id}">
-        <div class="cfg-question-label">${q.label}</div>
+        <div class="cfg-question-label">${q.label}${q.note ? `<span class="cfg-q-note">${q.note}</span>` : ""}</div>
         <div class="cfg-options">
           ${q.options.map(opt => `
-            <button class="cfg-opt-btn${blockingState[q.id] === opt.value ? " active" : ""}"
+            <button class="cfg-opt-btn${blockingState[q.id] === opt.value ? " active" : ""}${opt.incompatible ? " cfg-opt-incompatible" : ""}"
                     data-q="${q.id}" data-val="${opt.value}">
               ${opt.label}
             </button>
@@ -526,9 +526,17 @@ function handleCfgClick(e, product, cfg) {
 }
 
 function updateBlockingLock(product, cfg) {
-  const blocking     = cfg.blockingQuestions || [];
-  const allAnswered  = blocking.every(q => blockingState[q.id] !== undefined);
-  document.getElementById("bom-configurator").classList.toggle("cfg-blocked", !allAnswered);
+  const blocking = cfg.blockingQuestions || [];
+  const allAnswered = blocking.every(q => blockingState[q.id] !== undefined);
+  const isIncompatible = blocking.some(q => {
+    const val = blockingState[q.id];
+    if (val === undefined) return false;
+    const opt = q.options.find(o => o.value === val);
+    return opt && opt.incompatible;
+  });
+  const incompatEl = document.getElementById("cfg-incompatible-msg");
+  if (incompatEl) incompatEl.style.display = isIncompatible ? "block" : "none";
+  document.getElementById("bom-configurator").classList.toggle("cfg-blocked", !allAnswered || isIncompatible);
 }
 
 function updateCfgStatus(product, cfg) {
