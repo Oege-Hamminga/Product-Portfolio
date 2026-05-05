@@ -219,6 +219,10 @@ header {
 .overview-card-header {
   padding: 18px 22px 14px;
   border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .overview-card-eyebrow {
@@ -2314,3 +2318,101 @@ footer {
   .overview-inner    { padding: 16px; }
   .overview-stats-row { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ── Product type images ────────────────────────────────────────────── */
+.product-type-item { display: flex; flex-direction: column; }
+.pt-img { width: 100%; aspect-ratio: 4/3; overflow: hidden; border-radius: var(--radius); margin-bottom: 10px; background: var(--dark-2); }
+.pt-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pt-img--placeholder { display: flex; align-items: center; justify-content: center; }
+.pt-img--placeholder span { font-size: 2rem; font-weight: 700; color: var(--text-muted); letter-spacing: 2px; }
+
+/* ── Map image frame (replaces CSS world-map-frame) ─────────────────── */
+.map-img-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #1a2b3c;
+  margin-top: 12px;
+}
+.map-img-frame--eu { aspect-ratio: 5/3; }
+.map-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.85;
+}
+.map-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* ── Matrix edit button ──────────────────────────────────────────────── */
+.matrix-edit-btn {
+  margin-left: auto;
+  padding: 4px 14px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--dark-3);
+  color: var(--text-muted);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.matrix-edit-btn:hover, .matrix-edit-btn--active {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
+}
+
+/* ── Matrix cell popover ─────────────────────────────────────────────── */
+.matrix-cell-popover {
+  background: var(--dark);
+  border: 1px solid var(--dark-3);
+  border-radius: var(--radius-lg);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-lg);
+  min-width: 160px;
+}
+.mcp-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: var(--grey-0);
+}
+.mcp-item input[type=checkbox] { cursor: pointer; accent-color: var(--red); }
+
+/* Highlight mm-cell in edit mode */
+body.matrix-edit-active td.mm-cell {
+  cursor: pointer;
+  background: rgba(204,0,0,0.04);
+  outline: 1px dashed rgba(204,0,0,0.3);
+  outline-offset: -1px;
+}
+
+/* ── Country table select dropdowns ─────────────────────────────────── */
+.ct-select {
+  background: var(--dark-2);
+  border: 1px solid var(--dark-3);
+  color: var(--text);
+  border-radius: var(--radius);
+  padding: 2px 6px;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+.ct-select--status { min-width: 100px; }
+.ct-select--homol  { min-width: 80px; }
+.ct-select:focus   { outline: 1px solid var(--red); }

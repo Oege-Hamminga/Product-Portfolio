@@ -215,56 +215,58 @@ const products = [
 ═══════════════════════════════════════════════════════════════════════ */
 const VEHICLE_META = {
   /* Volkswagen */
-  "Volkswagen|Caddy":        { vanType: "Panel Van",     marketIntro: "" },
-  "Volkswagen|Transporter":  { vanType: "Panel Van",     marketIntro: "" },
-  "Volkswagen|Crafter":      { vanType: "Panel Van",     marketIntro: "" },
-  "Volkswagen|Caravelle":    { vanType: "Passenger Van", marketIntro: "" },
-  "Volkswagen|ID Buzz":      { vanType: "Passenger Van", marketIntro: "" },
-  "Volkswagen|Multivan":     { vanType: "Passenger Van", marketIntro: "" },
+  "Volkswagen|Caddy":          { vanType: "Panel Van",     marketIntro: "2020" },
+  "Volkswagen|Transporter":    { vanType: "Panel Van",     marketIntro: "2015" },
+  "Volkswagen|Crafter":        { vanType: "Panel Van",     marketIntro: "2017" },
+  "Volkswagen|Caravelle":      { vanType: "Passenger Van", marketIntro: "2024" },
+  "Volkswagen|ID Buzz":        { vanType: "Passenger Van", marketIntro: "2022" },
+  "Volkswagen|Multivan":       { vanType: "Passenger Van", marketIntro: "2021" },
   /* Citroën */
-  "Citroën|Berlingo":        { vanType: "Panel Van",     marketIntro: "" },
-  "Citroën|Jumpy":           { vanType: "Panel Van",     marketIntro: "" },
-  "Citroën|Jumpy Combi":     { vanType: "Passenger Van", marketIntro: "" },
-  "Citroën|Jumper":          { vanType: "Panel Van",     marketIntro: "" },
+  "Citroën|Berlingo":          { vanType: "Panel Van",     marketIntro: "2018" },
+  "Citroën|Jumpy":             { vanType: "Panel Van",     marketIntro: "2016" },
+  "Citroën|Jumpy Combi":       { vanType: "Passenger Van", marketIntro: "2016" },
+  "Citroën|Jumper":            { vanType: "Panel Van",     marketIntro: "2006" },
   /* Peugeot */
-  "Peugeot|Partner":         { vanType: "Panel Van",     marketIntro: "" },
-  "Peugeot|Expert":          { vanType: "Panel Van",     marketIntro: "" },
-  "Peugeot|Boxer":           { vanType: "Panel Van",     marketIntro: "" },
+  "Peugeot|Partner":           { vanType: "Panel Van",     marketIntro: "2018" },
+  "Peugeot|Expert":            { vanType: "Panel Van",     marketIntro: "2016" },
+  "Peugeot|Boxer":             { vanType: "Panel Van",     marketIntro: "2006" },
   /* Opel */
-  "Opel|Combo":              { vanType: "Panel Van",     marketIntro: "" },
-  "Opel|Vivaro":             { vanType: "Panel Van",     marketIntro: "" },
-  "Opel|Movano":             { vanType: "Panel Van",     marketIntro: "" },
+  "Opel|Combo":                { vanType: "Panel Van",     marketIntro: "2018" },
+  "Opel|Vivaro":               { vanType: "Panel Van",     marketIntro: "2019" },
+  "Opel|Movano":               { vanType: "Panel Van",     marketIntro: "2021" },
   /* Fiat */
-  "Fiat|Doblo":              { vanType: "Panel Van",     marketIntro: "" },
-  "Fiat|Scudo":              { vanType: "Panel Van",     marketIntro: "" },
-  "Fiat|Ducato":             { vanType: "Panel Van",     marketIntro: "" },
+  "Fiat|Doblo":                { vanType: "Panel Van",     marketIntro: "2022" },
+  "Fiat|Scudo":                { vanType: "Panel Van",     marketIntro: "2022" },
+  "Fiat|Ducato":               { vanType: "Panel Van",     marketIntro: "2006" },
   /* Toyota */
-  "Toyota|Proace City":      { vanType: "Panel Van",     marketIntro: "" },
-  "Toyota|Proace":           { vanType: "Panel Van",     marketIntro: "" },
-  "Toyota|Proace Max":       { vanType: "Panel Van",     marketIntro: "" },
+  "Toyota|Proace City":        { vanType: "Panel Van",     marketIntro: "2019" },
+  "Toyota|Proace":             { vanType: "Panel Van",     marketIntro: "2016" },
+  "Toyota|Proace Max":         { vanType: "Panel Van",     marketIntro: "2024" },
   /* Ford */
-  "Ford|Transit Connect":    { vanType: "Panel Van",     marketIntro: "" },
-  "Ford|Transit Custom":     { vanType: "Panel Van",     marketIntro: "" },
-  "Ford|Transit":            { vanType: "Panel Van",     marketIntro: "" },
-  "Ford|Tourneo":            { vanType: "Passenger Van", marketIntro: "" },
-  "Ford|Transit Kombi":      { vanType: "Passenger Van", marketIntro: "" },
+  "Ford|Transit Connect":      { vanType: "Panel Van",     marketIntro: "2024" },
+  "Ford|Transit Custom":       { vanType: "Panel Van",     marketIntro: "2023" },
+  "Ford|Transit":              { vanType: "Panel Van",     marketIntro: "2014" },
+  "Ford|Tourneo":              { vanType: "Passenger Van", marketIntro: "2023" },
+  "Ford|Transit Kombi":        { vanType: "Passenger Van", marketIntro: "2019" },
   /* Mercedes-Benz */
-  "Mercedes-Benz|Vito":      { vanType: "Panel Van",     marketIntro: "" },
-  "Mercedes-Benz|Vito Mixto":{ vanType: "Passenger Van", marketIntro: "" },
-  "Mercedes-Benz|V-Class":   { vanType: "Passenger Van", marketIntro: "" },
-  "Mercedes-Benz|Sprinter":  { vanType: "Panel Van",     marketIntro: "" },
+  "Mercedes-Benz|Vito":        { vanType: "Panel Van",     marketIntro: "2014" },
+  "Mercedes-Benz|Vito Mixto":  { vanType: "Passenger Van", marketIntro: "2020" },
+  "Mercedes-Benz|V-Class":     { vanType: "Passenger Van", marketIntro: "2014" },
+  "Mercedes-Benz|Sprinter":    { vanType: "Panel Van",     marketIntro: "2018" },
   /* Renault */
-  "Renault|Trafic":          { vanType: "Panel Van",     marketIntro: "" },
-  "Renault|Trafic E-Tech":   { vanType: "Panel Van",     marketIntro: "" },
-  "Renault|Master":          { vanType: "Panel Van",     marketIntro: "" },
+  "Renault|Trafic":            { vanType: "Panel Van",     marketIntro: "2014" },
+  "Renault|Trafic E-Tech":     { vanType: "Panel Van",     marketIntro: "2021" },
+  "Renault|Master":            { vanType: "Panel Van",     marketIntro: "2024" },
   /* IVECO */
-  "IVECO|Daily":             { vanType: "Panel Van",     marketIntro: "" },
+  "IVECO|Daily":               { vanType: "Panel Van",     marketIntro: "2014" },
   /* MAN */
-  "MAN|TGE":                 { vanType: "Panel Van",     marketIntro: "" },
+  "MAN|TGE":                   { vanType: "Panel Van",     marketIntro: "2017" },
   /* RAM */
-  "RAM|ProMaster":           { vanType: "Panel Van",     marketIntro: "" },
+  "RAM|ProMaster":             { vanType: "Panel Van",     marketIntro: "2013" },
+  /* Nissan */
+  "Nissan|Primastar":          { vanType: "Panel Van",     marketIntro: "2022" },
   /* KIA */
-  "KIA|PV5":                 { vanType: "Panel Van",     marketIntro: "" },
+  "KIA|PV5":                   { vanType: "Panel Van",     marketIntro: "2025" },
 };
 
 function getVehicleMeta(brand, van) {
@@ -835,6 +837,864 @@ const VEHICLE_CONFIGURATOR = {
   },
 };
 
+// ── Peugeot Boxer / Fiat Ducato / Opel Movano / Toyota ProAce Max ──
+// Same platform & questions as Citroën Jumper K2/3
+VEHICLE_CONFIGURATOR["Peugeot|Boxer"]     = { "Crew Cab": Object.assign({}, (VEHICLE_CONFIGURATOR["Citroën|Jumper"]||{})["Crew Cab"], {vehicleCode:"BX"}) };
+VEHICLE_CONFIGURATOR["Fiat|Ducato"]       = { "Crew Cab": Object.assign({}, (VEHICLE_CONFIGURATOR["Citroën|Jumper"]||{})["Crew Cab"], {vehicleCode:"DC"}) };
+VEHICLE_CONFIGURATOR["Opel|Movano"]       = { "Crew Cab": Object.assign({}, (VEHICLE_CONFIGURATOR["Citroën|Jumper"]||{})["Crew Cab"], {vehicleCode:"MV"}) };
+VEHICLE_CONFIGURATOR["Toyota|Proace Max"] = { "Crew Cab": Object.assign({}, (VEHICLE_CONFIGURATOR["Citroën|Jumper"]||{})["Crew Cab"], {vehicleCode:"PM"}) };
+
+// ── Peugeot Expert / Fiat Scudo / Opel Vivaro / Toyota ProAce ─────
+// Same platform & questions as Citroën Jumpy K1
+VEHICLE_CONFIGURATOR["Peugeot|Expert"] = { "Crew Cab": Object.assign({}, (VEHICLE_CONFIGURATOR["Citroën|Jumpy"]||{})["Crew Cab"], {vehicleCode:"EX"}) };
+VEHICLE_CONFIGURATOR["Fiat|Scudo"]     = { "Crew Cab": Object.assign({}, (VEHICLE_CONFIGURATOR["Citroën|Jumpy"]||{})["Crew Cab"], {vehicleCode:"SC"}) };
+VEHICLE_CONFIGURATOR["Opel|Vivaro"]    = { "Crew Cab": Object.assign({}, (VEHICLE_CONFIGURATOR["Citroën|Jumpy"]||{})["Crew Cab"], {vehicleCode:"VV"}) };
+VEHICLE_CONFIGURATOR["Toyota|Proace"]  = { "Crew Cab": Object.assign({}, (VEHICLE_CONFIGURATOR["Citroën|Jumpy"]||{})["Crew Cab"], {vehicleCode:"PA"}) };
+
+VEHICLE_CONFIGURATOR["Ford|Transit Custom"] = {
+  "Crew Cab": {
+    "Crew Cab": {
+      vehicleCode: "TC",
+      alwaysActive: ["divider","seating","wiring","hardware"],
+      blockingQuestions: [],
+      questions: [
+        {
+          id:"wielbasis", label:"Wielbasis",
+          options:[
+            {value:"l1",label:"L1",code:"L1",activates:["frame-l1"]},
+            {value:"l2",label:"L2",code:"L2",activates:["frame-l2"]},
+          ]
+        },
+        {
+          id:"hoogte", label:"Hoogte",
+          options:[
+            {value:"h1",label:"H1",code:"H1",activates:["height-h1"]},
+            {value:"h2",label:"H2",code:"H2",activates:["height-h2"]},
+          ]
+        },
+        {
+          id:"schuifdeur", label:"Schuifdeur configuratie",
+          options:[
+            {value:"rs",label:"Rechts (RS)",  code:"RS",activates:["door-single"]},
+            {value:"ls",label:"Links (LS)",   code:"LS",activates:["door-left"]},
+            {value:"ds",label:"Dubbel (DS)",  code:"DS",activates:["door-double"]},
+          ]
+        },
+        {
+          id:"ramen_b", label:"Ramen achter B-stijl",
+          options:[
+            {value:"right", label:"Rechts",    code:"WR",activates:["win-right"]},
+            {value:"left",  label:"Links",     code:"WL",activates:["win-left"]},
+            {value:"double",label:"Beide",     code:"WB",activates:["win-both"]},
+            {value:"none",  label:"Geen",      code:"W0",activates:[]},
+          ]
+        },
+        {
+          id:"separatiewand", label:"Separatiewand aanwezig",
+          options:[
+            {value:"yes",         label:"Ja",             code:"PW",activates:["partition"]},
+            {value:"no",          label:"Nee",            code:"NP",activates:[]},
+            {value:"disassembled",label:"Gedemonteerd",   code:"PD",activates:[]},
+            {value:"aaltc",       label:"AALTC",          code:"AA",activates:[]},
+          ]
+        },
+        {
+          id:"eerste_zitrij", label:"Eerste zitrij",
+          options:[
+            {value:"voorstoel",label:"Voorstoel",code:"VS",activates:[]},
+            {value:"bank",     label:"Bank",     code:"BK",activates:["seat-bench"]},
+          ]
+        },
+        {
+          id:"bekleding", label:"Bekleding voorstoelen",
+          options:[
+            {value:"trend",   label:"Trend",   code:"TR",activates:[]},
+            {value:"limited", label:"Limited", code:"LT",activates:[]},
+            {value:"sport",   label:"Sport",   code:"SP",activates:[]},
+            {value:"msrt",    label:"MS-RT",   code:"MS",activates:[]},
+          ]
+        },
+        {
+          id:"elect_schuifdeur", label:"Elektrische en/of softclose schuifdeuren",
+          options:[
+            {value:"yes",label:"Ja", code:"ES",activates:["elec-door"]},
+            {value:"no", label:"Nee",code:"NS",activates:[]},
+          ]
+        },
+        {
+          id:"bo_sound", label:"B&O Sound System",
+          options:[
+            {value:"yes",label:"Ja", code:"BO",activates:["bo-sound"]},
+            {value:"no", label:"Nee",code:"NB",activates:[]},
+          ]
+        },
+        {
+          id:"trimlevel", label:"Trimlevel",
+          options:[
+            {value:"essential",    label:"Essential",    code:"T1",activates:["trim-ess"]},
+            {value:"essential-xl", label:"Essential XL", code:"T2",activates:["trim-esx"]},
+            {value:"comfort",      label:"Comfort",      code:"T3",activates:["trim-com"]},
+            {value:"comfort-xl",   label:"Comfort XL",   code:"T4",activates:["trim-cox"]},
+            {value:"luxury",       label:"Luxury",       code:"T5",activates:["trim-lux"]},
+            {value:"luxury-xl",    label:"Luxury XL",    code:"T6",activates:["trim-lxx"]},
+            {value:"msrt",         label:"Luxe MS-RT",   code:"T7",activates:["trim-msr"]},
+          ]
+        },
+        {
+          id:"glassoort", label:"Glassoort (indien ramen ontbreken)",
+          options:[
+            {value:"normal", label:"Normaal glas",code:"GC",activates:["win-clear"]},
+            {value:"privacy",label:"Privacy glas",code:"GP",activates:["win-privacy"]},
+          ]
+        },
+      ]
+    }
+  }
+};
+
+/* ── Ford Transit ────────────────────────────────────────────────── */
+VEHICLE_CONFIGURATOR["Ford|Transit"] = {
+  "Crew Cab": {
+      vehicleCode: "FT",
+      alwaysActive: ["divider","seating","wiring","hardware"],
+      blockingQuestions: [
+        {
+          id:"drive", label:"Aandrijving",
+          options:[
+            {value:"fwd",label:"Voorwielaandrijving",code:"FW",activates:[]},
+            {value:"rwd",label:"Achterwielaandrijving",code:"RW",activates:[]},
+            {value:"4wd",label:"Vierwielaandrijving",code:"4W",activates:[]},
+          ]
+        },
+        {
+          id:"overhead_shelve", label:"Overhead shelve aanwezig (indien niet aanwezig: configuratie niet mogelijk)",
+          options:[
+            {value:"yes",label:"Ja", code:"OS",activates:["overhead"]},
+            {value:"no", label:"Nee — configuratie niet mogelijk",code:"NOS",activates:[]},
+          ]
+        },
+      ],
+      questions: [
+        {
+          id:"wielbasis", label:"Wielbasis",
+          options:[
+            {value:"l1",label:"L1",code:"L1",activates:["frame-l1"]},
+            {value:"l2",label:"L2",code:"L2",activates:["frame-l2"]},
+            {value:"l3",label:"L3",code:"L3",activates:["frame-l3"]},
+          ]
+        },
+        {
+          id:"hoogte", label:"Hoogte",
+          options:[
+            {value:"h2",label:"H2",code:"H2",activates:["height-h2"]},
+            {value:"h3",label:"H3",code:"H3",activates:["height-h3"]},
+          ]
+        },
+        {
+          id:"schuifdeur", label:"Schuifdeur configuratie",
+          options:[
+            {value:"rs",label:"Rechts (RS)",code:"RS",activates:["door-single"]},
+            {value:"ls",label:"Links (LS)", code:"LS",activates:["door-left"]},
+            {value:"ds",label:"Dubbel (DS)",code:"DS",activates:["door-double"]},
+          ]
+        },
+        {
+          id:"ramen_b", label:"Ramen achter B-stijl",
+          options:[
+            {value:"right", label:"Rechts",code:"WR",activates:["win-right"]},
+            {value:"left",  label:"Links", code:"WL",activates:["win-left"]},
+            {value:"double",label:"Beide", code:"WB",activates:["win-both"]},
+            {value:"none",  label:"Geen",  code:"W0",activates:[]},
+          ]
+        },
+        {
+          id:"separatiewand", label:"Separatiewand aanwezig",
+          options:[
+            {value:"yes",         label:"Ja",          code:"PW",activates:["partition"]},
+            {value:"no",          label:"Nee",         code:"NP",activates:[]},
+            {value:"disassembled",label:"Gedemonteerd",code:"PD",activates:[]},
+          ]
+        },
+        {
+          id:"bekleding", label:"Bekleding voorstoelen",
+          options:[
+            {value:"base-max",   label:"Base Max",       code:"B1",activates:[]},
+            {value:"trend-max",  label:"Trend Max",      code:"B2",activates:[]},
+            {value:"ambiente",   label:"Ambiente",       code:"B3",activates:[]},
+            {value:"trend-lim",  label:"Trend & Limited",code:"B4",activates:[]},
+            {value:"amb-trend",  label:"Ambiente & Trend",code:"B5",activates:[]},
+          ]
+        },
+        {
+          id:"trimlevel", label:"Trimlevel",
+          options:[
+            {value:"essential",label:"Essential",code:"T1",activates:["trim-ess"]},
+          ]
+        },
+        {
+          id:"glassoort", label:"Glassoort (indien ramen ontbreken)",
+          options:[
+            {value:"normal", label:"Normaal glas",code:"GC",activates:["win-clear"]},
+            {value:"privacy",label:"Privacy glas",code:"GP",activates:["win-privacy"]},
+          ]
+        },
+      ]
+    }
+};
+
+/* ── IVECO Daily ─────────────────────────────────────────────────── */
+VEHICLE_CONFIGURATOR["IVECO|Daily"] = {
+  "Crew Cab": {
+    vehicleCode: "ID",
+      alwaysActive: ["divider","seating","wiring","hardware"],
+      blockingQuestions: [
+        {
+          id:"overhead_shelve", label:"Overhead shelve aanwezig (indien niet aanwezig: configuratie niet mogelijk)",
+          options:[
+            {value:"yes",label:"Ja", code:"OS",activates:["overhead"]},
+            {value:"no", label:"Nee — configuratie niet mogelijk",code:"NOS",activates:[]},
+          ]
+        },
+      ],
+      questions: [
+        {
+          id:"wielbasis", label:"Wielbasis (L1 niet beschikbaar)",
+          options:[
+            {value:"l2",  label:"L2",  code:"L2",activates:["frame-l2"]},
+            {value:"l2p", label:"L2+", code:"L2P",activates:["frame-l2p"]},
+            {value:"l3",  label:"L3",  code:"L3",activates:["frame-l3"]},
+            {value:"l3p", label:"L3+", code:"L3P",activates:["frame-l3p"]},
+          ]
+        },
+        {
+          id:"hoogte", label:"Hoogte (alleen H2 beschikbaar)",
+          options:[
+            {value:"h2",label:"H2",code:"H2",activates:["height-h2"]},
+          ]
+        },
+        {
+          id:"schuifdeur", label:"Schuifdeur configuratie",
+          options:[
+            {value:"rs",label:"Rechts (RS)",code:"RS",activates:["door-single"]},
+            {value:"ls",label:"Links (LS)", code:"LS",activates:["door-left"]},
+            {value:"ds",label:"Dubbel (DS)",code:"DS",activates:["door-double"]},
+          ]
+        },
+        {
+          id:"ramen_b", label:"Ramen achter B-stijl",
+          options:[
+            {value:"right", label:"Rechts",code:"WR",activates:["win-right"]},
+            {value:"left",  label:"Links", code:"WL",activates:["win-left"]},
+            {value:"double",label:"Beide", code:"WB",activates:["win-both"]},
+            {value:"none",  label:"Geen",  code:"W0",activates:[]},
+          ]
+        },
+        {
+          id:"separatiewand", label:"Separatiewand aanwezig",
+          options:[
+            {value:"yes",         label:"Ja",          code:"PW",activates:["partition"]},
+            {value:"no",          label:"Nee",         code:"NP",activates:[]},
+            {value:"disassembled",label:"Gedemonteerd",code:"PD",activates:[]},
+          ]
+        },
+        {
+          id:"bekleding", label:"Bekleding voorstoelen",
+          options:[
+            {value:"nettuno",label:"Nettuno Nero",code:"NN",activates:[]},
+            {value:"standard",label:"Standard",   code:"ST",activates:[]},
+          ]
+        },
+        {
+          id:"sliding_win", label:"Zijn de fabrieksramen schuiframen?",
+          options:[
+            {value:"yes",label:"Ja", code:"SW",activates:["sliding-win"]},
+            {value:"no", label:"Nee",code:"NW",activates:[]},
+          ]
+        },
+        {
+          id:"display_2024", label:"Voertuig vanaf 2024 met 7/10-inch display?",
+          options:[
+            {value:"yes",label:"Ja", code:"D24",activates:["display-new"]},
+            {value:"no", label:"Nee",code:"ND", activates:[]},
+          ]
+        },
+        {
+          id:"trimlevel", label:"Trimlevel",
+          options:[
+            {value:"comfort",label:"Comfort",code:"TC",activates:["trim-com"]},
+          ]
+        },
+        {
+          id:"seating", label:"Zitplaatsen",
+          options:[
+            {value:"3",label:"3-persoons",    code:"S3",activates:["seat-3"]},
+            {value:"4",label:"4-persoons",    code:"S4",activates:["seat-4"]},
+          ]
+        },
+        {
+          id:"glassoort", label:"Glassoort (indien ramen ontbreken)",
+          options:[
+            {value:"normal", label:"Normaal glas",code:"GC",activates:["win-clear"]},
+            {value:"privacy",label:"Privacy glas",code:"GP",activates:["win-privacy"]},
+          ]
+        },
+      ]
+    }
+};
+
+/* ── MAN TGE ─────────────────────────────────────────────────────── */
+VEHICLE_CONFIGURATOR["MAN|TGE"] = {
+  "Crew Cab": {
+    vehicleCode: "MT",
+      alwaysActive: ["divider","seating","wiring","hardware"],
+      blockingQuestions: [
+        {
+          id:"vaporizer", label:"Verdamper aanwezig (indien JA: configuratie niet mogelijk)",
+          options:[
+            {value:"yes",label:"Ja — configuratie niet mogelijk",code:"VP",activates:[]},
+            {value:"no", label:"Nee",code:"NV",activates:[]},
+          ]
+        },
+      ],
+      questions: [
+        {
+          id:"wielbasis", label:"Wielbasis",
+          options:[
+            {value:"l3",label:"L3",code:"L3",activates:["frame-l3"]},
+            {value:"l4",label:"L4",code:"L4",activates:["frame-l4"]},
+            {value:"l5",label:"L5",code:"L5",activates:["frame-l5"]},
+          ]
+        },
+        {
+          id:"hoogte", label:"Hoogte (H4 niet beschikbaar; L5+H2 niet mogelijk)",
+          options:[
+            {value:"h2",label:"H2",code:"H2",activates:["height-h2"]},
+            {value:"h3",label:"H3",code:"H3",activates:["height-h3"]},
+          ]
+        },
+        {
+          id:"schuifdeur", label:"Schuifdeur configuratie",
+          options:[
+            {value:"rs",label:"Rechts (RS)",code:"RS",activates:["door-single"]},
+            {value:"ls",label:"Links (LS)", code:"LS",activates:["door-left"]},
+            {value:"ds",label:"Dubbel (DS)",code:"DS",activates:["door-double"]},
+          ]
+        },
+        {
+          id:"ramen_b", label:"Ramen achter B-stijl",
+          options:[
+            {value:"right", label:"Rechts",code:"WR",activates:["win-right"]},
+            {value:"left",  label:"Links", code:"WL",activates:["win-left"]},
+            {value:"double",label:"Beide", code:"WB",activates:["win-both"]},
+            {value:"none",  label:"Geen",  code:"W0",activates:[]},
+          ]
+        },
+        {
+          id:"separatiewand", label:"Separatiewand aanwezig",
+          options:[
+            {value:"yes",         label:"Ja",          code:"PW",activates:["partition"]},
+            {value:"no",          label:"Nee",         code:"NP",activates:[]},
+            {value:"disassembled",label:"Gedemonteerd",code:"PD",activates:[]},
+          ]
+        },
+        {
+          id:"bekleding", label:"Bekleding voorstoelen",
+          options:[
+            {value:"leatherette",label:"Leatherette",code:"LE",activates:[]},
+            {value:"toronto",    label:"Toronto",    code:"TO",activates:[]},
+            {value:"robust",     label:"Robust",     code:"RO",activates:[]},
+          ]
+        },
+        {
+          id:"drive", label:"Aandrijving",
+          options:[
+            {value:"efwd",label:"Elektronisch voorwiel",code:"EF",activates:[]},
+            {value:"fwd", label:"Voorwielaandrijving",  code:"FW",activates:[]},
+            {value:"rwd", label:"Achterwielaandrijving",code:"RW",activates:[]},
+            {value:"4wd", label:"Vierwielaandrijving",  code:"4W",activates:[]},
+          ]
+        },
+        {
+          id:"sliding_win", label:"Zijn de fabrieksramen schuiframen?",
+          options:[
+            {value:"yes",label:"Ja", code:"SW",activates:["sliding-win"]},
+            {value:"no", label:"Nee",code:"NW",activates:[]},
+          ]
+        },
+        {
+          id:"sidewall", label:"Zijwandafwerking",
+          options:[
+            {value:"yes",label:"Ja", code:"SF",activates:["sidewall"]},
+            {value:"no", label:"Nee",code:"NS",activates:[]},
+          ]
+        },
+        {
+          id:"load_lighting", label:"Laadruimteverlichting",
+          options:[
+            {value:"yes",label:"Ja", code:"LL",activates:["load-light"]},
+            {value:"no", label:"Nee",code:"NL",activates:[]},
+          ]
+        },
+        {
+          id:"trimlevel", label:"Trimlevel",
+          options:[
+            {value:"comfort",label:"Comfort",code:"TC",activates:["trim-com"]},
+            {value:"luxury", label:"Luxury", code:"TL",activates:["trim-lux"]},
+          ]
+        },
+        {
+          id:"seating", label:"Zitplaatsen",
+          options:[
+            {value:"3",         label:"3-persoons",          code:"S3",activates:["seat-3"]},
+            {value:"4",         label:"4-persoons",          code:"S4",activates:["seat-4"]},
+            {value:"3-armrests",label:"3 persoons met armst.",code:"S3A",activates:["seat-arm"]},
+          ]
+        },
+        {
+          id:"glassoort", label:"Glassoort (indien ramen ontbreken)",
+          options:[
+            {value:"normal", label:"Normaal glas",code:"GC",activates:["win-clear"]},
+            {value:"privacy",label:"Privacy glas",code:"GP",activates:["win-privacy"]},
+          ]
+        },
+      ]
+    }
+};
+
+/* ── Mercedes-Benz Sprinter ──────────────────────────────────────── */
+VEHICLE_CONFIGURATOR["Mercedes-Benz|Sprinter"] = {
+  "Crew Cab": {
+    vehicleCode: "SP",
+      alwaysActive: ["divider","seating","wiring","hardware"],
+      blockingQuestions: [
+        {
+          id:"drive", label:"Aandrijving",
+          options:[
+            {value:"rwd",label:"Achterwielaandrijving",code:"RW",activates:[]},
+            {value:"4wd",label:"Vierwielaandrijving",  code:"4W",activates:[]},
+          ]
+        },
+        {
+          id:"t01_rail", label:"Is optiecode T01 – versterking bovenste rail schuifdeur aanwezig?",
+          options:[
+            {value:"yes",label:"Ja", code:"T1",activates:["rail-reinf"]},
+            {value:"no", label:"Nee",code:"NT",activates:[]},
+          ]
+        },
+      ],
+      questions: [
+        {
+          id:"wielbasis", label:"Wielbasis",
+          options:[
+            {value:"l2",label:"L2",code:"L2",activates:["frame-l2"]},
+            {value:"l3",label:"L3",code:"L3",activates:["frame-l3"]},
+            {value:"l4",label:"L4",code:"L4",activates:["frame-l4"]},
+          ]
+        },
+        {
+          id:"hoogte", label:"Hoogte",
+          options:[
+            {value:"h1",label:"H1",code:"H1",activates:["height-h1"]},
+            {value:"h2",label:"H2",code:"H2",activates:["height-h2"]},
+            {value:"h3",label:"H3",code:"H3",activates:["height-h3"]},
+          ]
+        },
+        {
+          id:"schuifdeur", label:"Schuifdeur configuratie",
+          options:[
+            {value:"rs",label:"Rechts (RS)",code:"RS",activates:["door-single"]},
+            {value:"ls",label:"Links (LS)", code:"LS",activates:["door-left"]},
+            {value:"ds",label:"Dubbel (DS)",code:"DS",activates:["door-double"]},
+          ]
+        },
+        {
+          id:"ramen_b", label:"Ramen achter B-stijl",
+          options:[
+            {value:"right", label:"Rechts",code:"WR",activates:["win-right"]},
+            {value:"left",  label:"Links", code:"WL",activates:["win-left"]},
+            {value:"double",label:"Beide", code:"WB",activates:["win-both"]},
+            {value:"none",  label:"Geen",  code:"W0",activates:[]},
+          ]
+        },
+        {
+          id:"separatiewand", label:"Separatiewand aanwezig",
+          options:[
+            {value:"yes",         label:"Ja",          code:"PW",activates:["partition"]},
+            {value:"no",          label:"Nee",         code:"NP",activates:[]},
+            {value:"disassembled",label:"Gedemonteerd",code:"PD",activates:[]},
+          ]
+        },
+        {
+          id:"bekleding", label:"Bekleding voorstoelen",
+          options:[
+            {value:"caluma",  label:"Caluma Black", code:"CA",activates:[]},
+            {value:"artico",  label:"Artico Black", code:"AR",activates:[]},
+            {value:"maturin", label:"Maturin Black",code:"MA",activates:[]},
+          ]
+        },
+        {
+          id:"overhead_shelve", label:"Overhead shelve",
+          options:[
+            {value:"yes",label:"Ja", code:"OS",activates:["overhead"]},
+            {value:"no", label:"Nee",code:"NS",activates:[]},
+          ]
+        },
+        {
+          id:"trimlevel", label:"Trimlevel",
+          options:[
+            {value:"standard",label:"Comfort Standard",code:"T1",activates:["trim-std"]},
+            {value:"plus",    label:"Comfort Plus",   code:"T2",activates:["trim-pls"]},
+            {value:"premium", label:"Comfort Premium",code:"T3",activates:["trim-prm"]},
+          ]
+        },
+        {
+          id:"seating", label:"Zitplaatsen",
+          options:[
+            {value:"3",         label:"3-persoons",          code:"S3",activates:["seat-3"]},
+            {value:"3-fold",    label:"3 persoons klapstoel", code:"S3F",activates:["seat-fold"]},
+            {value:"4",         label:"4-persoons",          code:"S4",activates:["seat-4"]},
+          ]
+        },
+        {
+          id:"carpet_mat", label:"Vloermat",
+          options:[
+            {value:"yes",label:"Ja", code:"CM",activates:["carpet"]},
+            {value:"no", label:"Nee",code:"NC",activates:[]},
+          ]
+        },
+        {
+          id:"partition_window", label:"Raam in separatiewand",
+          options:[
+            {value:"yes",label:"Ja", code:"PW",activates:["part-win"]},
+            {value:"no", label:"Nee",code:"NW",activates:[]},
+          ]
+        },
+        {
+          id:"glassoort", label:"Glassoort (indien ramen ontbreken)",
+          options:[
+            {value:"normal", label:"Normaal glas",code:"GC",activates:["win-clear"]},
+            {value:"privacy",label:"Privacy glas",code:"GP",activates:["win-privacy"]},
+          ]
+        },
+      ]
+    }
+};
+
+/* ── Renault Trafic ──────────────────────────────────────────────── */
+VEHICLE_CONFIGURATOR["Renault|Trafic"] = {
+  "Crew Cab": {
+    vehicleCode: "RT",
+      alwaysActive: ["divider","seating","wiring","hardware"],
+      blockingQuestions: [
+        {
+          id:"rear_side", label:"Achterzijde",
+          options:[
+            {value:"tailgate",   label:"Achterklep",  code:"TG",activates:[]},
+            {value:"rear_doors", label:"Achterdeuren",code:"RD",activates:[]},
+          ]
+        },
+      ],
+      questions: [
+        {
+          id:"wielbasis", label:"Wielbasis",
+          options:[
+            {value:"l1",label:"L1",code:"L1",activates:["frame-l1"]},
+            {value:"l2",label:"L2",code:"L2",activates:["frame-l2"]},
+          ]
+        },
+        {
+          id:"hoogte", label:"Hoogte",
+          options:[
+            {value:"h1",label:"H1",code:"H1",activates:["height-h1"]},
+          ]
+        },
+        {
+          id:"schuifdeur", label:"Schuifdeur configuratie",
+          options:[
+            {value:"rs",label:"Rechts (RS)",code:"RS",activates:["door-single"]},
+            {value:"ls",label:"Links (LS)", code:"LS",activates:["door-left"]},
+            {value:"ds",label:"Dubbel (DS)",code:"DS",activates:["door-double"]},
+          ]
+        },
+        {
+          id:"ramen_b", label:"Ramen achter B-stijl",
+          options:[
+            {value:"right", label:"Rechts",code:"WR",activates:["win-right"]},
+            {value:"left",  label:"Links", code:"WL",activates:["win-left"]},
+            {value:"double",label:"Beide", code:"WB",activates:["win-both"]},
+            {value:"none",  label:"Geen",  code:"W0",activates:[]},
+          ]
+        },
+        {
+          id:"separatiewand", label:"Separatiewand aanwezig",
+          options:[
+            {value:"yes",         label:"Ja",          code:"PW",activates:["partition"]},
+            {value:"no",          label:"Nee",         code:"NP",activates:[]},
+            {value:"disassembled",label:"Gedemonteerd",code:"PD",activates:[]},
+          ]
+        },
+        {
+          id:"eerste_zitrij", label:"Eerste zitrij",
+          options:[
+            {value:"voorstoel",label:"Voorstoel",code:"VS",activates:[]},
+            {value:"bank",     label:"Bank",     code:"BK",activates:["seat-bench"]},
+          ]
+        },
+        {
+          id:"bekleding", label:"Bekleding voorstoelen",
+          options:[
+            {value:"kompo",     label:"Kompo",     code:"KO",activates:[]},
+            {value:"black-java",label:"Black Java",code:"BJ",activates:[]},
+          ]
+        },
+        {
+          id:"trimlevel", label:"Trimlevel",
+          options:[
+            {value:"base",   label:"Base",   code:"T1",activates:["trim-base"]},
+            {value:"comfort",label:"Comfort",code:"T2",activates:["trim-com"]},
+          ]
+        },
+        {
+          id:"seating", label:"Zitplaatsen",
+          options:[
+            {value:"3",label:"3-persoons",code:"S3",activates:["seat-3"]},
+          ]
+        },
+        {
+          id:"protection_cover", label:"Beschermhoes",
+          options:[
+            {value:"yes",label:"Ja", code:"PC",activates:["prot-cover"]},
+            {value:"no", label:"Nee",code:"NP",activates:[]},
+          ]
+        },
+        {
+          id:"glassoort", label:"Glassoort (indien ramen ontbreken)",
+          options:[
+            {value:"normal", label:"Normaal glas",code:"GC",activates:["win-clear"]},
+            {value:"privacy",label:"Privacy glas",code:"GP",activates:["win-privacy"]},
+          ]
+        },
+      ]
+    }
+};
+
+/* ── Renault Trafic E-Tech – same as Trafic ──────────────────────── */
+VEHICLE_CONFIGURATOR["Renault|Trafic E-Tech"] = {
+  "Crew Cab": null  // will be set below via Object.assign
+};
+
+/* ── Volkswagen Transporter ──────────────────────────────────────── */
+VEHICLE_CONFIGURATOR["Volkswagen|Transporter"] = {
+  "Crew Cab": {
+    vehicleCode: "VT",
+      alwaysActive: ["divider","seating","wiring","hardware"],
+      blockingQuestions: [],
+      questions: [
+        {
+          id:"wielbasis", label:"Wielbasis",
+          options:[
+            {value:"l1",label:"L1",code:"L1",activates:["frame-l1"]},
+            {value:"l2",label:"L2",code:"L2",activates:["frame-l2"]},
+          ]
+        },
+        {
+          id:"hoogte", label:"Hoogte",
+          options:[
+            {value:"h1",label:"H1",code:"H1",activates:["height-h1"]},
+          ]
+        },
+        {
+          id:"schuifdeur", label:"Schuifdeur configuratie",
+          options:[
+            {value:"rs",label:"Rechts (RS)",code:"RS",activates:["door-single"]},
+            {value:"ls",label:"Links (LS)", code:"LS",activates:["door-left"]},
+            {value:"ds",label:"Dubbel (DS)",code:"DS",activates:["door-double"]},
+          ]
+        },
+        {
+          id:"ramen_b", label:"Ramen achter B-stijl",
+          options:[
+            {value:"right", label:"Rechts",code:"WR",activates:["win-right"]},
+            {value:"left",  label:"Links", code:"WL",activates:["win-left"]},
+            {value:"double",label:"Beide", code:"WB",activates:["win-both"]},
+            {value:"none",  label:"Geen",  code:"W0",activates:[]},
+          ]
+        },
+        {
+          id:"separatiewand", label:"Separatiewand aanwezig",
+          options:[
+            {value:"yes",         label:"Ja",          code:"PW",activates:["partition"]},
+            {value:"no",          label:"Nee",         code:"NP",activates:[]},
+            {value:"disassembled",label:"Gedemonteerd",code:"PD",activates:[]},
+          ]
+        },
+        {
+          id:"eerste_zitrij", label:"Eerste zitrij",
+          options:[
+            {value:"voorstoel",label:"Voorstoel",code:"VS",activates:[]},
+            {value:"bank",     label:"Bank",     code:"BK",activates:["seat-bench"]},
+          ]
+        },
+        {
+          id:"bekleding", label:"Bekleding voorstoelen",
+          options:[
+            {value:"hexagon",    label:"Hexagon",     code:"HX",activates:[]},
+            {value:"striped",    label:"Striped",     code:"ST",activates:[]},
+            {value:"fabric-life",label:"Fabric Life", code:"FL",activates:[]},
+            {value:"skai-style", label:"SKAI Style",  code:"SS",activates:[]},
+            {value:"skai-robust",label:"SKAI Robust", code:"SR",activates:[]},
+            {value:"pan-am",     label:"PAN Americana",code:"PA",activates:[]},
+          ]
+        },
+        {
+          id:"elect_doors", label:"Elektrische en/of softclose deuren",
+          options:[
+            {value:"yes",label:"Ja", code:"ED",activates:["elec-door"]},
+            {value:"no", label:"Nee",code:"ND",activates:[]},
+          ]
+        },
+        {
+          id:"inlays", label:"Inlays",
+          options:[
+            {value:"base",    label:"Base",    code:"IB",activates:[]},
+            {value:"diamond", label:"Diamond", code:"ID",activates:[]},
+            {value:"brushed", label:"Brushed", code:"IU",activates:[]},
+          ]
+        },
+        {
+          id:"hk_sound", label:"H&K Sound System",
+          options:[
+            {value:"yes",label:"Ja", code:"HK",activates:["hk-sound"]},
+            {value:"no", label:"Nee",code:"NH",activates:[]},
+          ]
+        },
+        {
+          id:"trimlevel", label:"Trimlevel",
+          options:[
+            {value:"base",label:"Base",code:"T1",activates:["trim-base"]},
+            {value:"luxe",label:"Luxe",code:"T2",activates:["trim-lux"]},
+          ]
+        },
+        {
+          id:"seating", label:"Zitplaatsen",
+          options:[
+            {value:"3",label:"3-persoons",code:"S3",activates:["seat-3"]},
+          ]
+        },
+        {
+          id:"glassoort", label:"Glassoort (indien ramen ontbreken)",
+          options:[
+            {value:"normal", label:"Normaal glas",code:"GC",activates:["win-clear"]},
+            {value:"privacy",label:"Privacy glas",code:"GP",activates:["win-privacy"]},
+          ]
+        },
+      ]
+    }
+};
+
+/* ── Nissan Primastar ────────────────────────────────────────────── */
+VEHICLE_CONFIGURATOR["Nissan|Primastar"] = {
+  "Crew Cab": {
+    vehicleCode: "NP",
+      alwaysActive: ["divider","seating","wiring","hardware"],
+      blockingQuestions: [
+        {
+          id:"rear_side", label:"Achterzijde",
+          options:[
+            {value:"tailgate",   label:"Achterklep",  code:"TG",activates:[]},
+            {value:"rear_doors", label:"Achterdeuren",code:"RD",activates:[]},
+          ]
+        },
+      ],
+      questions: [
+        {
+          id:"wielbasis", label:"Wielbasis",
+          options:[
+            {value:"l1",label:"L1",code:"L1",activates:["frame-l1"]},
+            {value:"l2",label:"L2",code:"L2",activates:["frame-l2"]},
+          ]
+        },
+        {
+          id:"hoogte", label:"Hoogte",
+          options:[
+            {value:"h1",label:"H1",code:"H1",activates:["height-h1"]},
+          ]
+        },
+        {
+          id:"schuifdeur", label:"Schuifdeur configuratie",
+          options:[
+            {value:"rs",label:"Rechts (RS)",code:"RS",activates:["door-single"]},
+            {value:"ls",label:"Links (LS)", code:"LS",activates:["door-left"]},
+            {value:"ds",label:"Dubbel (DS)",code:"DS",activates:["door-double"]},
+          ]
+        },
+        {
+          id:"ramen_b", label:"Ramen achter B-stijl",
+          options:[
+            {value:"right", label:"Rechts",code:"WR",activates:["win-right"]},
+            {value:"left",  label:"Links", code:"WL",activates:["win-left"]},
+            {value:"double",label:"Beide", code:"WB",activates:["win-both"]},
+            {value:"none",  label:"Geen",  code:"W0",activates:[]},
+          ]
+        },
+        {
+          id:"separatiewand", label:"Separatiewand aanwezig",
+          options:[
+            {value:"yes",         label:"Ja",          code:"PW",activates:["partition"]},
+            {value:"no",          label:"Nee",         code:"NP",activates:[]},
+            {value:"disassembled",label:"Gedemonteerd",code:"PD",activates:[]},
+          ]
+        },
+        {
+          id:"eerste_zitrij", label:"Eerste zitrij",
+          options:[
+            {value:"voorstoel",label:"Voorstoel",code:"VS",activates:[]},
+            {value:"bank",     label:"Bank",     code:"BK",activates:["seat-bench"]},
+          ]
+        },
+        {
+          id:"bekleding", label:"Bekleding voorstoelen",
+          options:[
+            {value:"kompo",label:"Kompo",code:"KO",activates:[]},
+            {value:"java", label:"Java", code:"JV",activates:[]},
+          ]
+        },
+        {
+          id:"trimlevel", label:"Trimlevel",
+          options:[
+            {value:"base",   label:"Base",   code:"T1",activates:["trim-base"]},
+            {value:"comfort",label:"Comfort",code:"T2",activates:["trim-com"]},
+          ]
+        },
+        {
+          id:"seating", label:"Zitplaatsen",
+          options:[
+            {value:"3",label:"3-persoons",code:"S3",activates:["seat-3"]},
+          ]
+        },
+        {
+          id:"protection_cover", label:"Beschermhoes",
+          options:[
+            {value:"yes",label:"Ja", code:"PC",activates:["prot-cover"]},
+            {value:"no", label:"Nee",code:"NP",activates:[]},
+          ]
+        },
+        {
+          id:"glassoort", label:"Glassoort (indien ramen ontbreken)",
+          options:[
+            {value:"normal", label:"Normaal glas",code:"GC",activates:["win-clear"]},
+            {value:"privacy",label:"Privacy glas",code:"GP",activates:["win-privacy"]},
+          ]
+        },
+      ]
+    }
+  },
+};
+
+// Renault Trafic E-Tech shares Trafic configurator
+VEHICLE_CONFIGURATOR["Renault|Trafic E-Tech"]["Crew Cab"] =
+  Object.assign({}, VEHICLE_CONFIGURATOR["Renault|Trafic"]["Crew Cab"], { vehicleCode: "RTE" });
+
 /* ── Vehicle configurator lookup ─────────────────────────────────────── */
 function getVehicleConfigurator(product) {
   const vKey = `${product.brand}|${product.van}`;
@@ -882,14 +1742,14 @@ const MARKET_DATA = {
       NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
       DE:{active:true,homologation:"CoC"},FR:{active:true,homologation:"CoC"},
       ES:{active:false,homologation:"CoC"},GB:{active:true,homologation:"CoC"},
-      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GWC"},
       DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
-      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GWC"},SE:{active:false,homologation:"CoC"},
       FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
-      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
-      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
-      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
-      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+      HU:{active:false,homologation:"GWC"},EE:{active:false,homologation:"GWC"},
+      LT:{active:false,homologation:"GWC"},LV:{active:false,homologation:"GWC"},
+      RO:{active:false,homologation:"GWC"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GWC"},BG:{active:false,homologation:"GWC"},
     },
   },
   "Citroën|Jumpy|Flex Cab|OEM": {
@@ -907,14 +1767,14 @@ const MARKET_DATA = {
       NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
       DE:{active:true,homologation:"CoC"},FR:{active:true,homologation:"CoC"},
       ES:{active:false,homologation:"CoC"},GB:{active:false,homologation:"CoC"},
-      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GWC"},
       DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
-      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GWC"},SE:{active:false,homologation:"CoC"},
       FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
-      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
-      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
-      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
-      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+      HU:{active:false,homologation:"GWC"},EE:{active:false,homologation:"GWC"},
+      LT:{active:false,homologation:"GWC"},LV:{active:false,homologation:"GWC"},
+      RO:{active:false,homologation:"GWC"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GWC"},BG:{active:false,homologation:"GWC"},
     },
   },
 
@@ -926,14 +1786,14 @@ const MARKET_DATA = {
       NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
       DE:{active:false,homologation:"CoC"},FR:{active:false,homologation:"CoC"},
       ES:{active:false,homologation:"CoC"},GB:{active:false,homologation:"CoC"},
-      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GWC"},
       DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
-      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GWC"},SE:{active:false,homologation:"CoC"},
       FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
-      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
-      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
-      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
-      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+      HU:{active:false,homologation:"GWC"},EE:{active:false,homologation:"GWC"},
+      LT:{active:false,homologation:"GWC"},LV:{active:false,homologation:"GWC"},
+      RO:{active:false,homologation:"GWC"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GWC"},BG:{active:false,homologation:"GWC"},
     },
   },
 
@@ -965,14 +1825,14 @@ const MARKET_DATA = {
       NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
       DE:{active:true,homologation:"CoC"},FR:{active:true,homologation:"CoC"},
       ES:{active:false,homologation:"CoC"},GB:{active:true,homologation:"CoC"},
-      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GWC"},
       DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
-      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GWC"},SE:{active:false,homologation:"CoC"},
       FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
-      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
-      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
-      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
-      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+      HU:{active:false,homologation:"GWC"},EE:{active:false,homologation:"GWC"},
+      LT:{active:false,homologation:"GWC"},LV:{active:false,homologation:"GWC"},
+      RO:{active:false,homologation:"GWC"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GWC"},BG:{active:false,homologation:"GWC"},
     },
   },
 
@@ -984,14 +1844,14 @@ const MARKET_DATA = {
       NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
       DE:{active:true,homologation:"CoC"},FR:{active:false,homologation:"CoC"},
       ES:{active:false,homologation:"CoC"},GB:{active:false,homologation:"CoC"},
-      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GWC"},
       DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
-      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GWC"},SE:{active:false,homologation:"CoC"},
       FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
-      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
-      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
-      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
-      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+      HU:{active:false,homologation:"GWC"},EE:{active:false,homologation:"GWC"},
+      LT:{active:false,homologation:"GWC"},LV:{active:false,homologation:"GWC"},
+      RO:{active:false,homologation:"GWC"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GWC"},BG:{active:false,homologation:"GWC"},
     },
   },
 
@@ -1003,14 +1863,14 @@ const MARKET_DATA = {
       NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
       DE:{active:true,homologation:"CoC"},FR:{active:false,homologation:"CoC"},
       ES:{active:false,homologation:"CoC"},GB:{active:true,homologation:"CoC"},
-      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GWC"},
       DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
-      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GWC"},SE:{active:false,homologation:"CoC"},
       FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
-      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
-      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
-      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
-      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+      HU:{active:false,homologation:"GWC"},EE:{active:false,homologation:"GWC"},
+      LT:{active:false,homologation:"GWC"},LV:{active:false,homologation:"GWC"},
+      RO:{active:false,homologation:"GWC"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GWC"},BG:{active:false,homologation:"GWC"},
     },
   },
   "Volkswagen|Crafter|Crew Cab|After-fit": {
@@ -1020,14 +1880,32 @@ const MARKET_DATA = {
       NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
       DE:{active:true,homologation:"CoC"},FR:{active:false,homologation:"CoC"},
       ES:{active:false,homologation:"CoC"},GB:{active:false,homologation:"CoC"},
-      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GWC"},
       DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
-      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GWC"},SE:{active:false,homologation:"CoC"},
       FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
-      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
-      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
-      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
-      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+      HU:{active:false,homologation:"GWC"},EE:{active:false,homologation:"GWC"},
+      LT:{active:false,homologation:"GWC"},LV:{active:false,homologation:"GWC"},
+      RO:{active:false,homologation:"GWC"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GWC"},BG:{active:false,homologation:"GWC"},
+    },
+  },
+
+  /* ── Nissan Primastar ────────────────────────────────────────────── */
+  "Nissan|Primastar|Crew Cab|After-fit": {
+    introYear: 2022,
+    countryData: {
+      NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
+      DE:{active:true,homologation:"CoC"},FR:{active:false,homologation:"CoC"},
+      ES:{active:false,homologation:"CoC"},GB:{active:false,homologation:"CoC"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GWC"},
+      DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GWC"},SE:{active:false,homologation:"CoC"},
+      FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
+      HU:{active:false,homologation:"GWC"},EE:{active:false,homologation:"GWC"},
+      LT:{active:false,homologation:"GWC"},LV:{active:false,homologation:"GWC"},
+      RO:{active:false,homologation:"GWC"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GWC"},BG:{active:false,homologation:"GWC"},
     },
   },
 
@@ -1044,14 +1922,14 @@ const MARKET_DATA = {
       NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
       DE:{active:true,homologation:"CoC"},FR:{active:true,homologation:"CoC"},
       ES:{active:false,homologation:"CoC"},GB:{active:true,homologation:"CoC"},
-      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GWC"},
       DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
-      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GWC"},SE:{active:false,homologation:"CoC"},
       FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
-      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
-      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
-      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
-      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+      HU:{active:false,homologation:"GWC"},EE:{active:false,homologation:"GWC"},
+      LT:{active:false,homologation:"GWC"},LV:{active:false,homologation:"GWC"},
+      RO:{active:false,homologation:"GWC"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GWC"},BG:{active:false,homologation:"GWC"},
     },
   },
   "_|Flex Cab|OEM": {
@@ -1066,14 +1944,14 @@ const MARKET_DATA = {
       NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
       DE:{active:true,homologation:"CoC"},FR:{active:true,homologation:"CoC"},
       ES:{active:false,homologation:"CoC"},GB:{active:false,homologation:"CoC"},
-      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GWC"},
       DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
-      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GWC"},SE:{active:false,homologation:"CoC"},
       FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
-      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
-      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
-      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
-      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+      HU:{active:false,homologation:"GWC"},EE:{active:false,homologation:"GWC"},
+      LT:{active:false,homologation:"GWC"},LV:{active:false,homologation:"GWC"},
+      RO:{active:false,homologation:"GWC"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GWC"},BG:{active:false,homologation:"GWC"},
     },
   },
   "_|Partition Wall|After-fit": {
@@ -1083,14 +1961,14 @@ const MARKET_DATA = {
       NL:{active:true,homologation:"CoC"},BE:{active:true,homologation:"CoC"},
       DE:{active:true,homologation:"CoC"},FR:{active:true,homologation:"CoC"},
       ES:{active:true,homologation:"CoC"},GB:{active:true,homologation:"CoC"},
-      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GSW"},
+      IT:{active:false,homologation:"CoC"},CZ:{active:false,homologation:"GWC"},
       DK:{active:false,homologation:"CoC"},AT:{active:false,homologation:"CoC"},
-      PL:{active:false,homologation:"GSW"},SE:{active:false,homologation:"CoC"},
+      PL:{active:false,homologation:"GWC"},SE:{active:false,homologation:"CoC"},
       FI:{active:false,homologation:"CoC"},PT:{active:false,homologation:"CoC"},
-      HU:{active:false,homologation:"GSW"},EE:{active:false,homologation:"GSW"},
-      LT:{active:false,homologation:"GSW"},LV:{active:false,homologation:"GSW"},
-      RO:{active:false,homologation:"GSW"},SI:{active:false,homologation:"CoC"},
-      SK:{active:false,homologation:"GSW"},BG:{active:false,homologation:"GSW"},
+      HU:{active:false,homologation:"GWC"},EE:{active:false,homologation:"GWC"},
+      LT:{active:false,homologation:"GWC"},LV:{active:false,homologation:"GWC"},
+      RO:{active:false,homologation:"GWC"},SI:{active:false,homologation:"CoC"},
+      SK:{active:false,homologation:"GWC"},BG:{active:false,homologation:"GWC"},
     },
   },
 };
