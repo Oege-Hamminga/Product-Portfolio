@@ -208,22 +208,38 @@ function unlockAndPopulate(product) {
    MARKET PRESENCE
 ═══════════════════════════════════════════════════════════════════════ */
 function populateMarket(product) {
-  const md = getMarketData(product);
   const el = document.getElementById("market-content");
-
+  if (!el) return;
+  const md = getMarketData(product);
   if (!md) {
     el.innerHTML = `<p class="mkt-empty-msg">No market data available for this product.</p>`;
     return;
   }
 
   const isOEM = product.fitment === "OEM";
+  const MKT_KEY = `snoeks_mkt_${product.brand}|${product.van}|${product.type}|${product.fitment}`;
 
   if (isOEM) {
-    /* ── OEM: intro year + shipping destination map ── */
+    // ── OEM: intro year + image map with plant pinpoints ──
     const destinations = md.shippingDestinations || [];
+
+    // Decide Europe Map vs World Map:
+    // Use World map if any destination is outside Europe bounds (lat<30 or lat>72 or lng<-15 or lng>50)
+    const useWorld = destinations.some(d => d.lat < 30 || d.lat > 72 || d.lng < -15 || d.lng > 50);
+    const mapImg = useWorld ? "World map.png" : "Europe Map.png";
+
+    // Coordinate formulas:
+    // Europe Map: x=(lng+25)/70*100, y=(71-lat)/37*100
+    // World Map (Mercator): x=(lng+180)/360*100, y=(90-lat)/180*100
     const destDots = destinations.map(d => {
-      const x = ((d.lng + 180) / 360 * 100).toFixed(1);
-      const y = ((90 - d.lat) / 180 * 100).toFixed(1);
+      let x, y;
+      if (useWorld) {
+        x = ((d.lng + 180) / 360 * 100).toFixed(1);
+        y = ((90 - d.lat) / 180 * 100).toFixed(1);
+      } else {
+        x = ((d.lng + 25) / 70 * 100).toFixed(1);
+        y = ((71 - d.lat) / 37 * 100).toFixed(1);
+      }
       return `<div class="map-dot" style="left:${x}%;top:${y}%" title="${d.country}">
         <span class="map-dot-ring"></span>
         <span class="map-dot-label">${d.country}</span>
@@ -237,49 +253,95 @@ function populateMarket(product) {
           <div class="mkt-stat-value">${md.introYear || "—"}</div>
         </div>
         <div class="mkt-stat-card">
-          <div class="mkt-stat-label">Fitment</div>
+          <div class="mkt-stat-label">Customer</div>
           <div class="mkt-stat-value">OEM — via vehicle manufacturer</div>
         </div>
         <div class="mkt-stat-card">
-          <div class="mkt-stat-label">Shipping Destinations</div>
+          <div class="mkt-stat-label">Plant(s)</div>
           <div class="mkt-stat-value">${destinations.length > 0 ? destinations.map(d=>d.country).join(", ") : "—"}</div>
         </div>
       </div>
       <div class="mkt-section">
         <div class="mkt-section-header">
-          <div class="mkt-section-title">Shipping Destinations</div>
-          <div class="mkt-section-sub">Countries where OEM-configured vehicles are delivered</div>
+          <div class="mkt-section-title">Plant(s)</div>
+          <div class="mkt-section-sub">Manufacturing plants where OEM-configured vehicles are built</div>
         </div>
-        <div class="world-map-frame" id="world-map-frame">
-          ${destDots || `<span class="mkt-empty" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">No shipping destinations defined</span>`}
+        <div class="map-img-frame">
+          <img src="${mapImg}" alt="Plant locations map" class="map-bg-img" />
+          ${destDots || `<span class="mkt-empty map-empty">No plant locations defined</span>`}
         </div>
       </div>
     `;
   } else {
-    /* ── After-fit: intro year + 22-country homologation table ── */
+    // ── After-fit: intro year + EU map + editable 22-country table ──
     const ALL_COUNTRIES = [
-      {code:"NL",name:"Netherlands"},{code:"BE",name:"Belgium"},{code:"DE",name:"Germany"},
-      {code:"FR",name:"France"},{code:"ES",name:"Spain"},{code:"GB",name:"United Kingdom"},
-      {code:"IT",name:"Italy"},{code:"CZ",name:"Czech Republic"},{code:"DK",name:"Denmark"},
-      {code:"AT",name:"Austria"},{code:"PL",name:"Poland"},{code:"SE",name:"Sweden"},
-      {code:"FI",name:"Finland"},{code:"PT",name:"Portugal"},{code:"HU",name:"Hungary"},
-      {code:"EE",name:"Estonia"},{code:"LT",name:"Lithuania"},{code:"LV",name:"Latvia"},
-      {code:"RO",name:"Romania"},{code:"SI",name:"Slovenia"},{code:"SK",name:"Slovakia"},
-      {code:"BG",name:"Bulgaria"}
+      {code:"NL",name:"Netherlands",  ex:42.7, ey:50.3},
+      {code:"BE",name:"Belgium",      ex:42.0, ey:54.3},
+      {code:"DE",name:"Germany",      ex:54.9, ey:50.0},
+      {code:"FR",name:"France",       ex:39.1, ey:59.7},
+      {code:"ES",name:"Spain",        ex:30.4, ey:82.7},
+      {code:"GB",name:"United Kingdom",ex:35.6,ey:52.7},
+      {code:"IT",name:"Italy",        ex:53.6, ey:78.6},
+      {code:"CZ",name:"Czech Republic",ex:56.3,ey:56.5},
+      {code:"DK",name:"Denmark",      ex:53.7, ey:41.4},
+      {code:"AT",name:"Austria",      ex:59.1, ey:61.6},
+      {code:"PL",name:"Poland",       ex:65.7, ey:50.8},
+      {code:"SE",name:"Sweden",       ex:61.6, ey:31.6},
+      {code:"FI",name:"Finland",      ex:71.4, ey:29.2},
+      {code:"PT",name:"Portugal",     ex:22.7, ey:87.3},
+      {code:"HU",name:"Hungary",      ex:62.9, ey:63.5},
+      {code:"EE",name:"Estonia",      ex:71.1, ey:31.4},
+      {code:"LT",name:"Lithuania",    ex:71.9, ey:44.1},
+      {code:"LV",name:"Latvia",       ex:70.1, ey:38.1},
+      {code:"RO",name:"Romania",      ex:73.0, ey:71.9},
+      {code:"SI",name:"Slovenia",     ex:56.4, ey:67.3},
+      {code:"SK",name:"Slovakia",     ex:60.1, ey:61.6},
+      {code:"BG",name:"Bulgaria",     ex:69.0, ey:76.5},
     ];
+
+    // Load saved edits from localStorage
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(MKT_KEY)) || {}; } catch(e){}
+
     const cd = md.countryData || {};
+    const countryState = {};
+    ALL_COUNTRIES.forEach(c => {
+      const base = cd[c.code] || { active: false, homologation: "—" };
+      countryState[c.code] = saved[c.code] || { active: base.active, homologation: base.homologation };
+    });
+
+    // Active country dots on EU map
+    const activeDots = ALL_COUNTRIES
+      .filter(c => countryState[c.code].active)
+      .map(c => `<div class="map-dot map-dot--active" style="left:${c.ex}%;top:${c.ey}%" title="${c.name}">
+        <span class="map-dot-ring"></span>
+        <span class="map-dot-label">${c.code}</span>
+      </div>`).join("");
+
     const rows = ALL_COUNTRIES.map(c => {
-      const info = cd[c.code] || { active: false, homologation: "—" };
-      const activeCell = info.active
-        ? `<span class="country-status country-status--active">Active</span>`
-        : `<span class="country-status country-status--inactive">Not active</span>`;
-      return `<tr>
+      const st = countryState[c.code];
+      return `<tr data-country="${c.code}">
         <td class="ct-code">${c.code}</td>
         <td class="ct-name">${c.name}</td>
-        <td class="ct-active">${activeCell}</td>
-        <td class="ct-homol">${info.homologation || "—"}</td>
+        <td class="ct-active">
+          <select class="ct-select ct-select--status" data-field="active">
+            <option value="true"  ${st.active ? 'selected':''}>Active</option>
+            <option value="false" ${!st.active ? 'selected':''}>Not active</option>
+          </select>
+        </td>
+        <td class="ct-homol">
+          <select class="ct-select ct-select--homol" data-field="homologation">
+            <option value="CoC" ${st.homologation==='CoC'?'selected':''}>CoC</option>
+            <option value="GWC" ${st.homologation==='GWC'?'selected':''}>GWC</option>
+            <option value="Both" ${st.homologation==='Both'?'selected':''}>Both</option>
+            <option value="Other" ${st.homologation==='Other'?'selected':''}>Other</option>
+            <option value="—" ${(st.homologation==='—'||!st.homologation)?'selected':''}>—</option>
+          </select>
+        </td>
       </tr>`;
     }).join("");
+
+    const activeCount = ALL_COUNTRIES.filter(c => countryState[c.code].active).length;
 
     el.innerHTML = `
       <div class="mkt-overview-row">
@@ -288,35 +350,70 @@ function populateMarket(product) {
           <div class="mkt-stat-value">${md.introYear || "—"}</div>
         </div>
         <div class="mkt-stat-card">
-          <div class="mkt-stat-label">Fitment</div>
+          <div class="mkt-stat-label">Customer</div>
           <div class="mkt-stat-value">After-fit conversion</div>
         </div>
         <div class="mkt-stat-card">
           <div class="mkt-stat-label">Active Markets</div>
-          <div class="mkt-stat-value">${Object.values(cd).filter(v=>v.active).length} countries</div>
+          <div class="mkt-stat-value" id="mkt-active-count">${activeCount} countries</div>
+        </div>
+      </div>
+      <div class="mkt-section">
+        <div class="mkt-section-header">
+          <div class="mkt-section-title">Active Market Coverage</div>
+          <div class="mkt-section-sub">Countries where this product is currently active</div>
+        </div>
+        <div class="map-img-frame map-img-frame--eu" id="af-map-frame">
+          <img src="Europe Map.png" alt="Europe map" class="map-bg-img" />
+          ${activeDots}
         </div>
       </div>
       <div class="mkt-section">
         <div class="mkt-section-header">
           <div class="mkt-section-title">Market &amp; Homologation Overview</div>
-          <div class="mkt-section-sub">Active status and registration homologation method per country</div>
+          <div class="mkt-section-sub">Edit active status and homologation method per country — changes are saved automatically</div>
         </div>
         <div class="country-table-wrap">
           <table class="country-table">
             <thead>
-              <tr>
-                <th>Code</th>
-                <th>Country</th>
-                <th>Status</th>
-                <th>Homologation</th>
-              </tr>
+              <tr><th>Code</th><th>Country</th><th>Status</th><th>Homologation</th></tr>
             </thead>
-            <tbody>${rows}</tbody>
+            <tbody id="country-table-body">${rows}</tbody>
           </table>
         </div>
-        <p class="mkt-homol-note">CoC = Certificate of Conformity (EU type approval). GSW = General Small-Series Whole Vehicle (national approval). Both = CoC primary, GSW fallback available.</p>
+        <p class="mkt-homol-note">CoC = Certificate of Conformity (EU type approval). GWC = General Whole-vehicle Certification (national approval). Both = CoC primary, GWC fallback available.</p>
       </div>
     `;
+
+    // Wire up selects — save changes and refresh EU map dots
+    function refreshMapDots() {
+      const frame = document.getElementById('af-map-frame');
+      if (!frame) return;
+      frame.querySelectorAll('.map-dot').forEach(d=>d.remove());
+      ALL_COUNTRIES.filter(c => countryState[c.code].active).forEach(c => {
+        const dot = document.createElement('div');
+        dot.className = 'map-dot map-dot--active';
+        dot.style.cssText = `left:${c.ex}%;top:${c.ey}%`;
+        dot.title = c.name;
+        dot.innerHTML = `<span class="map-dot-ring"></span><span class="map-dot-label">${c.code}</span>`;
+        frame.appendChild(dot);
+      });
+      const cnt = document.getElementById('mkt-active-count');
+      if (cnt) cnt.textContent = ALL_COUNTRIES.filter(c=>countryState[c.code].active).length + ' countries';
+    }
+
+    el.querySelectorAll('.ct-select').forEach(sel => {
+      sel.addEventListener('change', function() {
+        const row = this.closest('tr[data-country]');
+        if (!row) return;
+        const code = row.dataset.country;
+        const field = this.dataset.field;
+        if (field === 'active') countryState[code].active = (this.value === 'true');
+        else countryState[code].homologation = this.value;
+        localStorage.setItem(MKT_KEY, JSON.stringify(countryState));
+        refreshMapDots();
+      });
+    });
   }
 }
 

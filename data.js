@@ -61,6 +61,9 @@ const VAN_IMAGES = {
   /* ── MAN ────────────────────────────────────────────────────────── */
   "TGE":            "TGE.jpg",
 
+  /* ── Nissan ─────────────────────────────────────────────────────── */
+  "Primastar":      "Primastar.jpg",
+
   /* ── KIA ────────────────────────────────────────────────────────── */
   "PV5":            "PV5.jpg",
 };
@@ -91,6 +94,7 @@ const BRAND_META = {
   "Mercedes-Benz":  { color: "#222222", abbr: "MB"  },
   "Renault":        { color: "#EFDF00", textDark: true, abbr: "REN" },
   "MAN":            { color: "#E4002B", abbr: "MAN" },
+  "Nissan":         { color: "#C3002F", abbr: "NIS" },
   "KIA":            { color: "#05141F", abbr: "KIA" },
 };
 
