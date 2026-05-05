@@ -618,73 +618,73 @@ const VEHICLE_CONFIGURATOR = {
         {
           id: "wielbasis", label: "Wielbasis",
           options: [
-            { value:"kort",  label:"Kort (XS / S)",   activates:["frame-l1"] },
-            { value:"lang",  label:"Lang (M / L / XL)", activates:["frame-l2"] },
+            { value:"kort",  label:"Kort (XS / S)",    code:"L1", activates:["frame-l1"] },
+            { value:"lang",  label:"Lang (M / L / XL)", code:"L2", activates:["frame-l2"] },
           ]
         },
         {
           id: "schuifdeur", label: "Schuifdeur configuratie",
           options: [
-            { value:"enkel",  label:"Enkele schuifdeur",    activates:["door-single"] },
-            { value:"dubbel", label:"Dubbele schuifdeuren", activates:["door-double"] },
+            { value:"enkel",  label:"Enkele schuifdeur",    code:"1D", activates:["door-single"] },
+            { value:"dubbel", label:"Dubbele schuifdeuren", code:"2D", activates:["door-double"] },
           ]
         },
         {
           id: "keyless", label: "Keyless entry & start",
           options: [
-            { value:"ja",  label:"Aanwezig",      activates:["keyless"] },
-            { value:"nee", label:"Niet aanwezig", activates:[] },
+            { value:"ja",  label:"Aanwezig",      code:"KY", activates:["keyless"] },
+            { value:"nee", label:"Niet aanwezig", code:"NK", activates:[] },
           ]
         },
         {
           id: "deurhendel", label: "Heeft uw voertuig een deurhendel?",
           options: [
-            { value:"ja",  label:"Ja",  activates:["deurhendel"] },
-            { value:"nee", label:"Nee", activates:[] },
+            { value:"ja",  label:"Ja",  code:"DH", activates:["deurhendel"] },
+            { value:"nee", label:"Nee", code:"ND", activates:[] },
           ]
         },
         {
           id: "ramen_b", label: "Ramen achter B-stijl",
           options: [
-            { value:"geen",     label:"Geen ramen", activates:[] },
-            { value:"aanwezig", label:"Aanwezig",   activates:["win-retain"] },
+            { value:"geen",     label:"Geen ramen", code:"R0", activates:[] },
+            { value:"aanwezig", label:"Aanwezig",   code:"RB", activates:["win-retain"] },
           ]
         },
         {
           id: "glassoort", label: "Glassoort voor dubbele cabine",
           options: [
-            { value:"helder",  label:"Helder glas",   activates:["win-clear"]  },
-            { value:"getint",  label:"Getint glas",   activates:["win-tinted"] },
-            { value:"opaque",  label:"Opaak paneel",  activates:["win-opaque"] },
-            { value:"geen",    label:"Geen",          activates:[] },
+            { value:"helder",  label:"Helder glas",  code:"GC", activates:["win-clear"]  },
+            { value:"getint",  label:"Getint glas",  code:"GT", activates:["win-tinted"] },
+            { value:"opaque",  label:"Opaak paneel", code:"GO", activates:["win-opaque"] },
+            { value:"geen",    label:"Geen",         code:"G0", activates:[] },
           ]
         },
         {
           id: "separatiewand", label: "Separatiewand aanwezig",
           options: [
-            { value:"ja",  label:"Ja",  activates:[] },
-            { value:"nee", label:"Nee", activates:[] },
+            { value:"ja",  label:"Ja",  code:"PW", activates:[] },
+            { value:"nee", label:"Nee", code:"NP", activates:[] },
           ]
         },
         {
           id: "voorstoel", label: "Voorstoel / bank",
           options: [
-            { value:"stoel", label:"Voorstoelen",  activates:[] },
-            { value:"bank",  label:"Voorbank",     activates:["seat-bench"] },
+            { value:"stoel", label:"Voorstoelen", code:"ST", activates:[] },
+            { value:"bank",  label:"Voorbank",    code:"BK", activates:["seat-bench"] },
           ]
         },
         {
           id: "bekleding", label: "Bekleding voorstoelen",
           options: [
-            { value:"stof",  label:"Stof",  activates:["uph-fabric"] },
-            { value:"vinyl", label:"Vinyl", activates:["uph-vinyl"]  },
+            { value:"stof",  label:"Stof",  code:"FA", activates:["uph-fabric"] },
+            { value:"vinyl", label:"Vinyl", code:"VY", activates:["uph-vinyl"]  },
           ]
         },
         {
           id: "airbags", label: "Airbags aanwezig in de bovenzijde van de B-stijl?",
           options: [
-            { value:"ja",  label:"Ja",  activates:["airbag-trim"] },
-            { value:"nee", label:"Nee", activates:[] },
+            { value:"ja",  label:"Ja",  code:"AB", activates:["airbag-trim"] },
+            { value:"nee", label:"Nee", code:"NA", activates:[] },
           ]
         },
       ]
@@ -698,44 +698,44 @@ const VEHICLE_CONFIGURATOR = {
         {
           id: "wielbasis", label: "Wielbasis",
           options: [
-            { value:"kort", label:"Kort (XS / S)",    activates:["frame-l1"] },
-            { value:"lang", label:"Lang (M / L / XL)", activates:["frame-l2"] },
+            { value:"kort", label:"Kort (XS / S)",     code:"L1", activates:["frame-l1"] },
+            { value:"lang", label:"Lang (M / L / XL)", code:"L2", activates:["frame-l2"] },
           ]
         },
         {
           id: "schuifdeur", label: "Schuifdeur configuratie",
           options: [
-            { value:"enkel",  label:"Enkele schuifdeur",    activates:["door-single"] },
-            { value:"dubbel", label:"Dubbele schuifdeuren", activates:["door-double"] },
+            { value:"enkel",  label:"Enkele schuifdeur",    code:"1D", activates:["door-single"] },
+            { value:"dubbel", label:"Dubbele schuifdeuren", code:"2D", activates:["door-double"] },
           ]
         },
         {
           id: "keyless", label: "Keyless entry & start",
           options: [
-            { value:"ja",  label:"Aanwezig",      activates:[] },
-            { value:"nee", label:"Niet aanwezig", activates:[] },
+            { value:"ja",  label:"Aanwezig",      code:"KY", activates:[] },
+            { value:"nee", label:"Niet aanwezig", code:"NK", activates:[] },
           ]
         },
         {
           id: "ramen_b", label: "Ramen achter B-stijl",
           options: [
-            { value:"geen",     label:"Geen ramen", activates:[] },
-            { value:"aanwezig", label:"Aanwezig",   activates:["win-retain"] },
+            { value:"geen",     label:"Geen ramen", code:"R0", activates:[] },
+            { value:"aanwezig", label:"Aanwezig",   code:"RB", activates:["win-retain"] },
           ]
         },
         {
           id: "glassoort", label: "Glassoort",
           options: [
-            { value:"helder",  label:"Helder glas",  activates:["win-clear"]  },
-            { value:"getint",  label:"Getint glas",  activates:["win-tinted"] },
-            { value:"geen",    label:"Geen",         activates:[] },
+            { value:"helder",  label:"Helder glas",  code:"GC", activates:["win-clear"]  },
+            { value:"getint",  label:"Getint glas",  code:"GT", activates:["win-tinted"] },
+            { value:"geen",    label:"Geen",         code:"G0", activates:[] },
           ]
         },
         {
           id: "bekleding", label: "Bekleding voorstoelen",
           options: [
-            { value:"stof",  label:"Stof",  activates:["uph-fabric"] },
-            { value:"vinyl", label:"Vinyl", activates:["uph-vinyl"]  },
+            { value:"stof",  label:"Stof",  code:"FA", activates:["uph-fabric"] },
+            { value:"vinyl", label:"Vinyl", code:"VY", activates:["uph-vinyl"]  },
           ]
         },
       ]
@@ -754,15 +754,15 @@ const VEHICLE_CONFIGURATOR = {
         {
           id: "led_verlichting", label: "LED Verlichting aanwezig",
           options: [
-            { value:"ja",  label:"Ja",  activates:["led"] },
-            { value:"nee", label:"Nee", activates:[] },
+            { value:"ja",  label:"Ja",  code:"LD", activates:["led"] },
+            { value:"nee", label:"Nee", code:"NL", activates:[] },
           ]
         },
         {
           id: "veerzitting", label: "Veerzitting in bestuurdersstoel",
           options: [
-            { value:"ja",  label:"Ja",  activates:["veerzitting"] },
-            { value:"nee", label:"Nee", activates:[] },
+            { value:"ja",  label:"Ja",  code:"VS", activates:["veerzitting"] },
+            { value:"nee", label:"Nee", code:"NV", activates:[] },
           ]
         },
       ],
@@ -771,54 +771,54 @@ const VEHICLE_CONFIGURATOR = {
         {
           id: "wielbasis", label: "Wielbasis",
           options: [
-            { value:"kort",  label:"Kort (L1 / L2)", activates:["frame-l1"] },
-            { value:"middel",label:"Middel (L3)",    activates:["frame-l2"] },
-            { value:"lang",  label:"Lang (L4)",      activates:["frame-l4"] },
+            { value:"kort",   label:"Kort (L1 / L2)", code:"L1", activates:["frame-l1"] },
+            { value:"middel", label:"Middel (L3)",    code:"L3", activates:["frame-l2"] },
+            { value:"lang",   label:"Lang (L4)",      code:"L4", activates:["frame-l4"] },
           ]
         },
         {
           id: "hoogte", label: "Hoogte",
           options: [
-            { value:"h1", label:"H1 – Laag",   activates:["height-h1"] },
-            { value:"h2", label:"H2 – Middel", activates:["height-h2"] },
-            { value:"h3", label:"H3 – Hoog",   activates:["height-h3"] },
+            { value:"h1", label:"H1 – Laag",   code:"H1", activates:["height-h1"] },
+            { value:"h2", label:"H2 – Middel", code:"H2", activates:["height-h2"] },
+            { value:"h3", label:"H3 – Hoog",   code:"H3", activates:["height-h3"] },
           ]
         },
         {
           id: "schuifdeur", label: "Schuifdeur configuratie",
           options: [
-            { value:"enkel",  label:"Enkele schuifdeur",    activates:["door-single"] },
-            { value:"dubbel", label:"Dubbele schuifdeuren", activates:["door-double"] },
+            { value:"enkel",  label:"Enkele schuifdeur",    code:"1D", activates:["door-single"] },
+            { value:"dubbel", label:"Dubbele schuifdeuren", code:"2D", activates:["door-double"] },
           ]
         },
         {
           id: "ramen_b", label: "Ramen achter B stijl",
           options: [
-            { value:"geen",     label:"Geen ramen", activates:[] },
-            { value:"aanwezig", label:"Aanwezig",   activates:["win-retain"] },
+            { value:"geen",     label:"Geen ramen", code:"R0", activates:[] },
+            { value:"aanwezig", label:"Aanwezig",   code:"RB", activates:["win-retain"] },
           ]
         },
         {
           id: "glassoort", label: "Glassoort voor dubbele cabine",
           options: [
-            { value:"helder",  label:"Helder glas",  activates:["win-clear"]  },
-            { value:"getint",  label:"Getint glas",  activates:["win-tinted"] },
-            { value:"opaque",  label:"Opaak paneel", activates:["win-opaque"] },
-            { value:"geen",    label:"Geen",         activates:[] },
+            { value:"helder",  label:"Helder glas",  code:"GC", activates:["win-clear"]  },
+            { value:"getint",  label:"Getint glas",  code:"GT", activates:["win-tinted"] },
+            { value:"opaque",  label:"Opaak paneel", code:"GO", activates:["win-opaque"] },
+            { value:"geen",    label:"Geen",         code:"G0", activates:[] },
           ]
         },
         {
           id: "separatiewand", label: "Separatiewand aanwezig",
           options: [
-            { value:"ja",  label:"Ja",  activates:["partition"] },
-            { value:"nee", label:"Nee", activates:[] },
+            { value:"ja",  label:"Ja",  code:"PW", activates:["partition"] },
+            { value:"nee", label:"Nee", code:"NP", activates:[] },
           ]
         },
         {
           id: "bekleding", label: "Bekleding voorstoelen",
           options: [
-            { value:"stof",  label:"Stof",  activates:["uph-fabric"] },
-            { value:"vinyl", label:"Vinyl", activates:["uph-vinyl"]  },
+            { value:"stof",  label:"Stof",  code:"FA", activates:["uph-fabric"] },
+            { value:"vinyl", label:"Vinyl", code:"VY", activates:["uph-vinyl"]  },
           ]
         },
       ]
