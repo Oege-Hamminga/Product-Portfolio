@@ -455,7 +455,7 @@ function renderConfigurator(product) {
   const secNum    = document.getElementById("cfg-sec-product-num");
 
   if (!cfg) {
-    if (qVehicle)  qVehicle.innerHTML  = "<p style='color:rgba(0,0,0,0.4);font-size:0.8rem;padding:12px 0'>Geen configurator beschikbaar voor dit product.</p>";
+    if (qVehicle)  qVehicle.innerHTML  = "<p style='color:rgba(0,0,0,0.4);font-size:0.8rem;padding:12px 0'>No configurator available for this product.</p>";
     if (qSpecific) qSpecific.innerHTML = "";
     if (qProduct)  qProduct.innerHTML  = "";
     if (secSpec)   secSpec.style.display = "none";
@@ -523,13 +523,13 @@ function applyConfiguratorToBOM(product) {
   const statusEl  = document.getElementById("cfg-status");
   if (statusEl) {
     if (isIncompatible) {
-      statusEl.textContent = "⚠ Configuratie niet mogelijk voor deze specificatie";
+      statusEl.textContent = "⚠ Configuration not possible for this specification";
       statusEl.classList.remove("cfg-status--done");
     } else if (allDone) {
-      statusEl.textContent = "✓ Configuratie volledig — code gegenereerd";
+      statusEl.textContent = "✓ Configuration complete — code generated";
       statusEl.classList.add("cfg-status--done");
     } else {
-      statusEl.textContent = `${answeredQ} van ${totalQ} vragen beantwoord`;
+      statusEl.textContent = `${answeredQ} of ${totalQ} questions answered`;
       statusEl.classList.remove("cfg-status--done");
     }
   }
@@ -548,7 +548,7 @@ function applyConfiguratorToBOM(product) {
       renderBOMTable(product);
     }
   } else {
-    if (qcVal) qcVal.textContent = "Beantwoord alle vragen om de code te genereren";
+    if (qcVal) qcVal.textContent = "Answer all questions to generate the code";
     if (qcEl)  qcEl.classList.add("quickcode-display--pending");
     if (bomResultEl) bomResultEl.style.display = "none";
   }
@@ -561,7 +561,7 @@ function renderBOMTable(product) {
   if (!bodyEl) return;
 
   if (!parts || parts.length === 0) {
-    bodyEl.innerHTML = `<tr><td colspan="4" class="bom-empty-row">Geen onderdelen beschikbaar voor dit product.</td></tr>`;
+    bodyEl.innerHTML = `<tr><td colspan="4" class="bom-empty-row">No parts available for this product.</td></tr>`;
     if (countEl) countEl.textContent = "";
     return;
   }
@@ -574,26 +574,12 @@ function renderBOMTable(product) {
       <td>${r.unit}</td>
     </tr>`).join("");
 
-  if (countEl) countEl.textContent = `${parts.length} onderdeel${parts.length !== 1 ? "en" : ""}`;
+  if (countEl) countEl.textContent = `${parts.length} part${parts.length !== 1 ? "s" : ""}`;
 }
 
 function populateBOM(product) {
   cfgState      = {};
   blockingState = {};
-
-  // Show product image at top of BOM tab
-  const heroWrap = document.getElementById("bom-product-hero");
-  const heroImg  = document.getElementById("bom-product-hero-img");
-  const imgUrl   = getProductImage(product);
-  if (heroWrap && heroImg) {
-    if (imgUrl) {
-      heroImg.src = imgUrl;
-      heroImg.alt = `${product.brand} ${product.van} – ${product.type}`;
-      heroWrap.style.display = "block";
-    } else {
-      heroWrap.style.display = "none";
-    }
-  }
 
   // Hide BOM result until code is generated
   const bomResultEl = document.getElementById("bom-result");
@@ -603,7 +589,7 @@ function populateBOM(product) {
   const qcEl  = document.getElementById("quickcode-display");
   const qcVal = document.getElementById("quickcode-value");
   if (qcEl)  qcEl.classList.add("quickcode-display--pending");
-  if (qcVal) qcVal.textContent = "Beantwoord alle vragen om de code te genereren";
+  if (qcVal) qcVal.textContent = "Answer all questions to generate the code";
 
   renderConfigurator(product);
 }

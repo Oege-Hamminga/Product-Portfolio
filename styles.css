@@ -2487,3 +2487,307 @@ body.matrix-edit-active td.mm-cell {
   font-size: 0.8rem;
   font-weight: 600;
 }
+
+/* ── BOM product hero image ─────────────────────────────────────── */
+.bom-product-hero {
+  margin-bottom: 20px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--grey-2);
+  max-height: 320px;
+}
+.bom-hero-img {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── BOM 3-section configurator ──────────────────────────────────── */
+.cfg-section {
+  background: var(--white);
+  border: 1px solid var(--grey-2);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.cfg-section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 20px;
+  background: var(--grey-1);
+  border-bottom: 1px solid var(--grey-2);
+}
+
+.cfg-section-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--dark);
+  color: var(--white);
+  font-size: 0.72rem;
+  font-weight: 900;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.cfg-section-num--specific {
+  background: #FFB020;
+  color: #111;
+}
+
+.cfg-section--specific {
+  border-color: rgba(255,176,32,0.4);
+  background: #fffdf5;
+}
+.cfg-section--specific .cfg-section-header {
+  background: #fff8e6;
+  border-bottom-color: rgba(255,176,32,0.3);
+}
+
+.cfg-section-title {
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text);
+}
+
+.cfg-section-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Override cfg-questions colours inside light sections */
+.cfg-section .cfg-questions {
+  padding: 16px 20px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  /* background already white from .cfg-section */
+}
+
+.cfg-section .cfg-question-label {
+  color: var(--text-muted);
+}
+
+.cfg-section .cfg-opt-btn {
+  border-color: var(--grey-2);
+  background: var(--grey-0);
+  color: var(--text);
+}
+
+.cfg-section .cfg-opt-btn:hover {
+  border-color: var(--dark);
+  background: var(--white);
+  color: var(--text);
+}
+
+.cfg-section .cfg-opt-btn.active {
+  background: var(--dark);
+  border-color: var(--dark);
+  color: var(--white);
+  font-weight: 800;
+}
+
+.cfg-section--specific .cfg-opt-btn {
+  border-color: rgba(255,176,32,0.25);
+  color: rgba(100,70,0,0.7);
+  background: rgba(255,248,230,0.6);
+}
+
+.cfg-section--specific .cfg-opt-btn:hover {
+  border-color: rgba(255,176,32,0.6);
+  color: #7a5000;
+  background: rgba(255,248,210,0.9);
+}
+
+.cfg-section--specific .cfg-opt-btn.active {
+  background: #FFB020;
+  border-color: #FFB020;
+  color: #111;
+  font-weight: 900;
+}
+
+/* cfg-footer in light context */
+.cfg-footer {
+  background: var(--grey-0);
+  border-top: 1px solid var(--grey-2);
+  border-radius: 0 0 var(--radius) var(--radius);
+  margin-bottom: 14px;
+}
+
+.cfg-footer .cfg-reset-btn {
+  color: var(--text-muted);
+  border-color: var(--grey-2);
+  background: var(--white);
+}
+
+.cfg-footer .cfg-reset-btn:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: var(--white);
+}
+
+.cfg-footer .cfg-status {
+  color: var(--text-muted);
+}
+
+.cfg-footer .cfg-status--done {
+  color: #1a8040;
+}
+
+/* Quickcode in light context */
+.quickcode-display {
+  background: rgba(204,0,0,0.07);
+  border: 1px solid rgba(204,0,0,0.25);
+}
+
+.quickcode-display--pending {
+  background: var(--grey-0);
+  border-color: var(--grey-2);
+}
+
+.qc-label {
+  color: var(--text-muted);
+}
+
+.qc-value {
+  color: var(--text);
+}
+
+.quickcode-display--pending .qc-value {
+  color: var(--text-muted);
+}
+
+.qc-hint {
+  color: var(--text-faint);
+}
+
+/* ── BOM result section ───────────────────────────────────────────── */
+.bom-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 0 10px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--grey-2);
+}
+
+.bom-result-title {
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin: 0;
+}
+
+.bom-part-code {
+  font-family: monospace;
+  font-size: 0.78rem;
+  color: rgba(0,0,0,0.6);
+}
+
+/* ── BOM table light-theme overrides ─────────────────────────────── */
+#bom-result .bom-table {
+  background: var(--white);
+  color: var(--text);
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#bom-result .bom-table thead {
+  background: var(--grey-1);
+}
+
+#bom-result .bom-table th {
+  color: var(--text);
+  background: var(--grey-1);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--grey-2);
+  text-align: left;
+}
+
+#bom-result .bom-table td {
+  color: var(--text);
+  background: var(--white);
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--grey-1);
+  font-size: 0.8rem;
+}
+
+#bom-result .bom-table tbody tr:nth-child(even) td {
+  background: var(--grey-0);
+}
+
+#bom-result .bom-table tbody tr:hover td {
+  background: rgba(204,0,0,0.04);
+}
+
+.bom-empty-row {
+  color: var(--text-muted) !important;
+  text-align: center;
+  font-style: italic;
+  padding: 20px !important;
+}
+
+/* ── Matrix inline select ─────────────────────────────────────────── */
+.mm-select {
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: inherit;
+  border: 1px solid var(--grey-2);
+  border-radius: 4px;
+  background: var(--white);
+  color: var(--text);
+  padding: 2px 2px;
+  cursor: pointer;
+  min-width: 54px;
+  max-width: 60px;
+}
+
+/* Read-only (disabled) — transparent, no border, just show the value */
+.mm-select:disabled {
+  opacity: 1;
+  cursor: default;
+  border-color: transparent;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  pointer-events: none;
+  padding: 0;
+  min-width: 0;
+}
+
+.mm-select--S:disabled   { color: var(--red); font-weight: 800; }
+.mm-select--D:disabled   { color: #1a56db; font-weight: 800; }
+.mm-select--SD:disabled  { color: #7a00cc; font-weight: 800; }
+.mm-select--New:disabled { color: #1a8040; font-weight: 800; }
+.mm-select--none:disabled { color: rgba(0,0,0,0.18); font-size: 0.65rem; }
+
+/* Edit mode — show full select with border */
+.matrix-edit-active .mm-select {
+  border-color: var(--grey-3, #bbb);
+  background: var(--white);
+  cursor: pointer;
+  -webkit-appearance: auto;
+  appearance: auto;
+  pointer-events: auto;
+  padding: 2px 2px;
+  min-width: 54px;
+}
+
+.matrix-edit-active .mm-select--S   { color: var(--red); }
+.matrix-edit-active .mm-select--D   { color: #1a56db; }
+.matrix-edit-active .mm-select--SD  { color: #7a00cc; }
+.matrix-edit-active .mm-select--New { color: #1a8040; }
+.matrix-edit-active .mm-select--none { color: var(--text-muted); }

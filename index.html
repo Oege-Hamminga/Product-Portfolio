@@ -53,7 +53,7 @@
               <div class="pt-desc">The FlexCab solution offers the best of both worlds. Offering more flexibility in the usability of the vehicle. The comfortable three-seater bench and partition wall can be folded as a whole in a forward position, creating a substantially larger cargo area that is easy accessible from the sliding door.</div>
             </div>
             <div class="product-type-item">
-              <div class="pt-img pt-img--placeholder"><span>PW</span></div>
+              <div class="pt-img"><img src="Partition wall.jpg" alt="Partition Wall" loading="lazy" /></div>
               <div class="pt-label">Partition Wall</div>
               <div class="pt-desc">By adding a partition wall in a closed panel van, both the driver and passengers will be protected from shifting cargo. Additionally, our partition walls prevent any unpleasant odors or dust coming from the cargo. It also improves the isolation in the driver's compartment.</div>
             </div>
@@ -373,7 +373,15 @@
   (function(){
     const STORAGE_KEY = 'snoeks_matrix_state';
 
-    // Build initial state from current HTML — values: 'S', 'D', 'SD', ''
+    const OPTS = [
+      { value: '',    label: '—' },
+      { value: 'S',   label: 'S' },
+      { value: 'D',   label: 'D' },
+      { value: 'SD',  label: 'S & D' },
+      { value: 'New', label: 'New' },
+    ];
+
+    // Build initial state from current HTML badges
     function buildInitialState() {
       const state = {};
       document.querySelectorAll('#matrix-collapsible tbody tr[data-row]').forEach(tr => {
@@ -387,13 +395,6 @@
         });
       });
       return state;
-    }
-
-    function renderCell(td, key) {
-      if (key === 'SD')     td.innerHTML = '<span class="matrix-badge matrix-badge--s">S</span><span class="matrix-badge matrix-badge--d">D</span>';
-      else if (key === 'S') td.innerHTML = '<span class="matrix-badge matrix-badge--s">S</span>';
-      else if (key === 'D') td.innerHTML = '<span class="matrix-badge matrix-badge--d">D</span>';
-      else                  td.innerHTML = '';
     }
 
     // Migrate old array format → new string format
@@ -415,6 +416,38 @@
       return n;
     }
 
+    // Replace badge content with select elements in every mm-cell
+    function buildSelects(state) {
+      document.querySelectorAll('#matrix-collapsible tbody tr[data-row]').forEach(tr => {
+        const row = tr.dataset.row;
+        tr.querySelectorAll('td[data-col]').forEach(td => {
+          const col = td.dataset.col;
+          const val = (state[row] && state[row][col]) || '';
+          td.innerHTML = '';
+          const sel = document.createElement('select');
+          sel.className = 'mm-select mm-select--' + (val || 'none');
+          sel.disabled = true;
+          OPTS.forEach(opt => {
+            const o = document.createElement('option');
+            o.value = opt.value;
+            o.textContent = opt.label;
+            if (opt.value === val) o.selected = true;
+            sel.appendChild(o);
+          });
+          sel.addEventListener('change', function() {
+            const newVal = this.value;
+            if (!state[row]) state[row] = {};
+            state[row][col] = newVal;
+            this.className = 'mm-select mm-select--' + (newVal || 'none');
+            const hasAny = Object.values(state[row]).some(v => v !== '');
+            tr.classList.toggle('mm-row--uncovered', !hasAny);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          });
+          td.appendChild(sel);
+        });
+      });
+    }
+
     // Load or init state
     let matrixState;
     try { matrixState = JSON.parse(localStorage.getItem(STORAGE_KEY)) || null; } catch(e){}
@@ -423,46 +456,37 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(matrixState));
     } else {
       matrixState = maybesMigrate(matrixState);
-      // Apply saved state to cells
-      document.querySelectorAll('#matrix-collapsible tbody tr[data-row]').forEach(tr => {
-        const row = tr.dataset.row;
-        if (!matrixState[row]) return;
-        tr.querySelectorAll('td[data-col]').forEach(td => {
-          const col = td.dataset.col;
-          if (matrixState[row][col] !== undefined) renderCell(td, matrixState[row][col]);
-        });
-      });
     }
 
+    buildSelects(matrixState);
+
     let editMode = false;
+    let unlocked = false;
     let activePopover = null;
 
     function closePopover() {
       if (activePopover) { activePopover.remove(); activePopover = null; }
     }
 
-    // Edit mode — password-gated
-    let editMode = false;
-    let unlocked = false;
-
     function activateEditMode(btn) {
       editMode = true;
       btn.textContent = 'Done';
       btn.classList.add('matrix-edit-btn--active');
       document.body.classList.add('matrix-edit-active');
+      document.querySelectorAll('.mm-select').forEach(sel => sel.disabled = false);
+    }
+
+    function deactivateEditMode(btn) {
+      editMode = false;
+      btn.textContent = 'Edit';
+      btn.classList.remove('matrix-edit-btn--active');
+      document.body.classList.remove('matrix-edit-active');
+      document.querySelectorAll('.mm-select').forEach(sel => sel.disabled = true);
     }
 
     document.getElementById('matrix-edit-btn').addEventListener('click', function() {
-      if (editMode) {
-        editMode = false;
-        this.textContent = 'Edit';
-        this.classList.remove('matrix-edit-btn--active');
-        document.body.classList.remove('matrix-edit-active');
-        closePopover();
-        return;
-      }
+      if (editMode) { deactivateEditMode(this); return; }
       if (unlocked) { activateEditMode(this); return; }
-      // Show password popover
       if (activePopover) { closePopover(); return; }
       const btn = this;
       const pop = document.createElement('div');
@@ -491,7 +515,7 @@
         }
       }
       pop.querySelector('.mcp-pw-submit').addEventListener('click', tryUnlock);
-      pop.querySelector('.mcp-pw-input').addEventListener('keydown', e => { if (e.key==='Enter') tryUnlock(); });
+      pop.querySelector('.mcp-pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
 
       const rect = btn.getBoundingClientRect();
       pop.style.position = 'fixed';
@@ -504,67 +528,9 @@
     });
 
     document.addEventListener('click', function(e) {
-      // Close password popover when clicking outside
-      if (!editMode && activePopover && !activePopover.contains(e.target) && e.target.id !== 'matrix-edit-btn') {
+      if (activePopover && !activePopover.contains(e.target) && e.target.id !== 'matrix-edit-btn') {
         closePopover();
-        return;
       }
-      if (!editMode) return;
-      const td = e.target.closest('td[data-col]');
-      if (!td) { closePopover(); return; }
-      const tr = td.closest('tr[data-row]');
-      if (!tr) return;
-      e.stopPropagation();
-      closePopover();
-
-      const row = tr.dataset.row;
-      const col = td.dataset.col;
-      const current = (matrixState[row] && matrixState[row][col]) || '';
-
-      // Presence options: S, D, SD, None
-      const OPTS = [
-        { key:'S',  label:'Snoeks',            html:'<span class="matrix-badge matrix-badge--s">S</span>' },
-        { key:'D',  label:'Durasotti',          html:'<span class="matrix-badge matrix-badge--d">D</span>' },
-        { key:'SD', label:'Snoeks & Durasotti', html:'<span class="matrix-badge matrix-badge--s">S</span><span class="matrix-badge matrix-badge--d">D</span>' },
-        { key:'',   label:'None',               html:'' },
-      ];
-
-      const pop = document.createElement('div');
-      pop.className = 'matrix-cell-popover';
-      pop.innerHTML = OPTS.map(opt => `
-        <label class="mcp-item${current === opt.key ? ' mcp-item--active' : ''}">
-          <input type="radio" name="mcp-p" value="${opt.key}" ${current === opt.key ? 'checked' : ''}>
-          ${opt.html || '<span style="color:rgba(255,255,255,0.35);font-size:0.75rem">—</span>'}
-          <span>${opt.label}</span>
-        </label>
-      `).join('');
-
-      pop.addEventListener('change', function(ev) {
-        const val = ev.target.value;
-        if (!matrixState[row]) matrixState[row] = {};
-        matrixState[row][col] = val;
-        // Render cell
-        if (val === 'SD')     td.innerHTML = '<span class="matrix-badge matrix-badge--s">S</span><span class="matrix-badge matrix-badge--d">D</span>';
-        else if (val === 'S') td.innerHTML = '<span class="matrix-badge matrix-badge--s">S</span>';
-        else if (val === 'D') td.innerHTML = '<span class="matrix-badge matrix-badge--d">D</span>';
-        else                  td.innerHTML = '';
-        const hasAny = Object.values(matrixState[row]).some(v => v !== '');
-        tr.classList.toggle('mm-row--uncovered', !hasAny);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(matrixState));
-        pop.querySelectorAll('.mcp-item').forEach(l => {
-          l.classList.toggle('mcp-item--active', l.querySelector('input').value === val);
-        });
-      });
-
-      pop.addEventListener('click', e => e.stopPropagation());
-
-      const rect = td.getBoundingClientRect();
-      pop.style.position = 'fixed';
-      pop.style.top  = (rect.bottom + 4) + 'px';
-      pop.style.left = rect.left + 'px';
-      pop.style.zIndex = '9999';
-      document.body.appendChild(pop);
-      activePopover = pop;
     });
   })();
   </script>
