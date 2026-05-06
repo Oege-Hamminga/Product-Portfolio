@@ -180,6 +180,104 @@ function unlockAndPopulate(product) {
 /* ═══════════════════════════════════════════════════════════════════════
    MARKET PRESENCE
 ═══════════════════════════════════════════════════════════════════════ */
+
+let mktUnlocked = false;
+
+function showMktPasswordPrompt(anchor, onSuccess) {
+  const existing = document.getElementById('mkt-pw-pop');
+  if (existing) { existing.remove(); return; }
+  const pop = document.createElement('div');
+  pop.id = 'mkt-pw-pop';
+  pop.className = 'matrix-cell-popover';
+  pop.style.minWidth = '200px';
+  pop.innerHTML = `
+    <div style="font-size:0.72rem;color:rgba(255,255,255,0.5);margin-bottom:6px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">Password required</div>
+    <div class="mcp-pw-form">
+      <input class="mcp-pw-input" type="password" placeholder="Enter password" />
+      <button class="mcp-pw-submit">OK</button>
+    </div>
+    <div class="mcp-pw-error" style="display:none">Incorrect password</div>
+  `;
+  pop.addEventListener('click', e => e.stopPropagation());
+  function tryUnlock() {
+    if (pop.querySelector('.mcp-pw-input').value === 'PM26') {
+      mktUnlocked = true;
+      pop.remove();
+      onSuccess();
+    } else {
+      pop.querySelector('.mcp-pw-error').style.display = 'block';
+      pop.querySelector('.mcp-pw-input').value = '';
+      pop.querySelector('.mcp-pw-input').focus();
+    }
+  }
+  pop.querySelector('.mcp-pw-submit').addEventListener('click', tryUnlock);
+  pop.querySelector('.mcp-pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+  const rect = anchor.getBoundingClientRect();
+  pop.style.position = 'fixed';
+  pop.style.top  = (rect.bottom + 6) + 'px';
+  pop.style.left = Math.max(8, rect.right - 210) + 'px';
+  pop.style.zIndex = '9999';
+  document.body.appendChild(pop);
+  setTimeout(() => pop.querySelector('.mcp-pw-input').focus(), 50);
+  function outsideClick(e) {
+    if (!pop.contains(e.target) && e.target !== anchor) {
+      pop.remove();
+      document.removeEventListener('click', outsideClick);
+    }
+  }
+  setTimeout(() => document.addEventListener('click', outsideClick), 0);
+}
+
+function makeDots(items, mapType) {
+  return items.map(d => {
+    let x, y;
+    if (mapType === 'world') {
+      x = ((d.lng + 180) / 360 * 100).toFixed(1);
+      y = ((90 - d.lat) / 180 * 100).toFixed(1);
+    } else {
+      x = ((d.lng + 25) / 70 * 100).toFixed(1);
+      y = ((71 - d.lat) / 37 * 100).toFixed(1);
+    }
+    const label = d.code || d.country || '';
+    return `<div class="map-dot map-dot--active" style="left:${x}%;top:${y}%" title="${d.name || d.country || ''}">
+      <span class="map-dot-ring"></span>
+      <span class="map-dot-label">${label}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderMapSection(frameId, tabsId, items, defaultMap) {
+  const mapSrc = defaultMap === 'world' ? 'World map.png' : 'Europe Map.png';
+  return `
+    <div class="mkt-map-tabs" id="${tabsId}">
+      <button class="mkt-map-tab${defaultMap === 'europe' ? ' active' : ''}" data-map="europe">Europe</button>
+      <button class="mkt-map-tab${defaultMap === 'world'  ? ' active' : ''}" data-map="world">World</button>
+    </div>
+    <div class="map-img-frame" id="${frameId}">
+      <img src="${mapSrc}" alt="Map" class="map-bg-img" id="${frameId}-img" />
+      ${makeDots(items, defaultMap)}
+    </div>
+  `;
+}
+
+function wireMapTabs(el, frameId, tabsId, getItems) {
+  const tabs = el.querySelector(`#${tabsId}`);
+  if (!tabs) return;
+  tabs.addEventListener('click', function(e) {
+    const tab = e.target.closest('.mkt-map-tab');
+    if (!tab) return;
+    const mapType = tab.dataset.map;
+    tabs.querySelectorAll('.mkt-map-tab').forEach(t => t.classList.toggle('active', t === tab));
+    const frame = el.querySelector(`#${frameId}`);
+    const img   = el.querySelector(`#${frameId}-img`);
+    if (img) img.src = mapType === 'world' ? 'World map.png' : 'Europe Map.png';
+    if (frame) {
+      frame.querySelectorAll('.map-dot').forEach(d => d.remove());
+      frame.insertAdjacentHTML('beforeend', makeDots(getItems(), mapType));
+    }
+  });
+}
+
 function populateMarket(product) {
   const el = document.getElementById("market-content");
   if (!el) return;
@@ -190,34 +288,37 @@ function populateMarket(product) {
   }
 
   const isOEM = product.fitment === "OEM";
-  const MKT_KEY = `snoeks_mkt_${product.brand}|${product.van}|${product.type}|${product.fitment}`;
+  const MKT_KEY    = `snoeks_mkt_${product.brand}|${product.van}|${product.type}|${product.fitment}`;
+  const PLANTS_KEY = `snoeks_plants_${product.brand}|${product.van}|${product.type}|${product.fitment}`;
 
+  /* ── OEM ──────────────────────────────────────────────────────── */
   if (isOEM) {
-    // ── OEM: intro year + image map with plant pinpoints ──
-    const destinations = md.shippingDestinations || [];
+    let plants = [];
+    try { plants = JSON.parse(localStorage.getItem(PLANTS_KEY)) || []; } catch(e) {}
+    if (!plants.length) {
+      plants = (md.shippingDestinations || []).map(d => ({
+        name: d.name || d.country,
+        country: d.country,
+        lat: d.lat,
+        lng: d.lng,
+        introYear: d.introYear || md.introYear || "—"
+      }));
+    }
 
-    // Decide Europe Map vs World Map:
-    // Use World map if any destination is outside Europe bounds (lat<30 or lat>72 or lng<-15 or lng>50)
-    const useWorld = destinations.some(d => d.lat < 30 || d.lat > 72 || d.lng < -15 || d.lng > 50);
-    const mapImg = useWorld ? "World map.png" : "Europe Map.png";
+    function savePlants() { localStorage.setItem(PLANTS_KEY, JSON.stringify(plants)); }
 
-    // Coordinate formulas:
-    // Europe Map: x=(lng+25)/70*100, y=(71-lat)/37*100
-    // World Map (Mercator): x=(lng+180)/360*100, y=(90-lat)/180*100
-    const destDots = destinations.map(d => {
-      let x, y;
-      if (useWorld) {
-        x = ((d.lng + 180) / 360 * 100).toFixed(1);
-        y = ((90 - d.lat) / 180 * 100).toFixed(1);
-      } else {
-        x = ((d.lng + 25) / 70 * 100).toFixed(1);
-        y = ((71 - d.lat) / 37 * 100).toFixed(1);
-      }
-      return `<div class="map-dot" style="left:${x}%;top:${y}%" title="${d.country}">
-        <span class="map-dot-ring"></span>
-        <span class="map-dot-label">${d.country}</span>
-      </div>`;
-    }).join("");
+    function renderPlantRows() {
+      if (!plants.length) return `<tr><td colspan="4" class="mkt-empty-row">No plants defined.</td></tr>`;
+      return plants.map((p, i) => `<tr>
+        <td>${p.name || "—"}</td>
+        <td>${p.country}</td>
+        <td>${p.introYear || "—"}</td>
+        <td>${mktUnlocked ? `<button class="plant-remove-btn" data-idx="${i}">✕</button>` : ''}</td>
+      </tr>`).join('');
+    }
+
+    const hasWorld = plants.some(p => p.lat < 30 || p.lat > 72 || p.lng < -15 || p.lng > 50);
+    const defaultMap = hasWorld ? 'world' : 'europe';
 
     el.innerHTML = `
       <div class="mkt-overview-row">
@@ -230,52 +331,134 @@ function populateMarket(product) {
           <div class="mkt-stat-value">OEM — via vehicle manufacturer</div>
         </div>
         <div class="mkt-stat-card">
-          <div class="mkt-stat-label">Plant(s)</div>
-          <div class="mkt-stat-value">${destinations.length > 0 ? destinations.map(d=>d.country).join(", ") : "—"}</div>
+          <div class="mkt-stat-label">Plants</div>
+          <div class="mkt-stat-value" id="mkt-plant-count">${plants.length} location${plants.length !== 1 ? 's' : ''}</div>
         </div>
       </div>
+
       <div class="mkt-section">
-        <div class="mkt-section-header">
-          <div class="mkt-section-title">Plant(s)</div>
-          <div class="mkt-section-sub">Manufacturing plants where OEM-configured vehicles are built</div>
+        <div class="mkt-section-header mkt-section-header--flex">
+          <div>
+            <div class="mkt-section-title">Plant Locations</div>
+            <div class="mkt-section-sub">Manufacturing plants where OEM-configured vehicles are built</div>
+          </div>
         </div>
-        <div class="map-img-frame">
-          <img src="${mapImg}" alt="Plant locations map" class="map-bg-img" />
-          ${destDots || `<span class="mkt-empty map-empty">No plant locations defined</span>`}
+        ${renderMapSection('oem-map-frame', 'oem-map-tabs', plants, defaultMap)}
+      </div>
+
+      <div class="mkt-section">
+        <div class="mkt-section-header mkt-section-header--flex">
+          <div>
+            <div class="mkt-section-title">Active Plants</div>
+            <div class="mkt-section-sub">Registered manufacturing plants for this product</div>
+          </div>
+          <button class="mkt-edit-btn" id="oem-edit-btn">${mktUnlocked ? 'Done' : 'Edit'}</button>
+        </div>
+        <div class="plant-table-wrap">
+          <table class="plant-table">
+            <thead><tr><th>Plant Name</th><th>Country / Location</th><th>Introduction</th><th></th></tr></thead>
+            <tbody id="plant-table-body">${renderPlantRows()}</tbody>
+          </table>
+        </div>
+        <div class="plant-add-form" id="plant-add-form" style="display:${mktUnlocked ? 'flex' : 'none'}">
+          <input class="plant-input" id="pi-name"    placeholder="Plant name" />
+          <input class="plant-input" id="pi-country" placeholder="Country / Location" />
+          <input class="plant-input plant-input--narrow" id="pi-lat"  placeholder="Lat"        type="number" step="0.1" />
+          <input class="plant-input plant-input--narrow" id="pi-lng"  placeholder="Lng"        type="number" step="0.1" />
+          <input class="plant-input plant-input--narrow" id="pi-year" placeholder="Intro year" />
+          <button class="plant-add-btn" id="pi-add-btn">+ Add Plant</button>
         </div>
       </div>
     `;
+
+    wireMapTabs(el, 'oem-map-frame', 'oem-map-tabs', () => plants);
+
+    function refreshPlantUI() {
+      const tbody = el.querySelector('#plant-table-body');
+      if (tbody) tbody.innerHTML = renderPlantRows();
+      const cnt = el.querySelector('#mkt-plant-count');
+      if (cnt) cnt.textContent = plants.length + ' location' + (plants.length !== 1 ? 's' : '');
+      wireRemoveBtns();
+      const currentMap = (el.querySelector('.mkt-map-tab.active') || {}).dataset?.map || defaultMap;
+      const frame = el.querySelector('#oem-map-frame');
+      if (frame) {
+        frame.querySelectorAll('.map-dot').forEach(d => d.remove());
+        frame.insertAdjacentHTML('beforeend', makeDots(plants, currentMap));
+      }
+    }
+
+    function wireRemoveBtns() {
+      el.querySelectorAll('.plant-remove-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          plants.splice(parseInt(this.dataset.idx), 1);
+          savePlants();
+          refreshPlantUI();
+        });
+      });
+    }
+    wireRemoveBtns();
+
+    el.querySelector('#pi-add-btn').addEventListener('click', function() {
+      const name    = el.querySelector('#pi-name').value.trim();
+      const country = el.querySelector('#pi-country').value.trim();
+      const lat     = parseFloat(el.querySelector('#pi-lat').value);
+      const lng     = parseFloat(el.querySelector('#pi-lng').value);
+      const year    = el.querySelector('#pi-year').value.trim();
+      if (!country || isNaN(lat) || isNaN(lng)) {
+        el.querySelector('#pi-country').focus();
+        return;
+      }
+      plants.push({ name: name || country, country, lat, lng, introYear: year || "—" });
+      savePlants();
+      refreshPlantUI();
+      ['#pi-name','#pi-country','#pi-lat','#pi-lng','#pi-year'].forEach(s => { el.querySelector(s).value = ''; });
+    });
+
+    const oemEditBtn = el.querySelector('#oem-edit-btn');
+    oemEditBtn.addEventListener('click', function() {
+      if (mktUnlocked) {
+        mktUnlocked = false;
+        this.textContent = 'Edit';
+        el.querySelector('#plant-add-form').style.display = 'none';
+        refreshPlantUI();
+        return;
+      }
+      showMktPasswordPrompt(this, () => {
+        this.textContent = 'Done';
+        el.querySelector('#plant-add-form').style.display = 'flex';
+        refreshPlantUI();
+      });
+    });
+
+  /* ── After-fit ────────────────────────────────────────────────── */
   } else {
-    // ── After-fit: intro year + EU map + editable 22-country table ──
     const ALL_COUNTRIES = [
-      {code:"NL",name:"Netherlands",  ex:42.7, ey:50.3},
-      {code:"BE",name:"Belgium",      ex:42.0, ey:54.3},
-      {code:"DE",name:"Germany",      ex:54.9, ey:50.0},
-      {code:"FR",name:"France",       ex:39.1, ey:59.7},
-      {code:"ES",name:"Spain",        ex:30.4, ey:82.7},
-      {code:"GB",name:"United Kingdom",ex:35.6,ey:52.7},
-      {code:"IT",name:"Italy",        ex:53.6, ey:78.6},
-      {code:"CZ",name:"Czech Republic",ex:56.3,ey:56.5},
-      {code:"DK",name:"Denmark",      ex:53.7, ey:41.4},
-      {code:"AT",name:"Austria",      ex:59.1, ey:61.6},
-      {code:"PL",name:"Poland",       ex:65.7, ey:50.8},
-      {code:"SE",name:"Sweden",       ex:61.6, ey:31.6},
-      {code:"FI",name:"Finland",      ex:71.4, ey:29.2},
-      {code:"PT",name:"Portugal",     ex:22.7, ey:87.3},
-      {code:"HU",name:"Hungary",      ex:62.9, ey:63.5},
-      {code:"EE",name:"Estonia",      ex:71.1, ey:31.4},
-      {code:"LT",name:"Lithuania",    ex:71.9, ey:44.1},
-      {code:"LV",name:"Latvia",       ex:70.1, ey:38.1},
-      {code:"RO",name:"Romania",      ex:73.0, ey:71.9},
-      {code:"SI",name:"Slovenia",     ex:56.4, ey:67.3},
-      {code:"SK",name:"Slovakia",     ex:60.1, ey:61.6},
-      {code:"BG",name:"Bulgaria",     ex:69.0, ey:76.5},
+      {code:"NL",name:"Netherlands",   ex:42.7, ey:50.3, lat:52.3, lng: 5.3},
+      {code:"BE",name:"Belgium",       ex:42.0, ey:54.3, lat:50.8, lng: 4.4},
+      {code:"DE",name:"Germany",       ex:54.9, ey:50.0, lat:51.2, lng:10.5},
+      {code:"FR",name:"France",        ex:39.1, ey:59.7, lat:46.2, lng: 2.2},
+      {code:"ES",name:"Spain",         ex:30.4, ey:82.7, lat:40.4, lng:-3.7},
+      {code:"GB",name:"United Kingdom",ex:35.6, ey:52.7, lat:54.0, lng:-2.0},
+      {code:"IT",name:"Italy",         ex:53.6, ey:78.6, lat:42.5, lng:12.5},
+      {code:"CZ",name:"Czech Republic",ex:56.3, ey:56.5, lat:49.8, lng:15.5},
+      {code:"DK",name:"Denmark",       ex:53.7, ey:41.4, lat:56.0, lng:10.0},
+      {code:"AT",name:"Austria",       ex:59.1, ey:61.6, lat:47.5, lng:14.5},
+      {code:"PL",name:"Poland",        ex:65.7, ey:50.8, lat:52.0, lng:19.0},
+      {code:"SE",name:"Sweden",        ex:61.6, ey:31.6, lat:60.0, lng:18.0},
+      {code:"FI",name:"Finland",       ex:71.4, ey:29.2, lat:62.0, lng:25.0},
+      {code:"PT",name:"Portugal",      ex:22.7, ey:87.3, lat:39.5, lng:-8.0},
+      {code:"HU",name:"Hungary",       ex:62.9, ey:63.5, lat:47.2, lng:19.5},
+      {code:"EE",name:"Estonia",       ex:71.1, ey:31.4, lat:58.8, lng:25.0},
+      {code:"LT",name:"Lithuania",     ex:71.9, ey:44.1, lat:55.8, lng:23.9},
+      {code:"LV",name:"Latvia",        ex:70.1, ey:38.1, lat:56.9, lng:24.6},
+      {code:"RO",name:"Romania",       ex:73.0, ey:71.9, lat:45.5, lng:25.0},
+      {code:"SI",name:"Slovenia",      ex:56.4, ey:67.3, lat:46.1, lng:14.8},
+      {code:"SK",name:"Slovakia",      ex:60.1, ey:61.6, lat:48.7, lng:19.7},
+      {code:"BG",name:"Bulgaria",      ex:69.0, ey:76.5, lat:42.7, lng:25.5},
     ];
 
-    // Load saved edits from localStorage
     let saved = {};
-    try { saved = JSON.parse(localStorage.getItem(MKT_KEY)) || {}; } catch(e){}
-
+    try { saved = JSON.parse(localStorage.getItem(MKT_KEY)) || {}; } catch(e) {}
     const cd = md.countryData || {};
     const countryState = {};
     ALL_COUNTRIES.forEach(c => {
@@ -283,38 +466,35 @@ function populateMarket(product) {
       countryState[c.code] = saved[c.code] || { active: base.active, homologation: base.homologation };
     });
 
-    // Active country dots on EU map
-    const activeDots = ALL_COUNTRIES
-      .filter(c => countryState[c.code].active)
-      .map(c => `<div class="map-dot map-dot--active" style="left:${c.ex}%;top:${c.ey}%" title="${c.name}">
-        <span class="map-dot-ring"></span>
-        <span class="map-dot-label">${c.code}</span>
-      </div>`).join("");
+    function activeCountries() { return ALL_COUNTRIES.filter(c => countryState[c.code].active); }
 
-    const rows = ALL_COUNTRIES.map(c => {
-      const st = countryState[c.code];
-      return `<tr data-country="${c.code}">
-        <td class="ct-code">${c.code}</td>
-        <td class="ct-name">${c.name}</td>
-        <td class="ct-active">
-          <select class="ct-select ct-select--status" data-field="active">
-            <option value="true"  ${st.active ? 'selected':''}>Active</option>
-            <option value="false" ${!st.active ? 'selected':''}>Not active</option>
-          </select>
-        </td>
-        <td class="ct-homol">
-          <select class="ct-select ct-select--homol" data-field="homologation">
-            <option value="CoC" ${st.homologation==='CoC'?'selected':''}>CoC</option>
-            <option value="GWC" ${st.homologation==='GWC'?'selected':''}>GWC</option>
-            <option value="Both" ${st.homologation==='Both'?'selected':''}>Both</option>
-            <option value="Other" ${st.homologation==='Other'?'selected':''}>Other</option>
-            <option value="—" ${(st.homologation==='—'||!st.homologation)?'selected':''}>—</option>
-          </select>
-        </td>
-      </tr>`;
-    }).join("");
+    function renderRows(locked) {
+      return ALL_COUNTRIES.map(c => {
+        const st = countryState[c.code];
+        return `<tr data-country="${c.code}">
+          <td class="ct-code">${c.code}</td>
+          <td class="ct-name">${c.name}</td>
+          <td class="ct-active">
+            <select class="ct-select ct-select--status" data-field="active" ${locked ? 'disabled' : ''}>
+              <option value="true"  ${st.active  ? 'selected':''}>Active</option>
+              <option value="false" ${!st.active ? 'selected':''}>Not active</option>
+            </select>
+          </td>
+          <td class="ct-homol">
+            <select class="ct-select ct-select--homol" data-field="homologation" ${locked ? 'disabled' : ''}>
+              <option value="CoC"   ${st.homologation==='CoC'  ?'selected':''}>CoC</option>
+              <option value="GWC"   ${st.homologation==='GWC'  ?'selected':''}>GWC</option>
+              <option value="Both"  ${st.homologation==='Both' ?'selected':''}>Both</option>
+              <option value="Other" ${st.homologation==='Other'?'selected':''}>Other</option>
+              <option value="—"     ${(st.homologation==='—'||!st.homologation)?'selected':''}>—</option>
+            </select>
+          </td>
+        </tr>`;
+      }).join('');
+    }
 
-    const activeCount = ALL_COUNTRIES.filter(c => countryState[c.code].active).length;
+    const activeCount = activeCountries().length;
+    const afDefaultMap = 'europe';
 
     el.innerHTML = `
       <div class="mkt-overview-row">
@@ -331,60 +511,77 @@ function populateMarket(product) {
           <div class="mkt-stat-value" id="mkt-active-count">${activeCount} countries</div>
         </div>
       </div>
+
       <div class="mkt-section">
-        <div class="mkt-section-header">
-          <div class="mkt-section-title">Active Market Coverage</div>
-          <div class="mkt-section-sub">Countries where this product is currently active</div>
+        <div class="mkt-section-header mkt-section-header--flex">
+          <div>
+            <div class="mkt-section-title">Active Market Coverage</div>
+            <div class="mkt-section-sub">Countries where this product is currently active</div>
+          </div>
         </div>
-        <div class="map-img-frame map-img-frame--eu" id="af-map-frame">
-          <img src="Europe Map.png" alt="Europe map" class="map-bg-img" />
-          ${activeDots}
-        </div>
+        ${renderMapSection('af-map-frame', 'af-map-tabs', activeCountries(), afDefaultMap)}
       </div>
+
       <div class="mkt-section">
-        <div class="mkt-section-header">
-          <div class="mkt-section-title">Market &amp; Homologation Overview</div>
-          <div class="mkt-section-sub">Edit active status and homologation method per country — changes are saved automatically</div>
+        <div class="mkt-section-header mkt-section-header--flex">
+          <div>
+            <div class="mkt-section-title">Market &amp; Homologation Overview</div>
+            <div class="mkt-section-sub">Active status and homologation method per country</div>
+          </div>
+          <button class="mkt-edit-btn" id="af-edit-btn">${mktUnlocked ? 'Done' : 'Edit'}</button>
         </div>
         <div class="country-table-wrap">
           <table class="country-table">
-            <thead>
-              <tr><th>Code</th><th>Country</th><th>Status</th><th>Homologation</th></tr>
-            </thead>
-            <tbody id="country-table-body">${rows}</tbody>
+            <thead><tr><th>Code</th><th>Country</th><th>Status</th><th>Homologation</th></tr></thead>
+            <tbody id="country-table-body">${renderRows(!mktUnlocked)}</tbody>
           </table>
         </div>
         <p class="mkt-homol-note">CoC = Certificate of Conformity (EU type approval). GWC = General Whole-vehicle Certification (national approval). Both = CoC primary, GWC fallback available.</p>
       </div>
     `;
 
-    // Wire up selects — save changes and refresh EU map dots
+    wireMapTabs(el, 'af-map-frame', 'af-map-tabs', () => activeCountries());
+
     function refreshMapDots() {
-      const frame = document.getElementById('af-map-frame');
+      const frame = el.querySelector('#af-map-frame');
       if (!frame) return;
-      frame.querySelectorAll('.map-dot').forEach(d=>d.remove());
-      ALL_COUNTRIES.filter(c => countryState[c.code].active).forEach(c => {
-        const dot = document.createElement('div');
-        dot.className = 'map-dot map-dot--active';
-        dot.style.cssText = `left:${c.ex}%;top:${c.ey}%`;
-        dot.title = c.name;
-        dot.innerHTML = `<span class="map-dot-ring"></span><span class="map-dot-label">${c.code}</span>`;
-        frame.appendChild(dot);
-      });
-      const cnt = document.getElementById('mkt-active-count');
-      if (cnt) cnt.textContent = ALL_COUNTRIES.filter(c=>countryState[c.code].active).length + ' countries';
+      frame.querySelectorAll('.map-dot').forEach(d => d.remove());
+      const currentMap = (el.querySelector('#af-map-tabs .mkt-map-tab.active') || {}).dataset?.map || afDefaultMap;
+      frame.insertAdjacentHTML('beforeend', makeDots(activeCountries(), currentMap));
+      const cnt = el.querySelector('#mkt-active-count');
+      if (cnt) cnt.textContent = activeCountries().length + ' countries';
     }
 
-    el.querySelectorAll('.ct-select').forEach(sel => {
-      sel.addEventListener('change', function() {
-        const row = this.closest('tr[data-country]');
-        if (!row) return;
-        const code = row.dataset.country;
-        const field = this.dataset.field;
-        if (field === 'active') countryState[code].active = (this.value === 'true');
-        else countryState[code].homologation = this.value;
-        localStorage.setItem(MKT_KEY, JSON.stringify(countryState));
-        refreshMapDots();
+    function wireSelects(locked) {
+      el.querySelectorAll('.ct-select').forEach(sel => {
+        sel.disabled = locked;
+        sel.addEventListener('change', function() {
+          const row   = this.closest('tr[data-country]');
+          if (!row) return;
+          const code  = row.dataset.country;
+          const field = this.dataset.field;
+          if (field === 'active') countryState[code].active = (this.value === 'true');
+          else countryState[code].homologation = this.value;
+          localStorage.setItem(MKT_KEY, JSON.stringify(countryState));
+          refreshMapDots();
+        });
+      });
+    }
+    wireSelects(!mktUnlocked);
+
+    const afEditBtn = el.querySelector('#af-edit-btn');
+    afEditBtn.addEventListener('click', function() {
+      if (mktUnlocked) {
+        mktUnlocked = false;
+        this.textContent = 'Edit';
+        el.querySelector('#country-table-body').innerHTML = renderRows(true);
+        wireSelects(true);
+        return;
+      }
+      showMktPasswordPrompt(this, () => {
+        this.textContent = 'Done';
+        el.querySelector('#country-table-body').innerHTML = renderRows(false);
+        wireSelects(false);
       });
     });
   }

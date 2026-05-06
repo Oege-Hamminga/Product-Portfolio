@@ -2791,3 +2791,201 @@ body.matrix-edit-active td.mm-cell {
 .matrix-edit-active .mm-select--SD  { color: #7a00cc; }
 .matrix-edit-active .mm-select--New { color: #1a8040; }
 .matrix-edit-active .mm-select--none { color: var(--text-muted); }
+
+/* ── mkt-section-header flex (title + edit btn) ───────────────────── */
+.mkt-section-header--flex {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* ── Map tabs (Europe / World) ────────────────────────────────────── */
+.mkt-map-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.mkt-map-tab {
+  padding: 5px 14px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border: 1px solid var(--grey-2);
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.mkt-map-tab:hover {
+  border-color: var(--grey-3, #bbb);
+  color: var(--text);
+}
+
+.mkt-map-tab.active {
+  background: var(--dark);
+  border-color: var(--dark);
+  color: var(--white);
+}
+
+/* ── Market section edit button ───────────────────────────────────── */
+.mkt-edit-btn {
+  flex-shrink: 0;
+  padding: 5px 13px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border: 1px solid var(--grey-2);
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.mkt-edit-btn:hover {
+  border-color: var(--dark);
+  color: var(--text);
+}
+
+/* ── Country table select — locked/unlocked ───────────────────────── */
+.ct-select {
+  font-size: 0.75rem;
+  font-family: inherit;
+  padding: 3px 6px;
+  border: 1px solid var(--grey-2);
+  border-radius: 4px;
+  background: var(--white);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.ct-select:disabled {
+  opacity: 1;
+  cursor: default;
+  border-color: transparent;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  pointer-events: none;
+  color: var(--text-muted);
+}
+
+.ct-select--status:disabled { font-weight: 600; }
+
+/* ── Plant table ──────────────────────────────────────────────────── */
+.plant-table-wrap {
+  overflow-x: auto;
+  margin-top: 10px;
+  border: 1px solid var(--grey-2);
+  border-radius: var(--radius);
+  background: var(--white);
+}
+
+.plant-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.plant-table th {
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(0,0,0,0.45);
+  background: var(--grey-1);
+  border-bottom: 1px solid var(--grey-2);
+}
+
+.plant-table td {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--grey-2);
+  color: rgba(0,0,0,0.75);
+}
+
+.plant-table tr:last-child td { border-bottom: none; }
+.plant-table tr:hover td { background: var(--grey-1); }
+
+.plant-remove-btn {
+  padding: 2px 7px;
+  font-size: 0.7rem;
+  border: 1px solid rgba(204,0,0,0.3);
+  border-radius: 3px;
+  background: rgba(204,0,0,0.06);
+  color: var(--red);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.plant-remove-btn:hover {
+  background: var(--red);
+  color: var(--white);
+  border-color: var(--red);
+}
+
+.mkt-empty-row {
+  color: var(--text-muted) !important;
+  text-align: center;
+  font-style: italic;
+  padding: 16px !important;
+}
+
+/* ── Add plant form ───────────────────────────────────────────────── */
+.plant-add-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--grey-1);
+  border: 1px solid var(--grey-2);
+  border-radius: var(--radius);
+}
+
+.plant-input {
+  flex: 1;
+  min-width: 110px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  font-family: inherit;
+  border: 1px solid var(--grey-2);
+  border-radius: 4px;
+  background: var(--white);
+  color: var(--text);
+}
+
+.plant-input--narrow {
+  flex: 0 0 80px;
+  min-width: 80px;
+}
+
+.plant-input:focus {
+  outline: none;
+  border-color: var(--dark);
+}
+
+.plant-add-btn {
+  padding: 6px 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: inherit;
+  border: 1px solid var(--dark);
+  border-radius: var(--radius);
+  background: var(--dark);
+  color: var(--white);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition);
+}
+
+.plant-add-btn:hover {
+  background: #111;
+}
