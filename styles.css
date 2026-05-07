@@ -2989,3 +2989,107 @@ body.matrix-edit-active td.mm-cell {
 .plant-add-btn:hover {
   background: #111;
 }
+
+/* ── Country table — active row highlight ─────────────────────────── */
+.ct-country-row--active > td { background: rgba(40,160,80,0.04); }
+.ct-country-row--active .ct-code { color: #1a8040 !important; }
+
+/* ── Customer sub-rows ────────────────────────────────────────────── */
+.ct-customer-row td {
+  background: rgba(40,160,80,0.03);
+  border-bottom: 1px solid rgba(40,160,80,0.08);
+  font-size: 0.75rem;
+  padding: 5px 12px;
+}
+
+.ct-cust-indent {
+  color: rgba(40,160,80,0.5);
+  font-size: 0.65rem;
+  text-align: center;
+  width: 28px;
+}
+
+.ct-cust-name { font-weight: 600; color: rgba(0,0,0,0.8) !important; }
+.ct-cust-loc  { color: var(--text-muted) !important; font-style: italic; }
+
+/* Snoeks Certified badge */
+.ct-cert {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-radius: 3px;
+}
+.ct-cert--yes      { background: rgba(40,160,80,0.12); color: #1a8040; border: 1px solid rgba(40,160,80,0.3); }
+.ct-cert--no       { background: rgba(204,0,0,0.08);   color: var(--red); border: 1px solid rgba(204,0,0,0.25); }
+.ct-cert--interest { background: rgba(255,176,32,0.12); color: #8a5c00; border: 1px solid rgba(255,176,32,0.35); }
+
+/* Add-customer inline row */
+.ct-customer-add-row td {
+  background: rgba(0,0,0,0.02);
+  border-bottom: 1px dashed var(--grey-2);
+  padding: 5px 12px;
+}
+
+.cust-input {
+  width: 100%;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  font-family: inherit;
+  border: 1px solid var(--grey-2);
+  border-radius: 4px;
+  background: var(--white);
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+.cust-input:focus {
+  outline: none;
+  border-color: var(--dark);
+}
+
+.cust-cert-sel {
+  width: 100%;
+  padding: 4px 6px;
+  font-size: 0.75rem;
+  font-family: inherit;
+  border: 1px solid var(--grey-2);
+  border-radius: 4px;
+  background: var(--white);
+  color: var(--text);
+}
+
+.cust-add-btn {
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 1px solid rgba(40,160,80,0.4);
+  border-radius: 4px;
+  background: rgba(40,160,80,0.1);
+  color: #1a8040;
+  cursor: pointer;
+}
+
+.cust-add-btn:hover {
+  background: rgba(40,160,80,0.2);
+  border-color: rgba(40,160,80,0.7);
+}
+
+.cust-remove-btn {
+  padding: 2px 7px;
+  font-size: 0.7rem;
+  border: 1px solid rgba(204,0,0,0.3);
+  border-radius: 3px;
+  background: rgba(204,0,0,0.06);
+  color: var(--red);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.cust-remove-btn:hover {
+  background: var(--red);
+  color: var(--white);
+  border-color: var(--red);
+}

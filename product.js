@@ -228,56 +228,6 @@ function showMktPasswordPrompt(anchor, onSuccess) {
   setTimeout(() => document.addEventListener('click', outsideClick), 0);
 }
 
-function makeDots(items, mapType) {
-  return items.map(d => {
-    let x, y;
-    if (mapType === 'world') {
-      x = ((d.lng + 180) / 360 * 100).toFixed(1);
-      y = ((90 - d.lat) / 180 * 100).toFixed(1);
-    } else {
-      x = ((d.lng + 25) / 70 * 100).toFixed(1);
-      y = ((71 - d.lat) / 37 * 100).toFixed(1);
-    }
-    const label = d.code || d.country || '';
-    return `<div class="map-dot map-dot--active" style="left:${x}%;top:${y}%" title="${d.name || d.country || ''}">
-      <span class="map-dot-ring"></span>
-      <span class="map-dot-label">${label}</span>
-    </div>`;
-  }).join('');
-}
-
-function renderMapSection(frameId, tabsId, items, defaultMap) {
-  const mapSrc = defaultMap === 'world' ? 'World map.png' : 'Europe Map.png';
-  return `
-    <div class="mkt-map-tabs" id="${tabsId}">
-      <button class="mkt-map-tab${defaultMap === 'europe' ? ' active' : ''}" data-map="europe">Europe</button>
-      <button class="mkt-map-tab${defaultMap === 'world'  ? ' active' : ''}" data-map="world">World</button>
-    </div>
-    <div class="map-img-frame" id="${frameId}">
-      <img src="${mapSrc}" alt="Map" class="map-bg-img" id="${frameId}-img" />
-      ${makeDots(items, defaultMap)}
-    </div>
-  `;
-}
-
-function wireMapTabs(el, frameId, tabsId, getItems) {
-  const tabs = el.querySelector(`#${tabsId}`);
-  if (!tabs) return;
-  tabs.addEventListener('click', function(e) {
-    const tab = e.target.closest('.mkt-map-tab');
-    if (!tab) return;
-    const mapType = tab.dataset.map;
-    tabs.querySelectorAll('.mkt-map-tab').forEach(t => t.classList.toggle('active', t === tab));
-    const frame = el.querySelector(`#${frameId}`);
-    const img   = el.querySelector(`#${frameId}-img`);
-    if (img) img.src = mapType === 'world' ? 'World map.png' : 'Europe Map.png';
-    if (frame) {
-      frame.querySelectorAll('.map-dot').forEach(d => d.remove());
-      frame.insertAdjacentHTML('beforeend', makeDots(getItems(), mapType));
-    }
-  });
-}
-
 function populateMarket(product) {
   const el = document.getElementById("market-content");
   if (!el) return;
@@ -299,8 +249,6 @@ function populateMarket(product) {
       plants = (md.shippingDestinations || []).map(d => ({
         name: d.name || d.country,
         country: d.country,
-        lat: d.lat,
-        lng: d.lng,
         introYear: d.introYear || md.introYear || "—"
       }));
     }
@@ -316,9 +264,6 @@ function populateMarket(product) {
         <td>${mktUnlocked ? `<button class="plant-remove-btn" data-idx="${i}">✕</button>` : ''}</td>
       </tr>`).join('');
     }
-
-    const hasWorld = plants.some(p => p.lat < 30 || p.lat > 72 || p.lng < -15 || p.lng > 50);
-    const defaultMap = hasWorld ? 'world' : 'europe';
 
     el.innerHTML = `
       <div class="mkt-overview-row">
@@ -339,16 +284,6 @@ function populateMarket(product) {
       <div class="mkt-section">
         <div class="mkt-section-header mkt-section-header--flex">
           <div>
-            <div class="mkt-section-title">Plant Locations</div>
-            <div class="mkt-section-sub">Manufacturing plants where OEM-configured vehicles are built</div>
-          </div>
-        </div>
-        ${renderMapSection('oem-map-frame', 'oem-map-tabs', plants, defaultMap)}
-      </div>
-
-      <div class="mkt-section">
-        <div class="mkt-section-header mkt-section-header--flex">
-          <div>
             <div class="mkt-section-title">Active Plants</div>
             <div class="mkt-section-sub">Registered manufacturing plants for this product</div>
           </div>
@@ -363,15 +298,11 @@ function populateMarket(product) {
         <div class="plant-add-form" id="plant-add-form" style="display:${mktUnlocked ? 'flex' : 'none'}">
           <input class="plant-input" id="pi-name"    placeholder="Plant name" />
           <input class="plant-input" id="pi-country" placeholder="Country / Location" />
-          <input class="plant-input plant-input--narrow" id="pi-lat"  placeholder="Lat"        type="number" step="0.1" />
-          <input class="plant-input plant-input--narrow" id="pi-lng"  placeholder="Lng"        type="number" step="0.1" />
           <input class="plant-input plant-input--narrow" id="pi-year" placeholder="Intro year" />
           <button class="plant-add-btn" id="pi-add-btn">+ Add Plant</button>
         </div>
       </div>
     `;
-
-    wireMapTabs(el, 'oem-map-frame', 'oem-map-tabs', () => plants);
 
     function refreshPlantUI() {
       const tbody = el.querySelector('#plant-table-body');
@@ -379,12 +310,6 @@ function populateMarket(product) {
       const cnt = el.querySelector('#mkt-plant-count');
       if (cnt) cnt.textContent = plants.length + ' location' + (plants.length !== 1 ? 's' : '');
       wireRemoveBtns();
-      const currentMap = (el.querySelector('.mkt-map-tab.active') || {}).dataset?.map || defaultMap;
-      const frame = el.querySelector('#oem-map-frame');
-      if (frame) {
-        frame.querySelectorAll('.map-dot').forEach(d => d.remove());
-        frame.insertAdjacentHTML('beforeend', makeDots(plants, currentMap));
-      }
     }
 
     function wireRemoveBtns() {
@@ -401,17 +326,12 @@ function populateMarket(product) {
     el.querySelector('#pi-add-btn').addEventListener('click', function() {
       const name    = el.querySelector('#pi-name').value.trim();
       const country = el.querySelector('#pi-country').value.trim();
-      const lat     = parseFloat(el.querySelector('#pi-lat').value);
-      const lng     = parseFloat(el.querySelector('#pi-lng').value);
       const year    = el.querySelector('#pi-year').value.trim();
-      if (!country || isNaN(lat) || isNaN(lng)) {
-        el.querySelector('#pi-country').focus();
-        return;
-      }
-      plants.push({ name: name || country, country, lat, lng, introYear: year || "—" });
+      if (!country) { el.querySelector('#pi-country').focus(); return; }
+      plants.push({ name: name || country, country, introYear: year || "—" });
       savePlants();
       refreshPlantUI();
-      ['#pi-name','#pi-country','#pi-lat','#pi-lng','#pi-year'].forEach(s => { el.querySelector(s).value = ''; });
+      ['#pi-name','#pi-country','#pi-year'].forEach(s => { el.querySelector(s).value = ''; });
     });
 
     const oemEditBtn = el.querySelector('#oem-edit-btn');
@@ -433,28 +353,28 @@ function populateMarket(product) {
   /* ── After-fit ────────────────────────────────────────────────── */
   } else {
     const ALL_COUNTRIES = [
-      {code:"NL",name:"Netherlands",   ex:42.7, ey:50.3, lat:52.3, lng: 5.3},
-      {code:"BE",name:"Belgium",       ex:42.0, ey:54.3, lat:50.8, lng: 4.4},
-      {code:"DE",name:"Germany",       ex:54.9, ey:50.0, lat:51.2, lng:10.5},
-      {code:"FR",name:"France",        ex:39.1, ey:59.7, lat:46.2, lng: 2.2},
-      {code:"ES",name:"Spain",         ex:30.4, ey:82.7, lat:40.4, lng:-3.7},
-      {code:"GB",name:"United Kingdom",ex:35.6, ey:52.7, lat:54.0, lng:-2.0},
-      {code:"IT",name:"Italy",         ex:53.6, ey:78.6, lat:42.5, lng:12.5},
-      {code:"CZ",name:"Czech Republic",ex:56.3, ey:56.5, lat:49.8, lng:15.5},
-      {code:"DK",name:"Denmark",       ex:53.7, ey:41.4, lat:56.0, lng:10.0},
-      {code:"AT",name:"Austria",       ex:59.1, ey:61.6, lat:47.5, lng:14.5},
-      {code:"PL",name:"Poland",        ex:65.7, ey:50.8, lat:52.0, lng:19.0},
-      {code:"SE",name:"Sweden",        ex:61.6, ey:31.6, lat:60.0, lng:18.0},
-      {code:"FI",name:"Finland",       ex:71.4, ey:29.2, lat:62.0, lng:25.0},
-      {code:"PT",name:"Portugal",      ex:22.7, ey:87.3, lat:39.5, lng:-8.0},
-      {code:"HU",name:"Hungary",       ex:62.9, ey:63.5, lat:47.2, lng:19.5},
-      {code:"EE",name:"Estonia",       ex:71.1, ey:31.4, lat:58.8, lng:25.0},
-      {code:"LT",name:"Lithuania",     ex:71.9, ey:44.1, lat:55.8, lng:23.9},
-      {code:"LV",name:"Latvia",        ex:70.1, ey:38.1, lat:56.9, lng:24.6},
-      {code:"RO",name:"Romania",       ex:73.0, ey:71.9, lat:45.5, lng:25.0},
-      {code:"SI",name:"Slovenia",      ex:56.4, ey:67.3, lat:46.1, lng:14.8},
-      {code:"SK",name:"Slovakia",      ex:60.1, ey:61.6, lat:48.7, lng:19.7},
-      {code:"BG",name:"Bulgaria",      ex:69.0, ey:76.5, lat:42.7, lng:25.5},
+      {code:"NL",name:"Netherlands"   },
+      {code:"BE",name:"Belgium"       },
+      {code:"DE",name:"Germany"       },
+      {code:"FR",name:"France"        },
+      {code:"ES",name:"Spain"         },
+      {code:"GB",name:"United Kingdom"},
+      {code:"IT",name:"Italy"         },
+      {code:"CZ",name:"Czech Republic"},
+      {code:"DK",name:"Denmark"       },
+      {code:"AT",name:"Austria"       },
+      {code:"PL",name:"Poland"        },
+      {code:"SE",name:"Sweden"        },
+      {code:"FI",name:"Finland"       },
+      {code:"PT",name:"Portugal"      },
+      {code:"HU",name:"Hungary"       },
+      {code:"EE",name:"Estonia"       },
+      {code:"LT",name:"Lithuania"     },
+      {code:"LV",name:"Latvia"        },
+      {code:"RO",name:"Romania"       },
+      {code:"SI",name:"Slovenia"      },
+      {code:"SK",name:"Slovakia"      },
+      {code:"BG",name:"Bulgaria"      },
     ];
 
     let saved = {};
@@ -463,38 +383,72 @@ function populateMarket(product) {
     const countryState = {};
     ALL_COUNTRIES.forEach(c => {
       const base = cd[c.code] || { active: false, homologation: "—" };
-      countryState[c.code] = saved[c.code] || { active: base.active, homologation: base.homologation };
+      const s = saved[c.code] || { active: base.active, homologation: base.homologation };
+      if (!s.customers) s.customers = [];
+      countryState[c.code] = s;
     });
 
-    function activeCountries() { return ALL_COUNTRIES.filter(c => countryState[c.code].active); }
+    function saveState() { localStorage.setItem(MKT_KEY, JSON.stringify(countryState)); }
+
+    function certClass(v) {
+      return v === 'YES' ? 'ct-cert--yes' : v === 'NO' ? 'ct-cert--no' : 'ct-cert--interest';
+    }
 
     function renderRows(locked) {
       return ALL_COUNTRIES.map(c => {
         const st = countryState[c.code];
-        return `<tr data-country="${c.code}">
-          <td class="ct-code">${c.code}</td>
-          <td class="ct-name">${c.name}</td>
-          <td class="ct-active">
-            <select class="ct-select ct-select--status" data-field="active" ${locked ? 'disabled' : ''}>
-              <option value="true"  ${st.active  ? 'selected':''}>Active</option>
-              <option value="false" ${!st.active ? 'selected':''}>Not active</option>
-            </select>
-          </td>
-          <td class="ct-homol">
-            <select class="ct-select ct-select--homol" data-field="homologation" ${locked ? 'disabled' : ''}>
-              <option value="CoC"   ${st.homologation==='CoC'  ?'selected':''}>CoC</option>
-              <option value="GWC"   ${st.homologation==='GWC'  ?'selected':''}>GWC</option>
-              <option value="Both"  ${st.homologation==='Both' ?'selected':''}>Both</option>
-              <option value="Other" ${st.homologation==='Other'?'selected':''}>Other</option>
-              <option value="—"     ${(st.homologation==='—'||!st.homologation)?'selected':''}>—</option>
-            </select>
-          </td>
-        </tr>`;
+        const customers = st.customers || [];
+
+        const customerRows = st.active ? customers.map((cu, ci) => `
+          <tr class="ct-customer-row">
+            <td class="ct-cust-indent">↳</td>
+            <td class="ct-cust-name">${cu.name || "—"}</td>
+            <td class="ct-cust-loc">${cu.location || "—"}</td>
+            <td><span class="ct-cert ${certClass(cu.certified)}">${cu.certified}</span></td>
+            <td>${locked ? '' : `<button class="cust-remove-btn" data-country="${c.code}" data-cidx="${ci}">✕</button>`}</td>
+          </tr>`).join('') : '';
+
+        const addRow = (!locked && st.active) ? `
+          <tr class="ct-customer-add-row" data-country="${c.code}">
+            <td class="ct-cust-indent"></td>
+            <td><input class="cust-input" placeholder="Customer name" data-role="name" /></td>
+            <td><input class="cust-input" placeholder="Location"      data-role="loc"  /></td>
+            <td>
+              <select class="cust-cert-sel">
+                <option value="YES">YES</option>
+                <option value="NO">NO</option>
+                <option value="INTEREST">INTEREST</option>
+              </select>
+            </td>
+            <td><button class="cust-add-btn" data-country="${c.code}">+</button></td>
+          </tr>` : '';
+
+        return `
+          <tr class="ct-country-row${st.active ? ' ct-country-row--active' : ''}" data-country="${c.code}">
+            <td class="ct-code">${c.code}</td>
+            <td class="ct-name">${c.name}</td>
+            <td class="ct-active">
+              <select class="ct-select ct-select--status" data-field="active" ${locked ? 'disabled' : ''}>
+                <option value="true"  ${st.active  ? 'selected':''}>Active</option>
+                <option value="false" ${!st.active ? 'selected':''}>Not active</option>
+              </select>
+            </td>
+            <td class="ct-homol">
+              <select class="ct-select ct-select--homol" data-field="homologation" ${locked ? 'disabled' : ''}>
+                <option value="CoC" ${st.homologation==='CoC'?'selected':''}>CoC</option>
+                <option value="GWC" ${st.homologation==='GWC'?'selected':''}>GWC</option>
+                <option value="IVA" ${st.homologation==='IVA'?'selected':''}>IVA</option>
+                <option value="—"   ${(st.homologation==='—'||!st.homologation)?'selected':''}>—</option>
+              </select>
+            </td>
+            <td></td>
+          </tr>
+          ${customerRows}
+          ${addRow}`;
       }).join('');
     }
 
-    const activeCount = activeCountries().length;
-    const afDefaultMap = 'europe';
+    const activeCount = ALL_COUNTRIES.filter(c => countryState[c.code].active).length;
 
     el.innerHTML = `
       <div class="mkt-overview-row">
@@ -515,73 +469,76 @@ function populateMarket(product) {
       <div class="mkt-section">
         <div class="mkt-section-header mkt-section-header--flex">
           <div>
-            <div class="mkt-section-title">Active Market Coverage</div>
-            <div class="mkt-section-sub">Countries where this product is currently active</div>
-          </div>
-        </div>
-        ${renderMapSection('af-map-frame', 'af-map-tabs', activeCountries(), afDefaultMap)}
-      </div>
-
-      <div class="mkt-section">
-        <div class="mkt-section-header mkt-section-header--flex">
-          <div>
             <div class="mkt-section-title">Market &amp; Homologation Overview</div>
-            <div class="mkt-section-sub">Active status and homologation method per country</div>
+            <div class="mkt-section-sub">Active status, homologation method and customers per country</div>
           </div>
           <button class="mkt-edit-btn" id="af-edit-btn">${mktUnlocked ? 'Done' : 'Edit'}</button>
         </div>
         <div class="country-table-wrap">
           <table class="country-table">
-            <thead><tr><th>Code</th><th>Country</th><th>Status</th><th>Homologation</th></tr></thead>
+            <thead><tr><th></th><th>Country</th><th>Status</th><th>Homologation</th><th></th></tr></thead>
             <tbody id="country-table-body">${renderRows(!mktUnlocked)}</tbody>
           </table>
         </div>
-        <p class="mkt-homol-note">CoC = Certificate of Conformity (EU type approval). GWC = General Whole-vehicle Certification (national approval). Both = CoC primary, GWC fallback available.</p>
+        <p class="mkt-homol-note">CoC = Certificate of Conformity. GWC = General Whole-vehicle Certification. IVA = Individual Vehicle Approval.</p>
       </div>
     `;
 
-    wireMapTabs(el, 'af-map-frame', 'af-map-tabs', () => activeCountries());
-
-    function refreshMapDots() {
-      const frame = el.querySelector('#af-map-frame');
-      if (!frame) return;
-      frame.querySelectorAll('.map-dot').forEach(d => d.remove());
-      const currentMap = (el.querySelector('#af-map-tabs .mkt-map-tab.active') || {}).dataset?.map || afDefaultMap;
-      frame.insertAdjacentHTML('beforeend', makeDots(activeCountries(), currentMap));
+    function refreshTable(locked) {
+      el.querySelector('#country-table-body').innerHTML = renderRows(locked);
       const cnt = el.querySelector('#mkt-active-count');
-      if (cnt) cnt.textContent = activeCountries().length + ' countries';
+      if (cnt) cnt.textContent = ALL_COUNTRIES.filter(c => countryState[c.code].active).length + ' countries';
+      wireTableEvents(locked);
     }
 
-    function wireSelects(locked) {
+    function wireTableEvents(locked) {
       el.querySelectorAll('.ct-select').forEach(sel => {
-        sel.disabled = locked;
         sel.addEventListener('change', function() {
-          const row   = this.closest('tr[data-country]');
+          const row  = this.closest('tr[data-country]');
           if (!row) return;
-          const code  = row.dataset.country;
-          const field = this.dataset.field;
-          if (field === 'active') countryState[code].active = (this.value === 'true');
+          const code = row.dataset.country;
+          if (this.dataset.field === 'active') countryState[code].active = (this.value === 'true');
           else countryState[code].homologation = this.value;
-          localStorage.setItem(MKT_KEY, JSON.stringify(countryState));
-          refreshMapDots();
+          saveState();
+          refreshTable(locked);
+        });
+      });
+      el.querySelectorAll('.cust-add-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const code = this.dataset.country;
+          const row  = this.closest('tr');
+          const name = row.querySelector('[data-role="name"]').value.trim();
+          const loc  = row.querySelector('[data-role="loc"]').value.trim();
+          const cert = row.querySelector('.cust-cert-sel').value;
+          if (!name) { row.querySelector('[data-role="name"]').focus(); return; }
+          countryState[code].customers.push({ name, location: loc, certified: cert });
+          saveState();
+          refreshTable(false);
+        });
+      });
+      el.querySelectorAll('.cust-remove-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const code = this.dataset.country;
+          const cidx = parseInt(this.dataset.cidx);
+          countryState[code].customers.splice(cidx, 1);
+          saveState();
+          refreshTable(false);
         });
       });
     }
-    wireSelects(!mktUnlocked);
+    wireTableEvents(!mktUnlocked);
 
     const afEditBtn = el.querySelector('#af-edit-btn');
     afEditBtn.addEventListener('click', function() {
       if (mktUnlocked) {
         mktUnlocked = false;
         this.textContent = 'Edit';
-        el.querySelector('#country-table-body').innerHTML = renderRows(true);
-        wireSelects(true);
+        refreshTable(true);
         return;
       }
       showMktPasswordPrompt(this, () => {
         this.textContent = 'Done';
-        el.querySelector('#country-table-body').innerHTML = renderRows(false);
-        wireSelects(false);
+        refreshTable(false);
       });
     });
   }
