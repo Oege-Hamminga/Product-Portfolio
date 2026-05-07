@@ -377,13 +377,21 @@ function populateMarket(product) {
       {code:"BG",name:"Bulgaria"      },
     ];
 
+    // Normalise homologation to array (migrates old single-string values)
+    function normalizeHomol(v) {
+      if (Array.isArray(v)) return v;
+      if (!v || v === '—') return [];
+      return [v];
+    }
+
     let saved = {};
     try { saved = JSON.parse(localStorage.getItem(MKT_KEY)) || {}; } catch(e) {}
     const cd = md.countryData || {};
     const countryState = {};
     ALL_COUNTRIES.forEach(c => {
-      const base = cd[c.code] || { active: false, homologation: "—" };
-      const s = saved[c.code] || { active: base.active, homologation: base.homologation };
+      const base = cd[c.code] || { active: false, homologation: [] };
+      const s = saved[c.code] || { active: base.active, homologation: normalizeHomol(base.homologation) };
+      s.homologation = normalizeHomol(s.homologation);
       if (!s.customers) s.customers = [];
       countryState[c.code] = s;
     });
@@ -398,7 +406,9 @@ function populateMarket(product) {
       return ALL_COUNTRIES.map(c => {
         const st = countryState[c.code];
         const customers = st.customers || [];
+        const homolArr  = st.homologation || [];
 
+        // Customer rows — always visible when country is active
         const customerRows = st.active ? customers.map((cu, ci) => `
           <tr class="ct-customer-row">
             <td class="ct-cust-indent">↳</td>
@@ -423,6 +433,17 @@ function populateMarket(product) {
             <td><button class="cust-add-btn" data-country="${c.code}">+</button></td>
           </tr>` : '';
 
+        // Homologation — three independent checkboxes
+        const homolCell = `<td class="ct-homol">
+          ${['CoC','GWC','IVA'].map(opt => `
+            <label class="ct-homol-check${locked ? ' ct-homol-check--locked' : ''}">
+              <input type="checkbox" class="ct-check" data-field="homologation" data-val="${opt}"
+                     data-country="${c.code}" ${locked ? 'disabled' : ''}
+                     ${homolArr.includes(opt) ? 'checked' : ''} />
+              <span>${opt}</span>
+            </label>`).join('')}
+        </td>`;
+
         return `
           <tr class="ct-country-row${st.active ? ' ct-country-row--active' : ''}" data-country="${c.code}">
             <td class="ct-code">${c.code}</td>
@@ -433,14 +454,7 @@ function populateMarket(product) {
                 <option value="false" ${!st.active ? 'selected':''}>Not active</option>
               </select>
             </td>
-            <td class="ct-homol">
-              <select class="ct-select ct-select--homol" data-field="homologation" ${locked ? 'disabled' : ''}>
-                <option value="CoC" ${st.homologation==='CoC'?'selected':''}>CoC</option>
-                <option value="GWC" ${st.homologation==='GWC'?'selected':''}>GWC</option>
-                <option value="IVA" ${st.homologation==='IVA'?'selected':''}>IVA</option>
-                <option value="—"   ${(st.homologation==='—'||!st.homologation)?'selected':''}>—</option>
-              </select>
-            </td>
+            ${homolCell}
             <td></td>
           </tr>
           ${customerRows}
@@ -492,17 +506,30 @@ function populateMarket(product) {
     }
 
     function wireTableEvents(locked) {
-      el.querySelectorAll('.ct-select').forEach(sel => {
+      // Status select (Active / Not active)
+      el.querySelectorAll('.ct-select--status').forEach(sel => {
         sel.addEventListener('change', function() {
           const row  = this.closest('tr[data-country]');
           if (!row) return;
           const code = row.dataset.country;
-          if (this.dataset.field === 'active') countryState[code].active = (this.value === 'true');
-          else countryState[code].homologation = this.value;
+          countryState[code].active = (this.value === 'true');
           saveState();
           refreshTable(locked);
         });
       });
+      // Homologation checkboxes
+      el.querySelectorAll('.ct-check[data-field="homologation"]').forEach(cb => {
+        cb.addEventListener('change', function() {
+          const code = this.dataset.country;
+          const val  = this.dataset.val;
+          let arr = countryState[code].homologation || [];
+          countryState[code].homologation = this.checked
+            ? (arr.includes(val) ? arr : [...arr, val])
+            : arr.filter(v => v !== val);
+          saveState();
+        });
+      });
+      // Add customer
       el.querySelectorAll('.cust-add-btn').forEach(btn => {
         btn.addEventListener('click', function() {
           const code = this.dataset.country;
@@ -516,6 +543,7 @@ function populateMarket(product) {
           refreshTable(false);
         });
       });
+      // Remove customer
       el.querySelectorAll('.cust-remove-btn').forEach(btn => {
         btn.addEventListener('click', function() {
           const code = this.dataset.country;
@@ -755,41 +783,53 @@ function populateMarketingTools(product) {
   const tools = getMarketingTools(product);
   const el    = document.getElementById("marketing-tools-content");
 
-  /* Prefer the Snoeks product conversion image; fall back to vehicle image */
   const heroImgUrl   = getProductImage(product) || VAN_IMAGES[product.van] || "";
   const heroImgLabel = getProductImage(product)
     ? `${product.brand} ${product.van} – ${product.type} (${product.fitment})`
     : `${product.brand} ${product.van}`;
 
-  const docCard = (title, filename, type) => `
+  const docCard = (title, filename, typeLabel) => `
     <a class="mkt-doc-card" href="${filename}" target="_blank" rel="noopener">
       <div class="mkt-doc-info">
-        <div class="mkt-doc-type">${type}</div>
+        <div class="mkt-doc-type">${typeLabel}</div>
         <div class="mkt-doc-title">${title}</div>
       </div>
       <div class="mkt-doc-arrow">↗</div>
-    </a>
-  `;
+    </a>`;
 
-  const hasDocuments = tools.brochures.length > 0 || tools.priceLists.length > 0;
+  const emptySlot = (label) => `
+    <div class="mkt-doc-empty">
+      <div class="mkt-doc-empty-icon">📄</div>
+      <div class="mkt-doc-empty-text">No ${label} available yet</div>
+    </div>`;
+
+  const brochures       = tools.brochures       || [];
+  const priceLists      = tools.priceLists      || [];
+  const workInstructions = tools.workInstructions || [];
+
+  const docSection = (title, eyebrow, items, typeLabel) => `
+    <div class="mkt-doc-section">
+      <div class="mkt-doc-section-header">
+        <div class="mkt-doc-section-eyebrow">${eyebrow}</div>
+        <div class="mkt-doc-section-title">${title}</div>
+      </div>
+      <div class="mkt-doc-section-body">
+        ${items.length
+          ? items.map(d => docCard(d.title, d.filename, `${typeLabel}${d.lang ? ' · ' + d.lang : ''}`)).join('')
+          : emptySlot(title.toLowerCase())}
+      </div>
+    </div>`;
 
   el.innerHTML = `
     <div class="mkt-tools-layout">
 
       <div class="mkt-tools-docs">
-        <div class="mkt-tools-section-title">Brochures &amp; Price Lists</div>
-
-        ${hasDocuments ? `
-          <div class="mkt-docs-list">
-            ${tools.brochures.map(b  => docCard(b.title,  b.filename,  `Brochure · ${b.lang}`)).join("")}
-            ${tools.priceLists.map(pl => docCard(pl.title, pl.filename, `Price List · ${pl.lang}`)).join("")}
-          </div>
-        ` : `
-          <div class="mkt-no-docs">
-            <p>No documents are available for this product yet.</p>
-            <button class="action-btn" style="margin-top:12px">Request Documents</button>
-          </div>
-        `}
+        <div class="mkt-tools-section-title">Documents</div>
+        <div class="mkt-doc-sections">
+          ${docSection('Brochures',         '01', brochures,        'Brochure')}
+          ${docSection('Price Lists',       '02', priceLists,       'Price List')}
+          ${docSection('Work Instructions', '03', workInstructions, 'Work Instruction')}
+        </div>
       </div>
 
       <div class="mkt-tools-images">

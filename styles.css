@@ -3093,3 +3093,109 @@ body.matrix-edit-active td.mm-cell {
   color: var(--white);
   border-color: var(--red);
 }
+
+/* ── Homologation checkboxes ──────────────────────────────────────── */
+.ct-homol {
+  white-space: nowrap;
+}
+
+.ct-homol-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  color: var(--text);
+}
+
+.ct-homol-check input[type="checkbox"] {
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+  accent-color: var(--dark);
+}
+
+.ct-homol-check--locked {
+  cursor: default;
+  color: var(--text-muted);
+}
+
+.ct-homol-check--locked input[type="checkbox"] {
+  cursor: default;
+}
+
+/* Highlight checked labels when locked (read mode) */
+.ct-homol-check--locked input:checked + span {
+  color: var(--text);
+  font-weight: 800;
+}
+
+/* ── Matrix select — Other variant ───────────────────────────────── */
+.mm-select--Other:disabled { color: #7a5a00; font-weight: 800; }
+.matrix-edit-active .mm-select--Other { color: #7a5a00; }
+
+/* ── Marketing doc sections ───────────────────────────────────────── */
+.mkt-doc-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.mkt-doc-section {
+  border: 1px solid var(--grey-2);
+  border-radius: var(--radius);
+  background: var(--white);
+  overflow: hidden;
+}
+
+.mkt-doc-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--grey-1);
+  border-bottom: 1px solid var(--grey-2);
+}
+
+.mkt-doc-section-eyebrow {
+  font-size: 0.6rem;
+  font-weight: 900;
+  color: rgba(0,0,0,0.3);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.mkt-doc-section-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text);
+}
+
+.mkt-doc-section-body {
+  padding: 10px 14px;
+}
+
+.mkt-doc-empty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  color: var(--text-muted);
+}
+
+.mkt-doc-empty-icon {
+  font-size: 1.2rem;
+  opacity: 0.4;
+}
+
+.mkt-doc-empty-text {
+  font-size: 0.75rem;
+  font-style: italic;
+}
