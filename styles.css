@@ -3349,6 +3349,61 @@ body.matrix-edit-active td.mm-cell {
 .act-product-card .country-table td {
   color: #171717;
   font-size: 0.78rem;
+  background: #fff;
+}
+
+.act-product-card .plant-table tr:hover td,
+.act-product-card .country-table tr:hover td {
+  background: #F0F0F0;
+}
+
+/* OEM product table: visible container */
+.act-product-card .plant-table {
+  border: 1px solid #D0D0D0;
+  border-radius: 4px;
+  overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 10px 12px 4px;
+  width: calc(100% - 24px);
+}
+
+.act-product-card .plant-table th:first-child { border-radius: 4px 0 0 0; }
+.act-product-card .plant-table th:last-child  { border-radius: 0 4px 0 0; }
+
+.act-product-card .plant-table td {
+  border-bottom: 1px solid #E8E8E8;
+}
+
+.act-product-card .plant-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Add-product row inside OEM panel */
+.act-product-card .ct-customer-add-row td {
+  background: #F5F9FF;
+  border-top: 1px dashed #B0C4DE;
+  border-bottom: none;
+  padding: 7px 12px;
+}
+
+.act-product-card .oem-prod-sel {
+  background: #fff;
+  color: #171717;
+  border: 1px solid #C0C0C0;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.78rem;
+  font-family: inherit;
+}
+
+/* Add-plant form at the bottom */
+.act-add-plant-form {
+  margin: 8px 0 4px;
+  padding: 10px 12px;
+  background: #F0F4FF;
+  border: 1px dashed #B0C4DE;
+  border-radius: 4px;
 }
 
 .act-product-card .ct-code {
@@ -3357,9 +3412,10 @@ body.matrix-edit-active td.mm-cell {
 }
 
 .act-product-card .mkt-empty-row {
-  color: var(--text-muted);
+  color: #6B6B6B;
   font-style: italic;
   text-align: center;
+  background: #fafafa !important;
 }
 
 .oem-plant-rm {
