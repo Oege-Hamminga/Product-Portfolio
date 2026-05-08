@@ -617,6 +617,8 @@
     // ── OEM Panel ─────────────────────────────────────────────────────
     function buildOEMPanel(container) {
       const oemProds = (typeof products !== 'undefined') ? products.filter(p => p.fitment === 'OEM') : [];
+      const oemExpanded = new Set();
+
       container.innerHTML = `
         <div class="act-toolbar">
           <p class="act-desc">Plant data is synced with product detail pages — changes here update all OEM product overviews.</p>
@@ -630,8 +632,10 @@
       }
 
       function renderOEMList() {
-        container.querySelector('#oem-act-list').innerHTML = oemProds.map(p => {
+        const list = container.querySelector('#oem-act-list');
+        list.innerHTML = oemProds.map((p, idx) => {
           const KEY = `snoeks_plants_${p.brand}|${p.van}|${p.type}|${p.fitment}`;
+          const expanded = oemExpanded.has(idx);
           let plants = [];
           try { plants = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) {}
           if (!plants.length && typeof getMarketData === 'function') {
@@ -640,35 +644,50 @@
               plants = md.shippingDestinations.map(d => ({ name: d.name||d.country, country: d.country, introYear: d.introYear||md.introYear||'—' }));
             }
           }
-          const rows = plants.length
+          const plantCount = plants.length;
+          const rows = plantCount
             ? plants.map((pl, i) => `<tr>
                 <td>${pl.name||'—'}</td><td>${pl.country}</td><td>${pl.introYear||'—'}</td>
                 <td>${actUnlocked ? `<button class="plant-remove-btn" data-key="${KEY}" data-idx="${i}">✕</button>` : ''}</td>
               </tr>`).join('')
             : `<tr><td colspan="4" class="mkt-empty-row">No plants defined</td></tr>`;
           return `
-            <div class="act-product-card">
-              <div class="act-product-header">
+            <div class="act-product-card${expanded ? ' act-product-card--expanded' : ''}" data-pidx="${idx}">
+              <div class="act-product-header act-product-header--toggle" data-pidx="${idx}">
+                <span class="act-product-chevron">${expanded ? '▾' : '▸'}</span>
                 <span class="act-product-name">${p.brand} ${p.van}</span>
                 <span class="act-product-badge">${p.type}</span>
                 <span class="act-product-seg">${p.segment}</span>
+                <span class="act-product-count">${plantCount} plant${plantCount !== 1 ? 's' : ''}</span>
               </div>
-              <div class="plant-table-wrap">
-                <table class="plant-table">
-                  <thead><tr><th>Plant Name</th><th>Country / Location</th><th>Introduction</th><th></th></tr></thead>
-                  <tbody>${rows}</tbody>
-                </table>
+              <div class="act-product-body">
+                <div class="plant-table-wrap">
+                  <table class="plant-table">
+                    <thead><tr><th>Plant Name</th><th>Country / Location</th><th>Introduction</th><th></th></tr></thead>
+                    <tbody>${rows}</tbody>
+                  </table>
+                </div>
+                ${actUnlocked ? `<div class="plant-add-form" style="display:flex">
+                  <input class="plant-input" placeholder="Plant name"         data-role="pname"    data-key="${KEY}"/>
+                  <input class="plant-input" placeholder="Country / Location" data-role="pcountry" data-key="${KEY}"/>
+                  <input class="plant-input plant-input--narrow" placeholder="Intro year" data-role="pyear" data-key="${KEY}"/>
+                  <button class="plant-add-btn act-add-plant" data-key="${KEY}">+ Add</button>
+                </div>` : ''}
               </div>
-              ${actUnlocked ? `<div class="plant-add-form" style="display:flex">
-                <input class="plant-input" placeholder="Plant name"         data-role="pname"    data-key="${KEY}"/>
-                <input class="plant-input" placeholder="Country / Location" data-role="pcountry" data-key="${KEY}"/>
-                <input class="plant-input plant-input--narrow" placeholder="Intro year" data-role="pyear" data-key="${KEY}"/>
-                <button class="plant-add-btn act-add-plant" data-key="${KEY}">+ Add</button>
-              </div>` : ''}
             </div>`;
         }).join('');
 
-        container.querySelectorAll('.plant-remove-btn').forEach(btn => {
+        // Toggle expand/collapse
+        list.querySelectorAll('.act-product-header--toggle').forEach(hdr => {
+          hdr.addEventListener('click', function(e) {
+            if (e.target.closest('button, input, select')) return;
+            const idx = parseInt(this.dataset.pidx);
+            if (oemExpanded.has(idx)) oemExpanded.delete(idx); else oemExpanded.add(idx);
+            renderOEMList();
+          });
+        });
+
+        list.querySelectorAll('.plant-remove-btn').forEach(btn => {
           btn.addEventListener('click', function() {
             let pl = []; try { pl = JSON.parse(localStorage.getItem(this.dataset.key)) || []; } catch(e) {}
             pl.splice(parseInt(this.dataset.idx), 1);
@@ -676,7 +695,7 @@
             renderOEMList();
           });
         });
-        container.querySelectorAll('.act-add-plant').forEach(btn => {
+        list.querySelectorAll('.act-add-plant').forEach(btn => {
           btn.addEventListener('click', function() {
             const KEY = this.dataset.key; const f = this.closest('.plant-add-form');
             const name    = f.querySelector('[data-role="pname"]').value.trim();
@@ -701,6 +720,7 @@
     // ── AF Panel ──────────────────────────────────────────────────────
     function buildAFPanel(container) {
       const afProds = (typeof products !== 'undefined') ? products.filter(p => p.fitment !== 'OEM') : [];
+      const afExpanded = new Set();
       function normH(v) { return Array.isArray(v) ? v : (!v||v==='—') ? [] : [v]; }
       function certCls(v) { return v==='YES'?'ct-cert--yes':v==='NO'?'ct-cert--no':'ct-cert--interest'; }
 
@@ -717,8 +737,10 @@
       }
 
       function renderAFList() {
-        container.querySelector('#af-act-list').innerHTML = afProds.map(p => {
+        const list = container.querySelector('#af-act-list');
+        list.innerHTML = afProds.map((p, idx) => {
           const KEY = `snoeks_mkt_${p.brand}|${p.van}|${p.type}|${p.fitment}`;
+          const expanded = afExpanded.has(idx);
           let saved = {}; try { saved = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
           const md = (typeof getMarketData === 'function') ? (getMarketData(p) || {}) : {};
           const cd = md.countryData || {};
@@ -731,6 +753,8 @@
             if (!s.customers) s.customers = [];
             state[c.code] = s;
           });
+
+          const activeCount = ALL_C.filter(c => state[c.code].active).length;
 
           const rows = ALL_C.map(c => {
             const st = state[c.code]; const hArr = st.homologation;
@@ -768,23 +792,37 @@
           }).join('');
 
           return `
-            <div class="act-product-card">
-              <div class="act-product-header">
+            <div class="act-product-card${expanded ? ' act-product-card--expanded' : ''}" data-pidx="${idx}">
+              <div class="act-product-header act-product-header--toggle" data-pidx="${idx}">
+                <span class="act-product-chevron">${expanded ? '▾' : '▸'}</span>
                 <span class="act-product-name">${p.brand} ${p.van}</span>
                 <span class="act-product-badge">${p.type}</span>
                 <span class="act-product-seg">${p.segment}</span>
+                <span class="act-product-count">${activeCount} active market${activeCount !== 1 ? 's' : ''}</span>
               </div>
-              <div class="country-table-wrap">
-                <table class="country-table">
-                  <thead><tr><th></th><th>Country</th><th>Status</th><th>Homologation</th><th></th></tr></thead>
-                  <tbody>${rows}</tbody>
-                </table>
+              <div class="act-product-body">
+                <div class="country-table-wrap">
+                  <table class="country-table">
+                    <thead><tr><th></th><th>Country</th><th>Status</th><th>Homologation</th><th></th></tr></thead>
+                    <tbody>${rows}</tbody>
+                  </table>
+                </div>
               </div>
             </div>`;
         }).join('');
 
+        // Toggle expand/collapse
+        list.querySelectorAll('.act-product-header--toggle').forEach(hdr => {
+          hdr.addEventListener('click', function(e) {
+            if (e.target.closest('button, input, select')) return;
+            const idx = parseInt(this.dataset.pidx);
+            if (afExpanded.has(idx)) afExpanded.delete(idx); else afExpanded.add(idx);
+            renderAFList();
+          });
+        });
+
         // Wire status selects
-        container.querySelectorAll('.af-status-sel').forEach(sel => {
+        list.querySelectorAll('.af-status-sel').forEach(sel => {
           sel.addEventListener('change', function() {
             const KEY = this.dataset.key; const code = this.dataset.code;
             let s = {}; try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
@@ -797,7 +835,7 @@
           });
         });
         // Wire homologation checkboxes
-        container.querySelectorAll('.af-homol-cb').forEach(cb => {
+        list.querySelectorAll('.af-homol-cb').forEach(cb => {
           cb.addEventListener('change', function() {
             const KEY = this.dataset.key; const code = this.dataset.code; const val = this.dataset.val;
             let s = {}; try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
@@ -808,7 +846,7 @@
           });
         });
         // Add customer
-        container.querySelectorAll('.af-cust-add').forEach(btn => {
+        list.querySelectorAll('.af-cust-add').forEach(btn => {
           btn.addEventListener('click', function() {
             const KEY = this.dataset.key; const code = this.dataset.code;
             const row = this.closest('tr');
@@ -825,7 +863,7 @@
           });
         });
         // Remove customer
-        container.querySelectorAll('.af-cust-rm').forEach(btn => {
+        list.querySelectorAll('.af-cust-rm').forEach(btn => {
           btn.addEventListener('click', function() {
             const KEY = this.dataset.key; const code = this.dataset.code;
             let s = {}; try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}

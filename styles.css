@@ -3299,3 +3299,65 @@ body.matrix-edit-active td.mm-cell {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+.act-product-chevron {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: transform 0.15s;
+  width: 14px;
+}
+
+.act-product-count {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.act-product-header--toggle {
+  cursor: pointer;
+  user-select: none;
+}
+
+.act-product-header--toggle:hover {
+  background: var(--grey-2);
+}
+
+/* collapsed: body hidden */
+.act-product-body {
+  display: none;
+}
+
+/* expanded: body visible */
+.act-product-card--expanded .act-product-body {
+  display: block;
+}
+
+/* contrast fixes for activity tables on light bg */
+.act-product-card .plant-table th,
+.act-product-card .country-table th {
+  background: #E8E8E8;
+  color: #171717;
+  font-weight: 700;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.act-product-card .plant-table td,
+.act-product-card .country-table td {
+  color: #171717;
+  font-size: 0.78rem;
+}
+
+.act-product-card .ct-code {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
+.act-product-card .mkt-empty-row {
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+}
