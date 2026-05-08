@@ -614,107 +614,175 @@
       setTimeout(() => document.addEventListener('click', outside), 0);
     }
 
-    // ── OEM Panel ─────────────────────────────────────────────────────
+    // ── OEM Panel (plant-centric) ──────────────────────────────────────
     function buildOEMPanel(container) {
       const oemProds = (typeof products !== 'undefined') ? products.filter(p => p.fitment === 'OEM') : [];
+      const PLANTS_KEY = 'snoeks_oem_plants';
       const oemExpanded = new Set();
 
-      container.innerHTML = `
-        <div class="act-toolbar">
-          <p class="act-desc">Plant data is synced with product detail pages — changes here update all OEM product overviews.</p>
-          <button class="mkt-edit-btn" id="oem-act-edit">${actUnlocked ? 'Done' : 'Edit'}</button>
-        </div>
-        <div id="oem-act-list"></div>`;
+      function loadPlants() {
+        try { return JSON.parse(localStorage.getItem(PLANTS_KEY)) || []; } catch(e) { return []; }
+      }
 
-      if (!oemProds.length) {
-        container.querySelector('#oem-act-list').innerHTML = '<p class="mkt-empty-msg" style="padding:12px 0">No OEM products found.</p>';
-        return;
+      function savePlants(plants) {
+        localStorage.setItem(PLANTS_KEY, JSON.stringify(plants));
+        // Keep per-product keys in sync so product detail pages stay current
+        oemProds.forEach(p => {
+          const pkey = `${p.brand}|${p.van}|${p.type}|${p.fitment}`;
+          const pPlants = plants
+            .filter(pl => (pl.products || []).includes(pkey))
+            .map(pl => ({ name: pl.name, country: pl.country, introYear: pl.introYear }));
+          localStorage.setItem(`snoeks_plants_${pkey}`, JSON.stringify(pPlants));
+        });
       }
 
       function renderOEMList() {
-        const list = container.querySelector('#oem-act-list');
-        list.innerHTML = oemProds.map((p, idx) => {
-          const KEY = `snoeks_plants_${p.brand}|${p.van}|${p.type}|${p.fitment}`;
-          const expanded = oemExpanded.has(idx);
-          let plants = [];
-          try { plants = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) {}
-          if (!plants.length && typeof getMarketData === 'function') {
-            const md = getMarketData(p);
-            if (md && md.shippingDestinations) {
-              plants = md.shippingDestinations.map(d => ({ name: d.name||d.country, country: d.country, introYear: d.introYear||md.introYear||'—' }));
-            }
-          }
-          const plantCount = plants.length;
-          const rows = plantCount
-            ? plants.map((pl, i) => `<tr>
-                <td>${pl.name||'—'}</td><td>${pl.country}</td><td>${pl.introYear||'—'}</td>
-                <td>${actUnlocked ? `<button class="plant-remove-btn" data-key="${KEY}" data-idx="${i}">✕</button>` : ''}</td>
-              </tr>`).join('')
-            : `<tr><td colspan="4" class="mkt-empty-row">No plants defined</td></tr>`;
-          return `
-            <div class="act-product-card${expanded ? ' act-product-card--expanded' : ''}" data-pidx="${idx}">
-              <div class="act-product-header act-product-header--toggle" data-pidx="${idx}">
-                <span class="act-product-chevron">${expanded ? '▾' : '▸'}</span>
-                <span class="act-product-name">${p.brand} ${p.van}</span>
-                <span class="act-product-badge">${p.type}</span>
-                <span class="act-product-seg">${p.segment}</span>
-                <span class="act-product-count">${plantCount} plant${plantCount !== 1 ? 's' : ''}</span>
-              </div>
-              <div class="act-product-body">
-                <div class="plant-table-wrap">
-                  <table class="plant-table">
-                    <thead><tr><th>Plant Name</th><th>Country / Location</th><th>Introduction</th><th></th></tr></thead>
-                    <tbody>${rows}</tbody>
+        const plants = loadPlants();
+
+        container.innerHTML = `
+          <div class="act-toolbar">
+            <p class="act-desc">Plants are the primary record — assign OEM products to each plant. Changes sync to product detail pages automatically.</p>
+            <button class="mkt-edit-btn" id="oem-act-edit">${actUnlocked ? 'Done' : 'Edit'}</button>
+          </div>
+          <div id="oem-plant-list"></div>
+          ${actUnlocked ? `
+          <div class="plant-add-form act-add-plant-form" style="display:flex;gap:6px;padding:10px 0 4px;flex-wrap:wrap">
+            <input class="plant-input" placeholder="Plant name" data-role="pname"/>
+            <input class="plant-input" placeholder="Country / Location" data-role="pcountry"/>
+            <input class="plant-input plant-input--narrow" placeholder="Intro year" data-role="pyear"/>
+            <button class="plant-add-btn" id="oem-add-plant-btn">+ Add Plant</button>
+          </div>` : ''}`;
+
+        const list = container.querySelector('#oem-plant-list');
+
+        if (!plants.length) {
+          list.innerHTML = `<p class="mkt-empty-msg" style="padding:12px 0">${actUnlocked ? 'No plants yet — add one below.' : 'No plants defined. Use Edit to add plants.'}</p>`;
+        } else {
+          list.innerHTML = plants.map((pl, pidx) => {
+            const expanded = oemExpanded.has(pidx);
+            const assigned = pl.products || [];
+            const unusedProds = oemProds.filter(p => !assigned.includes(`${p.brand}|${p.van}|${p.type}|${p.fitment}`));
+
+            const prodRows = assigned.length
+              ? assigned.map((pkey, ri) => {
+                  const prod = oemProds.find(p => `${p.brand}|${p.van}|${p.type}|${p.fitment}` === pkey);
+                  return `<tr>
+                    <td>${prod ? `${prod.brand} ${prod.van}` : pkey}</td>
+                    <td>${prod ? prod.type : '—'}</td>
+                    <td>${prod ? prod.segment : '—'}</td>
+                    <td>${actUnlocked ? `<button class="oem-prod-rm" data-pidx="${pidx}" data-ri="${ri}">✕</button>` : ''}</td>
+                  </tr>`;
+                }).join('')
+              : `<tr><td colspan="4" class="mkt-empty-row">No products assigned to this plant</td></tr>`;
+
+            const addProdRow = (actUnlocked && unusedProds.length) ? `
+              <tr class="ct-customer-add-row">
+                <td colspan="2">
+                  <select class="ct-select oem-prod-sel" data-pidx="${pidx}">
+                    <option value="">— select product —</option>
+                    ${unusedProds.map(p => `<option value="${p.brand}|${p.van}|${p.type}|${p.fitment}">${p.brand} ${p.van} — ${p.type}</option>`).join('')}
+                  </select>
+                </td>
+                <td></td>
+                <td><button class="plant-add-btn oem-prod-add" data-pidx="${pidx}">+ Add</button></td>
+              </tr>` : '';
+
+            return `
+              <div class="act-product-card${expanded ? ' act-product-card--expanded' : ''}">
+                <div class="act-product-header act-product-header--toggle" data-pidx="${pidx}">
+                  <span class="act-product-chevron">${expanded ? '▾' : '▸'}</span>
+                  <span class="act-product-name">${pl.name}</span>
+                  <span class="act-product-badge">${pl.country || '—'}</span>
+                  <span class="act-product-seg">${pl.introYear || '—'}</span>
+                  <span class="act-product-count">${assigned.length} product${assigned.length !== 1 ? 's' : ''}</span>
+                  ${actUnlocked ? `<button class="oem-plant-rm" data-pidx="${pidx}">✕ Remove plant</button>` : ''}
+                </div>
+                <div class="act-product-body">
+                  <table class="plant-table" style="width:100%">
+                    <thead><tr><th>Product</th><th>Type</th><th>Segment</th><th></th></tr></thead>
+                    <tbody>${prodRows}${addProdRow}</tbody>
                   </table>
                 </div>
-                ${actUnlocked ? `<div class="plant-add-form" style="display:flex">
-                  <input class="plant-input" placeholder="Plant name"         data-role="pname"    data-key="${KEY}"/>
-                  <input class="plant-input" placeholder="Country / Location" data-role="pcountry" data-key="${KEY}"/>
-                  <input class="plant-input plant-input--narrow" placeholder="Intro year" data-role="pyear" data-key="${KEY}"/>
-                  <button class="plant-add-btn act-add-plant" data-key="${KEY}">+ Add</button>
-                </div>` : ''}
-              </div>
-            </div>`;
-        }).join('');
+              </div>`;
+          }).join('');
+        }
 
         // Toggle expand/collapse
         list.querySelectorAll('.act-product-header--toggle').forEach(hdr => {
-          hdr.addEventListener('click', function(e) {
-            if (e.target.closest('button, input, select')) return;
-            const idx = parseInt(this.dataset.pidx);
+          hdr.addEventListener('click', e => {
+            if (e.target.closest('button, select, input')) return;
+            const idx = parseInt(hdr.dataset.pidx);
             if (oemExpanded.has(idx)) oemExpanded.delete(idx); else oemExpanded.add(idx);
             renderOEMList();
           });
         });
 
-        list.querySelectorAll('.plant-remove-btn').forEach(btn => {
-          btn.addEventListener('click', function() {
-            let pl = []; try { pl = JSON.parse(localStorage.getItem(this.dataset.key)) || []; } catch(e) {}
-            pl.splice(parseInt(this.dataset.idx), 1);
-            localStorage.setItem(this.dataset.key, JSON.stringify(pl));
+        // Remove product from plant
+        list.querySelectorAll('.oem-prod-rm').forEach(btn => {
+          btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const plants = loadPlants();
+            plants[parseInt(btn.dataset.pidx)].products.splice(parseInt(btn.dataset.ri), 1);
+            savePlants(plants);
             renderOEMList();
           });
         });
-        list.querySelectorAll('.act-add-plant').forEach(btn => {
-          btn.addEventListener('click', function() {
-            const KEY = this.dataset.key; const f = this.closest('.plant-add-form');
-            const name    = f.querySelector('[data-role="pname"]').value.trim();
-            const country = f.querySelector('[data-role="pcountry"]').value.trim();
-            const year    = f.querySelector('[data-role="pyear"]').value.trim();
-            if (!country) { f.querySelector('[data-role="pcountry"]').focus(); return; }
-            let pl = []; try { pl = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) {}
-            pl.push({ name: name||country, country, introYear: year||'—' });
-            localStorage.setItem(KEY, JSON.stringify(pl));
+
+        // Add product to plant
+        list.querySelectorAll('.oem-prod-add').forEach(btn => {
+          btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const pidx = parseInt(btn.dataset.pidx);
+            const sel  = list.querySelector(`.oem-prod-sel[data-pidx="${pidx}"]`);
+            if (!sel.value) { sel.focus(); return; }
+            const plants = loadPlants();
+            if (!plants[pidx].products) plants[pidx].products = [];
+            if (!plants[pidx].products.includes(sel.value)) plants[pidx].products.push(sel.value);
+            savePlants(plants);
             renderOEMList();
           });
         });
+
+        // Remove plant
+        list.querySelectorAll('.oem-plant-rm').forEach(btn => {
+          btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const plants = loadPlants();
+            plants.splice(parseInt(btn.dataset.pidx), 1);
+            oemExpanded.clear();
+            savePlants(plants);
+            renderOEMList();
+          });
+        });
+
+        // Edit / Done button
+        const editBtn = container.querySelector('#oem-act-edit');
+        if (editBtn) {
+          editBtn.addEventListener('click', function() {
+            if (actUnlocked) { actUnlocked = false; renderOEMList(); return; }
+            showActPw(this, () => { renderOEMList(); });
+          });
+        }
+
+        // Add plant form
+        const addPlantBtn = container.querySelector('#oem-add-plant-btn');
+        if (addPlantBtn) {
+          addPlantBtn.addEventListener('click', () => {
+            const form = container.querySelector('.act-add-plant-form');
+            const name    = form.querySelector('[data-role="pname"]').value.trim();
+            const country = form.querySelector('[data-role="pcountry"]').value.trim();
+            const year    = form.querySelector('[data-role="pyear"]').value.trim();
+            if (!name) { form.querySelector('[data-role="pname"]').focus(); return; }
+            const plants = loadPlants();
+            const newIdx = plants.length;
+            plants.push({ name, country, introYear: year || '—', products: [] });
+            savePlants(plants);
+            oemExpanded.add(newIdx);
+            renderOEMList();
+          });
+        }
       }
       renderOEMList();
-
-      container.querySelector('#oem-act-edit').addEventListener('click', function() {
-        if (actUnlocked) { actUnlocked = false; this.textContent = 'Edit'; renderOEMList(); return; }
-        showActPw(this, () => { container.querySelector('#oem-act-edit').textContent = 'Done'; renderOEMList(); });
-      });
     }
 
     // ── AF Panel ──────────────────────────────────────────────────────
