@@ -3199,3 +3199,103 @@ body.matrix-edit-active td.mm-cell {
   font-size: 0.75rem;
   font-style: italic;
 }
+
+/* ── Activity Tabs (OEM / After-fit) ─────────────────────────── */
+.mkt-ov-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--grey-2);
+  margin-bottom: 0;
+}
+
+.mkt-ov-tab {
+  padding: 8px 18px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.mkt-ov-tab:hover {
+  color: var(--text);
+}
+
+.mkt-ov-tab--active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.mkt-ov-panel {
+  display: none;
+}
+
+.mkt-ov-panel--active {
+  display: block;
+}
+
+/* ── Activity panel content ───────────────────────────────────── */
+.act-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0 12px;
+}
+
+.act-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0;
+  flex: 1;
+}
+
+.act-product-card {
+  border: 1px solid var(--grey-2);
+  border-radius: 6px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.act-product-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--grey-1);
+  border-bottom: 1px solid var(--grey-2);
+}
+
+.act-product-name {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.act-product-badge {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--accent);
+  color: #fff;
+}
+
+.act-product-seg {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-left: auto;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
