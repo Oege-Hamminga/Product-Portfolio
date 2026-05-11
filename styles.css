@@ -204,7 +204,7 @@ header {
 .overview-card {
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.07);
-  overflow: hidden;
+  overflow: clip;
   position: relative;
 }
 
@@ -553,6 +553,12 @@ header {
   min-width: 600px;
 }
 
+.market-matrix thead th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #1e1e1e;
+}
 .market-matrix th {
   padding: 5px 10px;
   font-size: 0.5rem;
@@ -3442,4 +3448,38 @@ body.matrix-edit-active td.mm-cell {
 .oem-prod-sel {
   width: 100%;
   min-width: 220px;
+}
+
+/* ── Export PDF button ─────────────────────────────────────────────── */
+.export-pdf-btn {
+  padding: 5px 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-family: inherit;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 3px;
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.export-pdf-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.9);
+}
+/* For buttons inside light-bg panels (OEM/AF activity) */
+.mkt-ov-panel--active .export-pdf-btn,
+#mkt-ov-oem .export-pdf-btn,
+#mkt-ov-af .export-pdf-btn {
+  border-color: var(--grey-3);
+  color: var(--text-muted);
+  background: transparent;
+}
+#mkt-ov-oem .export-pdf-btn:hover,
+#mkt-ov-af .export-pdf-btn:hover {
+  background: var(--grey-1);
+  color: var(--text);
 }
