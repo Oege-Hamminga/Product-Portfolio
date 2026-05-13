@@ -1953,9 +1953,15 @@ footer {
 /* ── Marketing Tools ─────────────────────────────────────────────── */
 .mkt-tools-layout {
   display: grid;
-  grid-template-columns: 340px 1fr;
+  grid-template-columns: 320px 1fr;
   gap: 22px;
   align-items: start;
+}
+
+/* When docs column is absent (OEM), photography fills the full row
+   but is constrained to the same max-width as the images column in 2-col layout */
+.mkt-tools-layout .mkt-tools-images:only-child {
+  max-width: 640px;
 }
 
 .mkt-tools-section-title {
@@ -2169,55 +2175,107 @@ footer {
   letter-spacing: 1px;
 }
 
-.gallery-thumbs {
+/* ── Uploaded images grid ─────────────────────────────────────── */
+.gallery-uploads {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 7px;
-  margin-top: 9px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
 }
 
-.gallery-thumb {
-  overflow: hidden;
+.gallery-upload-tile {
+  position: relative;
   aspect-ratio: 4/3;
+  overflow: hidden;
+  border-radius: 4px;
   border: 1px solid var(--grey-2);
-  background: var(--grey-0);
+  background: var(--grey-1);
 }
 
-.gallery-thumb-inner {
+.gallery-upload-tile img {
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-upload-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  padding: 10px;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.18s;
 }
 
-.gallery-thumb-label {
-  font-size: 0.58rem;
-  font-weight: 800;
-  text-align: center;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.gallery-upload-tile:hover .gallery-upload-overlay {
+  opacity: 1;
 }
 
-.gallery-thumb-badge {
-  font-size: 0.52rem;
+.gallery-upload-action {
+  display: inline-block;
+  padding: 5px 10px;
+  background: #fff;
+  color: #111;
+  border-radius: 3px;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--grey-3);
-  background: var(--grey-2);
-  padding: 2px 7px;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
-.gallery-footer {
-  display: flex;
-  gap: 9px;
-  flex-wrap: wrap;
-  margin-top: 13px;
+.gallery-upload-action:hover {
+  background: var(--grey-1);
+}
+
+.gallery-upload-del {
+  padding: 5px 8px;
+  background: var(--red);
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.gallery-upload-name {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 0.58rem;
+  padding: 3px 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gallery-upload-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 7px 16px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: inherit;
+  border: 1px dashed var(--grey-3);
+  border-radius: 4px;
+  background: var(--grey-1);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.gallery-upload-btn:hover {
+  background: var(--grey-2);
+  color: var(--text);
+  border-color: var(--grey-3);
 }
 
 /* ── Action buttons ──────────────────────────────────────────────── */

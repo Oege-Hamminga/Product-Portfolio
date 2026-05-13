@@ -850,7 +850,10 @@ function populateMarketingTools(product) {
         ` : ""}
 
         <div class="mkt-tools-images">
-          <div class="mkt-tools-section-title">Product Photography</div>
+          <div class="mkt-tools-section-header-row">
+            <div class="mkt-tools-section-title">Product Photography</div>
+            <button class="mkt-edit-btn" id="mkt-gallery-edit-btn">${toolsUnlocked ? "Done" : "Edit"}</button>
+          </div>
           <div class="gallery-hero">
             ${heroImgUrl
               ? `<img src="${heroImgUrl}" alt="${heroImgLabel}" loading="lazy"
@@ -862,22 +865,73 @@ function populateMarketingTools(product) {
             </div>
             <div class="gallery-hero-label">${heroImgLabel}</div>
           </div>
-          <div class="gallery-thumbs">
-            ${["Interior – Cabin","Installation Diagram","Product Close-up"].map(lbl => `
-              <div class="gallery-thumb">
-                <div class="gallery-thumb-inner">
-                  <div class="gallery-thumb-label">${lbl}</div>
-                  <div class="gallery-thumb-badge">Coming Soon</div>
-                </div>
-              </div>`).join("")}
-          </div>
-          <div class="gallery-footer">
-            <button class="action-btn">Request Hi-Res Assets</button>
-            <button class="action-btn action-btn--outline" onclick="window.print()">Print Sheet</button>
-          </div>
+          <div class="gallery-uploads" id="gallery-uploads-grid"></div>
+          ${toolsUnlocked ? `
+          <label class="gallery-upload-btn">
+            <input type="file" accept="image/*" multiple id="gallery-file-input" style="display:none"/>
+            + Upload Images
+          </label>` : ""}
         </div>
 
       </div>`;
+
+    // Render uploaded images grid
+    (function renderGallery() {
+      const GKEY = `snoeks_gallery_${product.brand}|${product.van}|${product.type}|${product.fitment}`;
+      let imgs = [];
+      try { imgs = JSON.parse(localStorage.getItem(GKEY)) || []; } catch(e) {}
+      const grid = el.querySelector("#gallery-uploads-grid");
+      if (!grid) return;
+      grid.innerHTML = imgs.length
+        ? imgs.map((img, i) => `
+            <div class="gallery-upload-tile">
+              <img src="${img.dataUrl}" alt="${img.name}" loading="lazy"/>
+              <div class="gallery-upload-overlay">
+                <a class="gallery-upload-action" href="${img.dataUrl}" download="${img.name}">↓ Download</a>
+                ${toolsUnlocked ? `<button class="gallery-upload-del" data-idx="${i}">✕</button>` : ""}
+              </div>
+              <div class="gallery-upload-name">${img.name}</div>
+            </div>`).join("")
+        : toolsUnlocked ? "" : `<p class="mkt-doc-empty-text" style="padding:10px 0;color:var(--text-muted);font-style:italic">No additional images uploaded yet.</p>`;
+
+      // Delete image
+      grid.querySelectorAll(".gallery-upload-del").forEach(btn => {
+        btn.addEventListener("click", () => {
+          let imgs = []; try { imgs = JSON.parse(localStorage.getItem(GKEY)) || []; } catch(e) {}
+          imgs.splice(parseInt(btn.dataset.idx), 1);
+          localStorage.setItem(GKEY, JSON.stringify(imgs));
+          renderGallery();
+        });
+      });
+    })();
+
+    // File upload handler
+    const fileInput = el.querySelector("#gallery-file-input");
+    if (fileInput) {
+      fileInput.addEventListener("change", () => {
+        const GKEY = `snoeks_gallery_${product.brand}|${product.van}|${product.type}|${product.fitment}`;
+        let imgs = []; try { imgs = JSON.parse(localStorage.getItem(GKEY)) || []; } catch(e) {}
+        const files = Array.from(fileInput.files);
+        let loaded = 0;
+        files.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = e => {
+            imgs.push({ name: file.name, dataUrl: e.target.result });
+            loaded++;
+            if (loaded === files.length) {
+              localStorage.setItem(GKEY, JSON.stringify(imgs));
+              const grid = el.querySelector("#gallery-uploads-grid");
+              if (grid) {
+                // Re-run gallery render in place without full page re-render
+                fileInput.value = "";
+                render();
+              }
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+    }
 
     // Open document URL
     el.querySelectorAll(".mkt-link-btn").forEach(btn => {
@@ -913,14 +967,13 @@ function populateMarketingTools(product) {
       });
     });
 
-    // Edit / Done
-    const editBtn = el.querySelector("#mkt-tools-edit-btn");
-    if (editBtn) {
+    // Edit / Done — shared between docs and gallery
+    el.querySelectorAll("#mkt-tools-edit-btn, #mkt-gallery-edit-btn").forEach(editBtn => {
       editBtn.addEventListener("click", function() {
         if (toolsUnlocked) { toolsUnlocked = false; render(); return; }
         showMktPasswordPrompt(this, () => { toolsUnlocked = true; render(); });
       });
-    }
+    });
   }
 
   render();
