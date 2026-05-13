@@ -1379,8 +1379,8 @@ footer {
 
 .sel-btn {
   padding: 8px 16px;
-  border: 1px solid var(--grey-2);
-  background: var(--grey-0);
+  border: 1px solid var(--grey-3);
+  background: var(--grey-2);
   color: var(--text);
   font-size: 0.76rem;
   font-weight: 700;
@@ -1391,7 +1391,7 @@ footer {
   text-transform: uppercase;
 }
 
-.sel-btn:hover { border-color: var(--dark); background: var(--white); }
+.sel-btn:hover { border-color: var(--dark); background: var(--grey-1); }
 
 .sel-btn.active {
   background: var(--dark);
