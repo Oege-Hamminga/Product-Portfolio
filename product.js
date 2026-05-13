@@ -3,7 +3,10 @@ const params = new URLSearchParams(location.search);
 const qBrand = params.get("brand") || "";
 const qVan   = params.get("van")   || "";
 
-const vehicleProducts = products.filter(p => p.brand === qBrand && p.van === qVan);
+function getLocalCustomProducts() {
+  try { return JSON.parse(localStorage.getItem('snoeks_custom_products')) || []; } catch(e) { return []; }
+}
+const vehicleProducts = [...products, ...getLocalCustomProducts()].filter(p => p.brand === qBrand && p.van === qVan);
 
 if (!vehicleProducts.length) {
   document.body.innerHTML = `<div style="padding:80px;text-align:center;font-family:sans-serif">
@@ -45,6 +48,8 @@ if (imgUrl) {
   fallbackEl.style.display = "flex";
 }
 
+wireVehicleImageEdit();
+
 /* ── Meta panel (static fields) ───────────────────────────────────── */
 document.getElementById("meta-eyebrow").textContent = firstP.segment;
 document.getElementById("meta-title").textContent   = `${firstP.brand} ${firstP.van}`;
@@ -57,13 +62,30 @@ document.getElementById("m-vantype").textContent     = _vm.vanType     || "—";
 document.getElementById("m-marketintro").textContent = _vm.marketIntro || "—";
 
 /* ── Product Type Selector ────────────────────────────────────────── */
-const uniqueTypes = [...new Set(vehicleProducts.map(p => p.type))];
 const typeBtnsEl  = document.getElementById("type-selector-btns");
 const fitBtnsEl   = document.getElementById("fitment-selector-btns");
 
-typeBtnsEl.innerHTML = uniqueTypes.map(t =>
-  `<button class="sel-btn" data-type="${t}">${t}</button>`
-).join("");
+const SELECTOR_HIDDEN_KEY = `snoeks_sel_hidden_${qBrand}|${qVan}`;
+function getSelectorHidden() {
+  try { return new Set(JSON.parse(localStorage.getItem(SELECTOR_HIDDEN_KEY)) || []); } catch(e) { return new Set(); }
+}
+function saveSelectorHidden(set) {
+  localStorage.setItem(SELECTOR_HIDDEN_KEY, JSON.stringify([...set]));
+}
+function getEffectiveProducts() {
+  const hidden = getSelectorHidden();
+  return vehicleProducts.filter(p => !hidden.has(`${p.type}|${p.fitment}`));
+}
+
+function renderTypeSelector() {
+  const uniqueTypes = [...new Set(getEffectiveProducts().map(p => p.type))];
+  typeBtnsEl.innerHTML = uniqueTypes.map(t =>
+    `<button class="sel-btn" data-type="${t}">${t}</button>`
+  ).join("");
+}
+
+renderTypeSelector();
+wireSelectorEdit();
 
 let currentProduct = null;
 
@@ -77,7 +99,7 @@ typeBtnsEl.addEventListener("click", e => {
   );
 
   const availFitments = [...new Set(
-    vehicleProducts.filter(p => p.type === type).map(p => p.fitment)
+    getEffectiveProducts().filter(p => p.type === type).map(p => p.fitment)
   )];
 
   fitBtnsEl.innerHTML = availFitments.map(f =>
@@ -206,7 +228,7 @@ function unlockAndPopulate(product) {
   });
 
   /* ── Wire image edits ─────────────────────────────────────────── */
-  wireImageEdits(product);
+  wireProductImageEdit(product);
 
   /* ── Render meta table with any saved overrides ───────────────── */
   renderMetaTable(product, false);
@@ -223,8 +245,7 @@ function getProductImageOverride(product) {
   return localStorage.getItem(`snoeks_img_prod_${product.brand}|${product.van}|${product.type}|${product.fitment}`) || null;
 }
 
-function wireImageEdits(product) {
-  /* ── Vehicle image edit ───────────────────────────────────────── */
+function wireVehicleImageEdit() {
   const vehicleEditBtn     = document.getElementById('vehicle-img-edit-btn');
   const vehicleOverlay     = document.getElementById('vehicle-img-edit-overlay');
   const vehicleUploadInput = document.getElementById('vehicle-img-upload');
@@ -232,14 +253,10 @@ function wireImageEdits(product) {
 
   if (vehicleEditBtn) {
     vehicleEditBtn.onclick = function() {
-      if (vehicleOverlay.style.display !== 'none') {
-        vehicleOverlay.style.display = 'none';
-        return;
-      }
+      if (vehicleOverlay.style.display !== 'none') { vehicleOverlay.style.display = 'none'; return; }
       showMktPasswordPrompt(this, () => {
         vehicleOverlay.style.display = 'flex';
-        // Show/hide remove based on override existence
-        vehicleRemoveBtn.style.display = getVanImageOverride(product.van) ? 'inline-block' : 'none';
+        vehicleRemoveBtn.style.display = getVanImageOverride(firstP.van) ? 'inline-block' : 'none';
       });
     };
   }
@@ -250,7 +267,7 @@ function wireImageEdits(product) {
       if (!file) return;
       const reader = new FileReader();
       reader.onload = function(e) {
-        localStorage.setItem(`snoeks_img_van_${product.van}`, e.target.result);
+        localStorage.setItem(`snoeks_img_van_${firstP.van}`, e.target.result);
         const photoEl = document.getElementById('vehicle-photo');
         const fallbackEl = document.getElementById('vp-fallback');
         photoEl.src = e.target.result;
@@ -265,25 +282,19 @@ function wireImageEdits(product) {
 
   if (vehicleRemoveBtn) {
     vehicleRemoveBtn.onclick = function() {
-      localStorage.removeItem(`snoeks_img_van_${product.van}`);
+      localStorage.removeItem(`snoeks_img_van_${firstP.van}`);
       const photoEl = document.getElementById('vehicle-photo');
       const fallbackEl = document.getElementById('vp-fallback');
-      // Revert to original
-      const origUrl = VAN_IMAGES[product.van] || null;
-      if (origUrl) {
-        photoEl.src = origUrl;
-        photoEl.style.display = 'block';
-        fallbackEl.style.display = 'none';
-      } else {
-        photoEl.style.display = 'none';
-        fallbackEl.style.display = 'flex';
-      }
+      const origUrl = VAN_IMAGES[firstP.van] || null;
+      if (origUrl) { photoEl.src = origUrl; photoEl.style.display = 'block'; fallbackEl.style.display = 'none'; }
+      else { photoEl.style.display = 'none'; fallbackEl.style.display = 'flex'; }
       vehicleRemoveBtn.style.display = 'none';
       vehicleOverlay.style.display = 'none';
     };
   }
+}
 
-  /* ── Product image edit ───────────────────────────────────────── */
+function wireProductImageEdit(product) {
   const productEditBtn     = document.getElementById('product-img-edit-btn');
   const productOverlay     = document.getElementById('product-img-edit-overlay');
   const productUploadInput = document.getElementById('product-img-upload');
@@ -291,10 +302,7 @@ function wireImageEdits(product) {
 
   if (productEditBtn) {
     productEditBtn.onclick = function() {
-      if (productOverlay.style.display !== 'none') {
-        productOverlay.style.display = 'none';
-        return;
-      }
+      if (productOverlay.style.display !== 'none') { productOverlay.style.display = 'none'; return; }
       showMktPasswordPrompt(this, () => {
         productOverlay.style.display = 'flex';
         productRemoveBtn.style.display = getProductImageOverride(product) ? 'inline-block' : 'none';
@@ -329,18 +337,145 @@ function wireImageEdits(product) {
       const photoEl = document.getElementById('product-photo');
       const ppFallback = document.getElementById('pp-fallback');
       const origUrl = getProductImage(product);
-      if (origUrl) {
-        photoEl.src = origUrl;
-        photoEl.style.display = 'block';
-        ppFallback.style.display = 'none';
-      } else {
-        photoEl.style.display = 'none';
-        ppFallback.style.display = 'flex';
-      }
+      if (origUrl) { photoEl.src = origUrl; photoEl.style.display = 'block'; ppFallback.style.display = 'none'; }
+      else { photoEl.style.display = 'none'; ppFallback.style.display = 'flex'; }
       productRemoveBtn.style.display = 'none';
       productOverlay.style.display = 'none';
     };
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SELECTOR EDIT
+═══════════════════════════════════════════════════════════════════════ */
+
+let selectorEditUnlocked = false;
+
+function wireSelectorEdit() {
+  const editBtn = document.getElementById('selector-edit-btn');
+  if (!editBtn) return;
+  editBtn.style.display = 'inline-block';
+  editBtn.addEventListener('click', function() {
+    if (selectorEditUnlocked) {
+      selectorEditUnlocked = false;
+      this.textContent = 'Edit';
+      document.getElementById('selector-edit-panel').style.display = 'none';
+      renderTypeSelector();
+      return;
+    }
+    showMktPasswordPrompt(this, () => {
+      selectorEditUnlocked = true;
+      editBtn.textContent = 'Done';
+      document.getElementById('selector-edit-panel').style.display = 'block';
+      renderSelectorEditPanel();
+    });
+  });
+}
+
+function renderSelectorEditPanel() {
+  const panel = document.getElementById('selector-edit-panel');
+  if (!panel) return;
+  const effProds = getEffectiveProducts();
+  const allCombos = effProds.map(p => ({ type: p.type, fitment: p.fitment, key: `${p.type}|${p.fitment}` }));
+  // Deduplicate
+  const seen = new Set();
+  const uniqueCombos = allCombos.filter(c => { if (seen.has(c.key)) return false; seen.add(c.key); return true; });
+
+  panel.innerHTML = `
+    <div class="sel-edit-panel">
+      <div class="sel-edit-title">Product Combinations</div>
+      <div class="sel-edit-combos">
+        ${uniqueCombos.length
+          ? uniqueCombos.map(c => `
+              <div class="sel-edit-combo-row">
+                <span class="sel-edit-type">${c.type}</span>
+                <span class="sel-edit-sep">+</span>
+                <span class="sel-edit-fit">${c.fitment}</span>
+                <button class="sel-edit-rm" data-key="${c.key}">✕ Remove</button>
+              </div>`).join('')
+          : '<p class="sel-edit-empty">No combinations. Add one below.</p>'}
+      </div>
+      <div class="sel-edit-add-form">
+        <div class="sel-edit-add-title">Add combination</div>
+        <div class="sel-edit-add-row">
+          <select class="sel-edit-select" id="sel-add-type">
+            <option value="">— Type —</option>
+            <option value="Crew Cab">Crew Cab</option>
+            <option value="Flex Cab">Flex Cab</option>
+            <option value="Partition Wall">Partition Wall</option>
+          </select>
+          <select class="sel-edit-select" id="sel-add-fitment">
+            <option value="">— Fitment —</option>
+            <option value="OEM">OEM</option>
+            <option value="After-fit">After-fit</option>
+          </select>
+          <button class="plant-add-btn" id="sel-add-btn">+ Add</button>
+        </div>
+      </div>
+    </div>`;
+
+  panel.querySelectorAll('.sel-edit-rm').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const hidden = getSelectorHidden();
+      hidden.add(btn.dataset.key);
+      saveSelectorHidden(hidden);
+      renderSelectorEditPanel();
+      renderTypeSelector();
+    });
+  });
+
+  panel.querySelector('#sel-add-btn').addEventListener('click', () => {
+    const type    = panel.querySelector('#sel-add-type').value;
+    const fitment = panel.querySelector('#sel-add-fitment').value;
+    if (!type || !fitment) return;
+    const key = `${type}|${fitment}`;
+    const alreadyExists = vehicleProducts.find(p => p.type === type && p.fitment === fitment);
+    if (alreadyExists) {
+      const hidden = getSelectorHidden();
+      hidden.delete(key);
+      saveSelectorHidden(hidden);
+    } else {
+      const customs = getLocalCustomProducts();
+      const newProd = { brand: qBrand, van: qVan, segment: firstP.segment, type, fitment };
+      customs.push(newProd);
+      localStorage.setItem('snoeks_custom_products', JSON.stringify(customs));
+      vehicleProducts.push(newProd);
+    }
+    renderSelectorEditPanel();
+    renderTypeSelector();
+  });
+}
+
+function showIntroPop(anchor, INTRO_KEY, currentVal, el) {
+  const existing = document.getElementById('mkt-intro-pop');
+  if (existing) { existing.remove(); return; }
+  const pop = document.createElement('div');
+  pop.id = 'mkt-intro-pop';
+  pop.className = 'matrix-cell-popover';
+  pop.style.minWidth = '200px';
+  pop.innerHTML = `
+    <div style="font-size:0.72rem;color:rgba(255,255,255,0.5);margin-bottom:6px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">Market Introduction Year</div>
+    <div class="mcp-pw-form">
+      <input class="mcp-pw-input" type="text" placeholder="e.g. 2019" value="${currentVal === '—' ? '' : currentVal}" style="width:70px"/>
+      <button class="mcp-pw-submit">Save</button>
+    </div>`;
+  pop.addEventListener('click', e => e.stopPropagation());
+  pop.querySelector('.mcp-pw-submit').addEventListener('click', () => {
+    const newVal = pop.querySelector('.mcp-pw-input').value.trim() || '—';
+    localStorage.setItem(INTRO_KEY, newVal);
+    const valEl = el.querySelector('#mkt-intro-year-val');
+    if (valEl) valEl.textContent = newVal;
+    pop.remove();
+  });
+  pop.querySelector('.mcp-pw-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') pop.querySelector('.mcp-pw-submit').click();
+  });
+  const r = anchor.getBoundingClientRect();
+  pop.style.cssText += `;position:fixed;top:${r.bottom+6}px;left:${Math.max(8,r.right-210)}px;z-index:9999`;
+  document.body.appendChild(pop);
+  setTimeout(() => pop.querySelector('.mcp-pw-input').focus(), 50);
+  function outside(e) { if (!pop.contains(e.target) && e.target !== anchor) { pop.remove(); document.removeEventListener('click', outside); } }
+  setTimeout(() => document.addEventListener('click', outside), 0);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -443,6 +578,8 @@ function populateMarket(product) {
   const isOEM = product.fitment === "OEM";
   const MKT_KEY    = `snoeks_mkt_${product.brand}|${product.van}|${product.type}|${product.fitment}`;
   const PLANTS_KEY = `snoeks_plants_${product.brand}|${product.van}|${product.type}|${product.fitment}`;
+  const INTRO_KEY = `snoeks_intro_${product.brand}|${product.van}|${product.type}|${product.fitment}`;
+  const introYear = localStorage.getItem(INTRO_KEY) || md.introYear || "—";
 
   /* ── OEM ──────────────────────────────────────────────────────── */
   if (isOEM) {
@@ -472,7 +609,10 @@ function populateMarket(product) {
       <div class="mkt-overview-row">
         <div class="mkt-stat-card">
           <div class="mkt-stat-label">Market Introduction</div>
-          <div class="mkt-stat-value">${md.introYear || "—"}</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="mkt-stat-value" id="mkt-intro-year-val">${introYear}</div>
+            <button class="mkt-intro-edit-icon" id="mkt-intro-edit-icon" title="Edit year">✎</button>
+          </div>
         </div>
         <div class="mkt-stat-card">
           <div class="mkt-stat-label">Customer</div>
@@ -525,6 +665,14 @@ function populateMarket(product) {
       });
     }
     wireRemoveBtns();
+
+    const introEditIconOEM = el.querySelector('#mkt-intro-edit-icon');
+    if (introEditIconOEM) {
+      introEditIconOEM.addEventListener('click', function() {
+        const curVal = (el.querySelector('#mkt-intro-year-val') || {}).textContent || introYear;
+        showMktPasswordPrompt(this, () => { showIntroPop(this, INTRO_KEY, curVal, el); });
+      });
+    }
 
     el.querySelector('#pi-add-btn').addEventListener('click', function() {
       const name    = el.querySelector('#pi-name').value.trim();
@@ -671,7 +819,10 @@ function populateMarket(product) {
       <div class="mkt-overview-row">
         <div class="mkt-stat-card">
           <div class="mkt-stat-label">Market Introduction</div>
-          <div class="mkt-stat-value">${md.introYear || "—"}</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="mkt-stat-value" id="mkt-intro-year-val">${introYear}</div>
+            <button class="mkt-intro-edit-icon" id="mkt-intro-edit-icon" title="Edit year">✎</button>
+          </div>
         </div>
         <div class="mkt-stat-card">
           <div class="mkt-stat-label">Customer</div>
@@ -700,6 +851,14 @@ function populateMarket(product) {
         <p class="mkt-homol-note">CoC = Certificate of Conformity. GWC = General Whole-vehicle Certification. IVA = Individual Vehicle Approval.</p>
       </div>
     `;
+
+    const introEditIconAF = el.querySelector('#mkt-intro-edit-icon');
+    if (introEditIconAF) {
+      introEditIconAF.addEventListener('click', function() {
+        const curVal = (el.querySelector('#mkt-intro-year-val') || {}).textContent || introYear;
+        showMktPasswordPrompt(this, () => { showIntroPop(this, INTRO_KEY, curVal, el); });
+      });
+    }
 
     function refreshTable(locked) {
       el.querySelector('#country-table-body').innerHTML = renderRows(locked);

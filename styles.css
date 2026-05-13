@@ -3772,3 +3772,75 @@ body.matrix-edit-active td.mm-cell {
 }
 .product-card { position: relative; }
 .product-card--editing { pointer-events: auto; }
+
+/* ── Selector Edit Panel ─────────────────────────────────────────── */
+.sel-edit-panel {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.sel-edit-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 10px;
+}
+.sel-edit-combos { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.sel-edit-combo-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 5px;
+}
+.sel-edit-type { font-weight: 600; color: rgba(255,255,255,0.9); font-size: 0.85rem; }
+.sel-edit-sep { color: rgba(255,255,255,0.3); }
+.sel-edit-fit { color: rgba(255,255,255,0.6); font-size: 0.85rem; }
+.sel-edit-rm {
+  margin-left: auto;
+  background: rgba(204,0,0,0.15);
+  border: 1px solid rgba(204,0,0,0.3);
+  color: #ff6b6b;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+.sel-edit-rm:hover { background: rgba(204,0,0,0.3); }
+.sel-edit-empty { color: rgba(255,255,255,0.35); font-style: italic; font-size: 0.82rem; }
+.sel-edit-add-form { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; }
+.sel-edit-add-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.sel-edit-add-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.sel-edit-select {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.9);
+  border-radius: 5px;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+}
+.sel-edit-select option { background: #1e1e1e; }
+
+/* ── Intro year edit icon ─────────────────────────────────────────── */
+.mkt-intro-edit-icon {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.35);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 2px 4px;
+  line-height: 1;
+  border-radius: 3px;
+}
+.mkt-intro-edit-icon:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.08); }

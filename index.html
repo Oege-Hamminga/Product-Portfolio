@@ -645,7 +645,8 @@
 
     // ── OEM Panel (plant-centric) ──────────────────────────────────────
     function buildOEMPanel(container) {
-      const oemProds = (typeof products !== 'undefined') ? products.filter(p => p.fitment === 'OEM') : [];
+      function getCustomProds() { try { return JSON.parse(localStorage.getItem('snoeks_custom_products')) || []; } catch(e) { return []; } }
+      const oemProds = (typeof products !== 'undefined') ? [...products, ...getCustomProds()].filter(p => p.fitment === 'OEM') : [];
       const PLANTS_KEY = 'snoeks_oem_plants';
       const oemExpanded = new Set();
 
@@ -817,7 +818,8 @@
 
     // ── AF Panel ──────────────────────────────────────────────────────
     function buildAFPanel(container) {
-      const afProds = (typeof products !== 'undefined') ? products.filter(p => p.fitment !== 'OEM') : [];
+      function getCustomProdsAF() { try { return JSON.parse(localStorage.getItem('snoeks_custom_products')) || []; } catch(e) { return []; } }
+      const afProds = (typeof products !== 'undefined') ? [...products, ...getCustomProdsAF()].filter(p => p.fitment !== 'OEM') : [];
       const afExpanded = new Set();
       function normH(v) { return Array.isArray(v) ? v : (!v||v==='—') ? [] : [v]; }
       function certCls(v) { return v==='YES'?'ct-cert--yes':v==='NO'?'ct-cert--no':'ct-cert--interest'; }
