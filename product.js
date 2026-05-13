@@ -835,6 +835,7 @@ function populateMarketingTools(product) {
     el.innerHTML = `
       <div class="mkt-tools-layout">
 
+        ${product.fitment !== "OEM" ? `
         <div class="mkt-tools-docs">
           <div class="mkt-tools-section-header-row">
             <div class="mkt-tools-section-title">Documents</div>
@@ -846,6 +847,7 @@ function populateMarketingTools(product) {
             ${docSection("workInstructions", "03", "Work Instructions")}
           </div>
         </div>
+        ` : ""}
 
         <div class="mkt-tools-images">
           <div class="mkt-tools-section-title">Product Photography</div>
