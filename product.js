@@ -126,12 +126,12 @@ document.querySelector(".tabs-bar").addEventListener("click", e => {
   document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
 });
 
-/* ── Configurator reset ───────────────────────────────────────────── */
-document.getElementById("cfg-reset").addEventListener("click", () => {
+/* ── Configurator reset (BOM removed; guard in case element still exists) ── */
+const cfgResetBtn = document.getElementById("cfg-reset");
+if (cfgResetBtn) cfgResetBtn.addEventListener("click", () => {
   if (!currentProduct) return;
   cfgState      = {};
   blockingState = {};
-  populateBOM(currentProduct);
 });
 
 /* ── Tabs lock / unlock ───────────────────────────────────────────── */
@@ -171,7 +171,6 @@ function unlockAndPopulate(product) {
   }
 
   populateMarket(product);
-  populateBOM(product);
   populateMarketingTools(product);
 
   document.getElementById("tabs-lock").classList.add("hidden");
@@ -780,87 +779,147 @@ function populateBOM(product) {
    MARKETING TOOLS
 ═══════════════════════════════════════════════════════════════════════ */
 function populateMarketingTools(product) {
-  const tools = getMarketingTools(product);
-  const el    = document.getElementById("marketing-tools-content");
+  const el  = document.getElementById("marketing-tools-content");
+  const KEY = `snoeks_mktlinks_${product.brand}|${product.van}|${product.type}|${product.fitment}`;
+  let toolsUnlocked = false;
 
   const heroImgUrl   = getProductImage(product) || VAN_IMAGES[product.van] || "";
   const heroImgLabel = getProductImage(product)
     ? `${product.brand} ${product.van} – ${product.type} (${product.fitment})`
     : `${product.brand} ${product.van}`;
 
-  const docCard = (title, filename, typeLabel) => `
-    <a class="mkt-doc-card" href="${filename}" target="_blank" rel="noopener">
-      <div class="mkt-doc-info">
-        <div class="mkt-doc-type">${typeLabel}</div>
-        <div class="mkt-doc-title">${title}</div>
-      </div>
-      <div class="mkt-doc-arrow">↗</div>
-    </a>`;
+  function loadLinks() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || { brochures: [], priceLists: [], workInstructions: [] }; }
+    catch(e) { return { brochures: [], priceLists: [], workInstructions: [] }; }
+  }
 
-  const emptySlot = (label) => `
-    <div class="mkt-doc-empty">
-      <div class="mkt-doc-empty-icon">📄</div>
-      <div class="mkt-doc-empty-text">No ${label} available yet</div>
-    </div>`;
+  function saveLinks(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
 
-  const brochures       = tools.brochures       || [];
-  const priceLists      = tools.priceLists      || [];
-  const workInstructions = tools.workInstructions || [];
+  function render() {
+    const data = loadLinks();
 
-  const docSection = (title, eyebrow, items, typeLabel) => `
-    <div class="mkt-doc-section">
-      <div class="mkt-doc-section-header">
-        <div class="mkt-doc-section-eyebrow">${eyebrow}</div>
-        <div class="mkt-doc-section-title">${title}</div>
-      </div>
-      <div class="mkt-doc-section-body">
-        ${items.length
-          ? items.map(d => docCard(d.title, d.filename, `${typeLabel}${d.lang ? ' · ' + d.lang : ''}`)).join('')
-          : emptySlot(title.toLowerCase())}
-      </div>
-    </div>`;
+    const docSection = (key, eyebrow, title) => {
+      const items = data[key] || [];
 
-  el.innerHTML = `
-    <div class="mkt-tools-layout">
+      const buttons = items.length
+        ? items.map((item, i) => `
+            <div class="mkt-link-row">
+              <button class="mkt-link-btn" data-url="${encodeURIComponent(item.url || '')}">${item.title || 'Open Document'}</button>
+              ${toolsUnlocked ? `<button class="mkt-link-del" data-key="${key}" data-idx="${i}">✕</button>` : ""}
+            </div>`).join("")
+        : `<div class="mkt-doc-empty">
+             <div class="mkt-doc-empty-icon">📄</div>
+             <div class="mkt-doc-empty-text">No ${title.toLowerCase()} available yet${toolsUnlocked ? " — add one below" : ""}</div>
+           </div>`;
 
-      <div class="mkt-tools-docs">
-        <div class="mkt-tools-section-title">Documents</div>
-        <div class="mkt-doc-sections">
-          ${docSection('Brochures',         '01', brochures,        'Brochure')}
-          ${docSection('Price Lists',       '02', priceLists,       'Price List')}
-          ${docSection('Work Instructions', '03', workInstructions, 'Work Instruction')}
-        </div>
-      </div>
+      const addForm = toolsUnlocked ? `
+        <div class="mkt-link-add-form">
+          <input class="mkt-link-input" placeholder="Button label" data-role="ltitle" data-key="${key}"/>
+          <input class="mkt-link-input mkt-link-input--url" placeholder="https://…" data-role="lurl" data-key="${key}"/>
+          <button class="plant-add-btn mkt-link-add" data-key="${key}">+ Add</button>
+        </div>` : "";
 
-      <div class="mkt-tools-images">
-        <div class="mkt-tools-section-title">Product Photography</div>
-        <div class="gallery-hero">
-          ${heroImgUrl
-            ? `<img src="${heroImgUrl}" alt="${heroImgLabel}" loading="lazy"
-                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-            : ""}
-          <div class="gallery-hero-fallback" style="background:linear-gradient(135deg,${meta.color} 0%,${meta.color}99 100%);${heroImgUrl ? "display:none" : ""}">
-            <span style="font-size:3rem;font-weight:900;color:rgba(255,255,255,0.9)">${meta.abbr}</span>
-            <span style="font-size:0.72rem;color:rgba(255,255,255,0.55);letter-spacing:3px;text-transform:uppercase">${product.van}</span>
+      return `
+        <div class="mkt-doc-section">
+          <div class="mkt-doc-section-header">
+            <div class="mkt-doc-section-eyebrow">${eyebrow}</div>
+            <div class="mkt-doc-section-title">${title}</div>
           </div>
-          <div class="gallery-hero-label">${heroImgLabel}</div>
-        </div>
-        <div class="gallery-thumbs">
-          ${["Interior – Cabin","Installation Diagram","Product Close-up"].map(lbl => `
-            <div class="gallery-thumb">
-              <div class="gallery-thumb-inner">
-                <div class="gallery-thumb-label">${lbl}</div>
-                <div class="gallery-thumb-badge">Coming Soon</div>
-              </div>
-            </div>
-          `).join("")}
-        </div>
-        <div class="gallery-footer">
-          <button class="action-btn">Request Hi-Res Assets</button>
-          <button class="action-btn action-btn--outline" onclick="window.print()">Print Sheet</button>
-        </div>
-      </div>
+          <div class="mkt-doc-section-body">
+            ${buttons}
+            ${addForm}
+          </div>
+        </div>`;
+    };
 
-    </div>
-  `;
+    el.innerHTML = `
+      <div class="mkt-tools-layout">
+
+        <div class="mkt-tools-docs">
+          <div class="mkt-tools-section-header-row">
+            <div class="mkt-tools-section-title">Documents</div>
+            <button class="mkt-edit-btn" id="mkt-tools-edit-btn">${toolsUnlocked ? "Done" : "Edit"}</button>
+          </div>
+          <div class="mkt-doc-sections">
+            ${docSection("brochures",        "01", "Brochures")}
+            ${docSection("priceLists",       "02", "Price Lists")}
+            ${docSection("workInstructions", "03", "Work Instructions")}
+          </div>
+        </div>
+
+        <div class="mkt-tools-images">
+          <div class="mkt-tools-section-title">Product Photography</div>
+          <div class="gallery-hero">
+            ${heroImgUrl
+              ? `<img src="${heroImgUrl}" alt="${heroImgLabel}" loading="lazy"
+                      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+              : ""}
+            <div class="gallery-hero-fallback" style="background:linear-gradient(135deg,${meta.color} 0%,${meta.color}99 100%);${heroImgUrl ? "display:none" : ""}">
+              <span style="font-size:3rem;font-weight:900;color:rgba(255,255,255,0.9)">${meta.abbr}</span>
+              <span style="font-size:0.72rem;color:rgba(255,255,255,0.55);letter-spacing:3px;text-transform:uppercase">${product.van}</span>
+            </div>
+            <div class="gallery-hero-label">${heroImgLabel}</div>
+          </div>
+          <div class="gallery-thumbs">
+            ${["Interior – Cabin","Installation Diagram","Product Close-up"].map(lbl => `
+              <div class="gallery-thumb">
+                <div class="gallery-thumb-inner">
+                  <div class="gallery-thumb-label">${lbl}</div>
+                  <div class="gallery-thumb-badge">Coming Soon</div>
+                </div>
+              </div>`).join("")}
+          </div>
+          <div class="gallery-footer">
+            <button class="action-btn">Request Hi-Res Assets</button>
+            <button class="action-btn action-btn--outline" onclick="window.print()">Print Sheet</button>
+          </div>
+        </div>
+
+      </div>`;
+
+    // Open document URL
+    el.querySelectorAll(".mkt-link-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const url = decodeURIComponent(btn.dataset.url || "");
+        if (url) window.open(url, "_blank", "noopener,noreferrer");
+      });
+    });
+
+    // Delete document link
+    el.querySelectorAll(".mkt-link-del").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const d = loadLinks();
+        d[btn.dataset.key].splice(parseInt(btn.dataset.idx), 1);
+        saveLinks(d);
+        render();
+      });
+    });
+
+    // Add document link
+    el.querySelectorAll(".mkt-link-add").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const key  = btn.dataset.key;
+        const form = btn.closest(".mkt-link-add-form");
+        const title = form.querySelector("[data-role='ltitle']").value.trim();
+        const url   = form.querySelector("[data-role='lurl']").value.trim();
+        if (!url) { form.querySelector("[data-role='lurl']").focus(); return; }
+        const d = loadLinks();
+        if (!d[key]) d[key] = [];
+        d[key].push({ title: title || "Document", url });
+        saveLinks(d);
+        render();
+      });
+    });
+
+    // Edit / Done
+    const editBtn = el.querySelector("#mkt-tools-edit-btn");
+    if (editBtn) {
+      editBtn.addEventListener("click", function() {
+        if (toolsUnlocked) { toolsUnlocked = false; render(); return; }
+        showMktPasswordPrompt(this, () => { toolsUnlocked = true; render(); });
+      });
+    }
+  }
+
+  render();
 }

@@ -118,7 +118,6 @@
 
       <div class="tabs-bar" role="tablist">
         <button class="tab-btn active" data-tab="market" role="tab">Market Presence</button>
-        <button class="tab-btn"        data-tab="bom"    role="tab">Bill of Materials</button>
         <button class="tab-btn"        data-tab="images" role="tab">Marketing Tools</button>
       </div>
 
@@ -129,91 +128,6 @@
           <p>Market introduction, pricing, active markets and Certificate of Conformity availability.</p>
         </div>
         <div id="market-content"></div>
-      </div>
-
-      <!-- Tab: Bill of Materials -->
-      <div class="tab-panel" id="tab-bom">
-        <div class="tab-header">
-          <h2>Bill of Materials</h2>
-          <p>Answer all questions to generate a configuration code and bill of materials.</p>
-        </div>
-
-        <!-- Section 1: Universal vehicle questions -->
-        <div class="cfg-section" id="cfg-sec-vehicle">
-          <div class="cfg-section-header">
-            <span class="cfg-section-num">1</span>
-            <div>
-              <div class="cfg-section-title">Vehicle Configuration</div>
-              <div class="cfg-section-sub">Basic vehicle information</div>
-            </div>
-          </div>
-          <div class="cfg-questions" id="cfg-questions-vehicle"></div>
-        </div>
-
-        <!-- Section 2: Vehicle-specific questions (shown only if blocking questions exist) -->
-        <div class="cfg-section cfg-section--specific" id="cfg-sec-specific" style="display:none">
-          <div class="cfg-section-header">
-            <span class="cfg-section-num cfg-section-num--specific">2</span>
-            <div>
-              <div class="cfg-section-title">Vehicle Specs</div>
-              <div class="cfg-section-sub">Vehicle-specific options</div>
-            </div>
-          </div>
-          <div class="cfg-questions" id="cfg-questions-specific"></div>
-          <div class="cfg-incompatible-msg" id="cfg-incompatible-msg" style="display:none">
-            ⚠️ Configuration not possible for this vehicle specification.
-          </div>
-        </div>
-
-        <!-- Section 3: Snoeks product questions -->
-        <div class="cfg-section" id="cfg-sec-product">
-          <div class="cfg-section-header">
-            <span class="cfg-section-num" id="cfg-sec-product-num">3</span>
-            <div>
-              <div class="cfg-section-title">Snoeks Product</div>
-              <div class="cfg-section-sub">Product specifications and configuration</div>
-            </div>
-          </div>
-          <div class="cfg-questions" id="cfg-questions-product"></div>
-        </div>
-
-        <!-- Reset + status -->
-        <div class="cfg-footer">
-          <button class="cfg-reset-btn" id="cfg-reset">Reset</button>
-          <span class="cfg-status" id="cfg-status">Answer all questions to generate the configuration code</span>
-        </div>
-
-        <!-- Configuration code (always visible, pending until all answered) -->
-        <div class="quickcode-display quickcode-display--pending" id="quickcode-display">
-          <div class="qc-label">Configuration Code</div>
-          <div class="qc-value" id="quickcode-value">Answer all questions to generate the code</div>
-          <div class="qc-hint">Use this code when ordering via Snoeks Automotive</div>
-        </div>
-
-        <!-- BOM table (hidden until all questions answered) -->
-        <div id="bom-result" style="display:none">
-          <div class="bom-result-header">
-            <h3 class="bom-result-title">Bill of Materials</h3>
-            <span class="bom-count" id="bom-part-count"></span>
-          </div>
-          <div class="bom-table-wrap">
-            <table class="bom-table">
-              <thead>
-                <tr>
-                  <th>Part No.</th>
-                  <th>Description</th>
-                  <th>Qty</th>
-                  <th>Unit</th>
-                </tr>
-              </thead>
-              <tbody id="bom-body"></tbody>
-            </table>
-          </div>
-          <div class="bom-footer">
-            <button class="action-btn" onclick="window.print()">Export BOM (PDF)</button>
-          </div>
-        </div>
-
       </div>
 
       <!-- Tab: Marketing Tools -->
