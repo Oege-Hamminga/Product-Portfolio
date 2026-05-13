@@ -345,12 +345,40 @@
       <div class="results-bar">
         <span id="results-count"></span>
         <div class="results-bar-right">
+          <button class="mkt-edit-btn" id="vehicle-grid-edit-btn">Edit Vehicles</button>
           <select id="sort-select">
             <option value="default">Sort: Default</option>
             <option value="brand-az">Brand A–Z</option>
             <option value="segment">Segment</option>
           </select>
         </div>
+      </div>
+
+      <div id="add-vehicle-form" class="add-vehicle-form" style="display:none">
+        <div class="avf-title">Add New Vehicle</div>
+        <div class="avf-fields">
+          <input class="avf-input" id="avf-brand" placeholder="Brand (e.g. Ford)"/>
+          <input class="avf-input" id="avf-van" placeholder="Van model (e.g. Transit Custom)"/>
+          <select class="avf-input" id="avf-segment">
+            <option value="K1">K1 — Medium Van</option>
+            <option value="F1">F1 — Compact Van</option>
+            <option value="K2/3">K2/3 — Large Van</option>
+          </select>
+        </div>
+        <div class="avf-fields">
+          <div class="avf-check-group">
+            <span class="avf-label">Product Types:</span>
+            <label><input type="checkbox" class="avf-type-cb" value="Crew Cab" checked/> Crew Cab</label>
+            <label><input type="checkbox" class="avf-type-cb" value="Flex Cab"/> Flex Cab</label>
+            <label><input type="checkbox" class="avf-type-cb" value="Partition Wall"/> Partition Wall</label>
+          </div>
+          <div class="avf-check-group">
+            <span class="avf-label">Market Segment:</span>
+            <label><input type="checkbox" class="avf-fit-cb" value="OEM" checked/> OEM</label>
+            <label><input type="checkbox" class="avf-fit-cb" value="After-fit" checked/> After-fit</label>
+          </div>
+        </div>
+        <button class="plant-add-btn" id="avf-add-btn">+ Add Vehicle</button>
       </div>
 
       <div class="product-grid" id="product-grid"></div>

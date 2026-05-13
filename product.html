@@ -36,7 +36,7 @@
 
       <div class="detail-images">
 
-        <div class="image-card">
+        <div class="image-card" id="vehicle-img-card">
           <div class="image-label">Vehicle</div>
           <div class="vehicle-placeholder" id="vehicle-img">
             <img id="vehicle-photo" src="" alt="" loading="lazy" />
@@ -45,9 +45,17 @@
               <div class="vp-van"   id="vp-van"></div>
             </div>
           </div>
+          <button class="img-edit-icon-btn" id="vehicle-img-edit-btn">&#9998;</button>
+          <div class="img-edit-overlay" id="vehicle-img-edit-overlay" style="display:none">
+            <label class="img-upload-btn">
+              <input type="file" accept="image/*" id="vehicle-img-upload" style="display:none"/>
+              Upload
+            </label>
+            <button class="img-remove-btn" id="vehicle-img-remove">Remove</button>
+          </div>
         </div>
 
-        <div class="image-card">
+        <div class="image-card" id="product-img-card">
           <div class="image-label">Snoeks Product</div>
           <div class="product-placeholder" id="product-img">
             <img id="product-photo" src="" alt="" loading="lazy" style="display:none" />
@@ -55,6 +63,14 @@
               <div class="pp-type"  id="pp-type">Select Product</div>
               <div class="pp-label" id="pp-label">Choose type &amp; fitment below</div>
             </div>
+          </div>
+          <button class="img-edit-icon-btn" id="product-img-edit-btn">&#9998;</button>
+          <div class="img-edit-overlay" id="product-img-edit-overlay" style="display:none">
+            <label class="img-upload-btn">
+              <input type="file" accept="image/*" id="product-img-upload" style="display:none"/>
+              Upload
+            </label>
+            <button class="img-remove-btn" id="product-img-remove">Remove</button>
           </div>
         </div>
 
@@ -64,15 +80,19 @@
         <div class="meta-header">
           <div class="meta-eyebrow" id="meta-eyebrow"></div>
           <div class="meta-title"   id="meta-title"></div>
+          <button class="mkt-edit-btn" id="meta-edit-btn" style="display:none;margin-top:8px">Edit</button>
         </div>
         <div class="meta-body">
           <table class="meta-table">
-            <tr><td>Brand</td>        <td id="m-brand"></td></tr>
-            <tr><td>Van Model</td>    <td id="m-van"></td></tr>
-            <tr><td>Segment</td>      <td id="m-segment"></td></tr>
-            <tr><td>Van Type</td>     <td id="m-vantype">—</td></tr>
-            <tr><td>Market Intro</td> <td id="m-marketintro">—</td></tr>
-            <tr><td>Product Type</td> <td id="m-type">—</td></tr>
+            <tbody>
+              <tr><td>Brand</td>           <td id="m-brand"></td></tr>
+              <tr><td>Van Model</td>        <td id="m-van"></td></tr>
+              <tr><td>Segment</td>          <td id="m-segment"></td></tr>
+              <tr><td>Van Type</td>         <td id="m-vantype">—</td></tr>
+              <tr><td>Market Intro</td>     <td id="m-marketintro">—</td></tr>
+              <tr><td>Product Type</td>     <td id="m-type">—</td></tr>
+              <tr><td>Market Segment</td>   <td id="m-fitment">—</td></tr>
+            </tbody>
           </table>
         </div>
       </div>
@@ -99,7 +119,7 @@
         <div class="selector-step selector-step--locked" id="step-fitment">
           <div class="selector-step-label">
             <span class="selector-step-num">2</span>
-            Fitment
+            Market Segment
           </div>
           <div class="selector-btns" id="fitment-selector-btns">
             <span class="selector-hint">Select a product type first</span>

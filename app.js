@@ -1,5 +1,21 @@
 const state = { brand: "all", type: "all", segment: "all", sort: "default" };
 
+// ── Custom / hidden vehicles ────────────────────────────────────────
+const CUSTOM_KEY = 'snoeks_custom_products';
+const HIDDEN_KEY = 'snoeks_hidden_products';
+
+function getCustomProducts() {
+  try { return JSON.parse(localStorage.getItem(CUSTOM_KEY)) || []; } catch(e) { return []; }
+}
+function getHiddenSet() {
+  try { return new Set(JSON.parse(localStorage.getItem(HIDDEN_KEY)) || []); } catch(e) { return new Set(); }
+}
+function getAllProducts() {
+  const hidden = getHiddenSet();
+  const base = products.filter(p => !hidden.has(`${p.brand}|${p.van}`));
+  return [...base, ...getCustomProducts().filter(p => !hidden.has(`${p.brand}|${p.van}`))];
+}
+
 const grid         = document.getElementById("product-grid");
 const noResults    = document.getElementById("no-results");
 const resultsCount = document.getElementById("results-count");
@@ -37,7 +53,8 @@ document.getElementById("reset-btn").addEventListener("click", () => {
 const SEGMENT_ORDER = { "F1": 0, "K1": 1, "K2/3": 2 };
 
 function render() {
-  const sorted = [...products].sort((a, b) => {
+  const allProds = getAllProducts();
+  const sorted = [...allProds].sort((a, b) => {
     if (state.sort === "brand-az") return a.brand.localeCompare(b.brand) || a.van.localeCompare(b.van);
     if (state.sort === "segment")  return SEGMENT_ORDER[a.segment] - SEGMENT_ORDER[b.segment] || a.brand.localeCompare(b.brand);
     return 0;
@@ -55,7 +72,7 @@ function render() {
     if (ok) { seen.add(key); filtered.push(p); }
   }
 
-  const totalVehicles = new Set(products.map(p => `${p.brand}|${p.van}`)).size;
+  const totalVehicles = new Set(allProds.map(p => `${p.brand}|${p.van}`)).size;
   resultsCount.textContent = filtered.length === totalVehicles
     ? `All ${totalVehicles} vehicles`
     : `${filtered.length} of ${totalVehicles} vehicles`;
@@ -75,14 +92,18 @@ function render() {
     const fbStyle = `background:linear-gradient(135deg,${meta.color} 0%,${meta.color}bb 100%)`;
 
     const vehicleTypes = [...new Set(
-      products.filter(q => q.brand === p.brand && q.van === p.van).map(q => q.type)
+      allProds.filter(q => q.brand === p.brand && q.van === p.van).map(q => q.type)
     )];
     const typeBadges = vehicleTypes.map(t =>
       `<span class="badge badge--type">${t}</span>`
     ).join("");
 
+    const deleteBtn = gridEditUnlocked
+      ? `<button class="vehicle-delete-btn" data-key="${p.brand}|${p.van}">✕ Remove</button>`
+      : '';
+
     return `
-    <a class="product-card" href="product.html?brand=${encodeURIComponent(p.brand)}&van=${encodeURIComponent(p.van)}">
+    <a class="product-card${gridEditUnlocked ? ' product-card--editing' : ''}" href="product.html?brand=${encodeURIComponent(p.brand)}&van=${encodeURIComponent(p.van)}">
       <div class="card-image">
         ${imgUrl
           ? `<img src="${imgUrl}" alt="${p.brand} ${p.van}" loading="lazy"
@@ -100,8 +121,88 @@ function render() {
         <div class="card-van">${p.van}</div>
         <div class="card-cta">Select Product →</div>
       </div>
+      ${deleteBtn}
     </a>`;
   }).join("");
 }
 
+let gridEditUnlocked = false;
+
+function showGridPw(anchor, onSuccess) {
+  const ex = document.getElementById('grid-pw-pop');
+  if (ex) { ex.remove(); return; }
+  const pop = document.createElement('div');
+  pop.id = 'grid-pw-pop';
+  pop.className = 'matrix-cell-popover';
+  pop.style.minWidth = '200px';
+  pop.innerHTML = `
+    <div style="font-size:0.72rem;color:rgba(255,255,255,0.5);margin-bottom:6px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">Password required</div>
+    <div class="mcp-pw-form">
+      <input class="mcp-pw-input" type="password" placeholder="Enter password"/>
+      <button class="mcp-pw-submit">OK</button>
+    </div>
+    <div class="mcp-pw-error" style="display:none">Incorrect password</div>`;
+  pop.addEventListener('click', e => e.stopPropagation());
+  function tryUnlock() {
+    if (pop.querySelector('.mcp-pw-input').value === 'PM26') {
+      pop.remove(); onSuccess();
+    } else {
+      pop.querySelector('.mcp-pw-error').style.display = 'block';
+      pop.querySelector('.mcp-pw-input').value = '';
+      pop.querySelector('.mcp-pw-input').focus();
+    }
+  }
+  pop.querySelector('.mcp-pw-submit').addEventListener('click', tryUnlock);
+  pop.querySelector('.mcp-pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+  const r = anchor.getBoundingClientRect();
+  pop.style.cssText = `position:fixed;top:${r.bottom+6}px;left:${Math.max(8,r.right-210)}px;z-index:9999`;
+  document.body.appendChild(pop);
+  setTimeout(() => pop.querySelector('.mcp-pw-input').focus(), 50);
+  function outside(e) { if (!pop.contains(e.target) && e.target !== anchor) { pop.remove(); document.removeEventListener('click', outside); } }
+  setTimeout(() => document.addEventListener('click', outside), 0);
+}
+
 render();
+
+document.getElementById('vehicle-grid-edit-btn').addEventListener('click', function() {
+  if (gridEditUnlocked) {
+    gridEditUnlocked = false;
+    this.textContent = 'Edit Vehicles';
+    document.getElementById('add-vehicle-form').style.display = 'none';
+    render();
+    return;
+  }
+  showGridPw(this, () => {
+    gridEditUnlocked = true;
+    document.getElementById('vehicle-grid-edit-btn').textContent = 'Done';
+    document.getElementById('add-vehicle-form').style.display = 'flex';
+    render();
+  });
+});
+
+document.getElementById('product-grid').addEventListener('click', e => {
+  const delBtn = e.target.closest('.vehicle-delete-btn');
+  if (!delBtn || !gridEditUnlocked) return;
+  e.preventDefault();
+  const key = delBtn.dataset.key;
+  const hidden = [...getHiddenSet(), key];
+  localStorage.setItem(HIDDEN_KEY, JSON.stringify(hidden));
+  render();
+});
+
+document.getElementById('avf-add-btn').addEventListener('click', () => {
+  const brand   = document.getElementById('avf-brand').value.trim();
+  const van     = document.getElementById('avf-van').value.trim();
+  const segment = document.getElementById('avf-segment').value;
+  const types   = [...document.querySelectorAll('.avf-type-cb:checked')].map(c => c.value);
+  const fits    = [...document.querySelectorAll('.avf-fit-cb:checked')].map(c => c.value);
+  if (!brand || !van || !types.length || !fits.length) return;
+  const customs = getCustomProducts();
+  types.forEach(type => fits.forEach(fitment => {
+    customs.push({ brand, van, segment, type, fitment });
+  }));
+  localStorage.setItem(CUSTOM_KEY, JSON.stringify(customs));
+  document.getElementById('avf-brand').value = '';
+  document.getElementById('avf-van').value = '';
+  render();
+});

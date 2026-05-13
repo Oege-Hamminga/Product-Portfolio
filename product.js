@@ -33,7 +33,7 @@ document.getElementById("vp-abbr").style.color = textCol;
 document.getElementById("vp-van").textContent  = firstP.van;
 document.getElementById("vp-van").style.color  = vanCol;
 
-const imgUrl  = VAN_IMAGES[firstP.van] || null;
+const imgUrl  = getVanImageOverride(firstP.van) || VAN_IMAGES[firstP.van] || null;
 const photoEl = document.getElementById("vehicle-photo");
 if (imgUrl) {
   photoEl.src = imgUrl;
@@ -147,7 +147,7 @@ function unlockAndPopulate(product) {
     `${product.segment} · ${product.fitment}`;
 
   /* ── Product image (Snoeks conversion photo) ──────────────────── */
-  const productImgUrl = getProductImage(product);
+  const productImgUrl = getProductImageOverride(product) || getProductImage(product);
   const productPhotoEl = document.getElementById("product-photo");
   const ppFallbackEl   = document.getElementById("pp-fallback");
   const ppTypeEl       = document.getElementById("pp-type");
@@ -174,6 +174,210 @@ function unlockAndPopulate(product) {
   populateMarketingTools(product);
 
   document.getElementById("tabs-lock").classList.add("hidden");
+
+  /* ── Show meta edit button ────────────────────────────────────── */
+  document.getElementById('meta-edit-btn').style.display = 'inline-block';
+
+  /* ── Wire meta edit button ────────────────────────────────────── */
+  const metaEditBtn = document.getElementById('meta-edit-btn');
+  metaEditBtn.onclick = null;
+  metaEditBtn.addEventListener('click', function() {
+    if (metaUnlocked) {
+      const ov = loadMetaOverride(currentProduct);
+      document.querySelectorAll('.meta-edit-input').forEach(inp => {
+        const field = inp.dataset.field;
+        if (field === 'm-brand')       ov.brand       = inp.value;
+        if (field === 'm-van')         ov.van          = inp.value;
+        if (field === 'm-segment')     ov.segment      = inp.value;
+        if (field === 'm-vantype')     ov.vanType      = inp.value;
+        if (field === 'm-marketintro') ov.marketIntro  = inp.value;
+      });
+      saveMetaOverride(currentProduct, ov);
+      metaUnlocked = false;
+      this.textContent = 'Edit';
+      renderMetaTable(currentProduct, false);
+      return;
+    }
+    showMktPasswordPrompt(this, () => {
+      metaUnlocked = true;
+      metaEditBtn.textContent = 'Done';
+      renderMetaTable(currentProduct, true);
+    });
+  });
+
+  /* ── Wire image edits ─────────────────────────────────────────── */
+  wireImageEdits(product);
+
+  /* ── Render meta table with any saved overrides ───────────────── */
+  renderMetaTable(product, false);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   IMAGE OVERRIDE HELPERS
+═══════════════════════════════════════════════════════════════════════ */
+
+function getVanImageOverride(van) {
+  return localStorage.getItem(`snoeks_img_van_${van}`) || null;
+}
+function getProductImageOverride(product) {
+  return localStorage.getItem(`snoeks_img_prod_${product.brand}|${product.van}|${product.type}|${product.fitment}`) || null;
+}
+
+function wireImageEdits(product) {
+  /* ── Vehicle image edit ───────────────────────────────────────── */
+  const vehicleEditBtn     = document.getElementById('vehicle-img-edit-btn');
+  const vehicleOverlay     = document.getElementById('vehicle-img-edit-overlay');
+  const vehicleUploadInput = document.getElementById('vehicle-img-upload');
+  const vehicleRemoveBtn   = document.getElementById('vehicle-img-remove');
+
+  if (vehicleEditBtn) {
+    vehicleEditBtn.onclick = function() {
+      if (vehicleOverlay.style.display !== 'none') {
+        vehicleOverlay.style.display = 'none';
+        return;
+      }
+      showMktPasswordPrompt(this, () => {
+        vehicleOverlay.style.display = 'flex';
+        // Show/hide remove based on override existence
+        vehicleRemoveBtn.style.display = getVanImageOverride(product.van) ? 'inline-block' : 'none';
+      });
+    };
+  }
+
+  if (vehicleUploadInput) {
+    vehicleUploadInput.onchange = function() {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        localStorage.setItem(`snoeks_img_van_${product.van}`, e.target.result);
+        const photoEl = document.getElementById('vehicle-photo');
+        const fallbackEl = document.getElementById('vp-fallback');
+        photoEl.src = e.target.result;
+        photoEl.style.display = 'block';
+        fallbackEl.style.display = 'none';
+        vehicleRemoveBtn.style.display = 'inline-block';
+        vehicleUploadInput.value = '';
+      };
+      reader.readAsDataURL(file);
+    };
+  }
+
+  if (vehicleRemoveBtn) {
+    vehicleRemoveBtn.onclick = function() {
+      localStorage.removeItem(`snoeks_img_van_${product.van}`);
+      const photoEl = document.getElementById('vehicle-photo');
+      const fallbackEl = document.getElementById('vp-fallback');
+      // Revert to original
+      const origUrl = VAN_IMAGES[product.van] || null;
+      if (origUrl) {
+        photoEl.src = origUrl;
+        photoEl.style.display = 'block';
+        fallbackEl.style.display = 'none';
+      } else {
+        photoEl.style.display = 'none';
+        fallbackEl.style.display = 'flex';
+      }
+      vehicleRemoveBtn.style.display = 'none';
+      vehicleOverlay.style.display = 'none';
+    };
+  }
+
+  /* ── Product image edit ───────────────────────────────────────── */
+  const productEditBtn     = document.getElementById('product-img-edit-btn');
+  const productOverlay     = document.getElementById('product-img-edit-overlay');
+  const productUploadInput = document.getElementById('product-img-upload');
+  const productRemoveBtn   = document.getElementById('product-img-remove');
+
+  if (productEditBtn) {
+    productEditBtn.onclick = function() {
+      if (productOverlay.style.display !== 'none') {
+        productOverlay.style.display = 'none';
+        return;
+      }
+      showMktPasswordPrompt(this, () => {
+        productOverlay.style.display = 'flex';
+        productRemoveBtn.style.display = getProductImageOverride(product) ? 'inline-block' : 'none';
+      });
+    };
+  }
+
+  if (productUploadInput) {
+    productUploadInput.onchange = function() {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const key = `snoeks_img_prod_${product.brand}|${product.van}|${product.type}|${product.fitment}`;
+        localStorage.setItem(key, e.target.result);
+        const photoEl = document.getElementById('product-photo');
+        const ppFallback = document.getElementById('pp-fallback');
+        photoEl.src = e.target.result;
+        photoEl.style.display = 'block';
+        ppFallback.style.display = 'none';
+        productRemoveBtn.style.display = 'inline-block';
+        productUploadInput.value = '';
+      };
+      reader.readAsDataURL(file);
+    };
+  }
+
+  if (productRemoveBtn) {
+    productRemoveBtn.onclick = function() {
+      const key = `snoeks_img_prod_${product.brand}|${product.van}|${product.type}|${product.fitment}`;
+      localStorage.removeItem(key);
+      const photoEl = document.getElementById('product-photo');
+      const ppFallback = document.getElementById('pp-fallback');
+      const origUrl = getProductImage(product);
+      if (origUrl) {
+        photoEl.src = origUrl;
+        photoEl.style.display = 'block';
+        ppFallback.style.display = 'none';
+      } else {
+        photoEl.style.display = 'none';
+        ppFallback.style.display = 'flex';
+      }
+      productRemoveBtn.style.display = 'none';
+      productOverlay.style.display = 'none';
+    };
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   META TABLE EDITING
+═══════════════════════════════════════════════════════════════════════ */
+
+let metaUnlocked = false;
+
+function loadMetaOverride(product) {
+  try { return JSON.parse(localStorage.getItem(`snoeks_vmeta_${product.brand}|${product.van}`)) || {}; } catch(e) { return {}; }
+}
+function saveMetaOverride(product, data) {
+  localStorage.setItem(`snoeks_vmeta_${product.brand}|${product.van}`, JSON.stringify(data));
+}
+
+function renderMetaTable(product, editing) {
+  const ov = loadMetaOverride(product);
+  const _vm = getVehicleMeta(product.brand, product.van);
+  const fields = [
+    { id: 'm-brand',       label: 'Brand',          val: ov.brand       || product.brand },
+    { id: 'm-van',         label: 'Van Model',       val: ov.van         || product.van },
+    { id: 'm-segment',     label: 'Segment',         val: ov.segment     || product.segment },
+    { id: 'm-vantype',     label: 'Van Type',        val: ov.vanType     || _vm.vanType || '—' },
+    { id: 'm-marketintro', label: 'Market Intro',    val: ov.marketIntro || _vm.marketIntro || '—' },
+    { id: 'm-type',        label: 'Product Type',    val: document.getElementById('m-type').textContent || '—' },
+    { id: 'm-fitment',     label: 'Market Segment',  val: product.fitment },
+  ];
+  const tbody = document.querySelector('.meta-table tbody') || document.querySelector('.meta-table');
+  if (!tbody) return;
+  tbody.innerHTML = fields.map(f => `
+    <tr>
+      <td>${f.label}</td>
+      <td id="${f.id}">${editing && f.id !== 'm-type' && f.id !== 'm-fitment'
+        ? `<input class="meta-edit-input" data-field="${f.id}" value="${f.val.replace(/"/g,'&quot;')}"/>`
+        : f.val}
+      </td>
+    </tr>`).join('');
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
