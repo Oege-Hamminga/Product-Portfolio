@@ -461,6 +461,17 @@
       return n;
     }
 
+    // Build pill badge HTML for a given cell value
+    function makeBadgeHTML(val) {
+      if (!val) return '';
+      if (val === 'SD') return '<span class="mm-badge-tag mm-badge-tag--s">S</span><span class="mm-badge-tag mm-badge-tag--d">D</span>';
+      if (val === 'S')     return '<span class="mm-badge-tag mm-badge-tag--s">S</span>';
+      if (val === 'D')     return '<span class="mm-badge-tag mm-badge-tag--d">D</span>';
+      if (val === 'New')   return '<span class="mm-badge-tag mm-badge-tag--new">New</span>';
+      if (val === 'Other') return '<span class="mm-badge-tag mm-badge-tag--other">Other</span>';
+      return '';
+    }
+
     // Replace badge content with select elements in every mm-cell
     function buildSelects(state) {
       document.querySelectorAll('#matrix-collapsible tbody tr[data-row]').forEach(tr => {
@@ -469,9 +480,16 @@
           const col = td.dataset.col;
           const val = (state[row] && state[row][col]) || '';
           td.innerHTML = '';
+
+          const disp = document.createElement('span');
+          disp.className = 'mm-badge-display';
+          disp.innerHTML = makeBadgeHTML(val);
+          td.appendChild(disp);
+
           const sel = document.createElement('select');
           sel.className = 'mm-select mm-select--' + (val || 'none');
           sel.disabled = true;
+          sel.style.display = 'none';
           OPTS.forEach(opt => {
             const o = document.createElement('option');
             o.value = opt.value;
@@ -484,6 +502,7 @@
             if (!state[row]) state[row] = {};
             state[row][col] = newVal;
             this.className = 'mm-select mm-select--' + (newVal || 'none');
+            disp.innerHTML = makeBadgeHTML(newVal);
             const hasAny = Object.values(state[row]).some(v => v !== '');
             tr.classList.toggle('mm-row--uncovered', !hasAny);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -567,7 +586,8 @@
       btn.textContent = 'Done';
       btn.classList.add('matrix-edit-btn--active');
       document.body.classList.add('matrix-edit-active');
-      document.querySelectorAll('.mm-select').forEach(sel => sel.disabled = false);
+      document.querySelectorAll('.mm-badge-display').forEach(s => s.style.display = 'none');
+      document.querySelectorAll('.mm-select').forEach(sel => { sel.style.display = ''; sel.disabled = false; });
     }
 
     function deactivateEditMode(btn) {
@@ -575,7 +595,8 @@
       btn.textContent = 'Edit';
       btn.classList.remove('matrix-edit-btn--active');
       document.body.classList.remove('matrix-edit-active');
-      document.querySelectorAll('.mm-select').forEach(sel => sel.disabled = true);
+      document.querySelectorAll('.mm-select').forEach(sel => { sel.style.display = 'none'; sel.disabled = true; });
+      document.querySelectorAll('.mm-badge-display').forEach(s => s.style.display = '');
     }
 
     document.getElementById('matrix-edit-btn').addEventListener('click', function() {
