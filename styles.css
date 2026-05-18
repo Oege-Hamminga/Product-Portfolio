@@ -542,15 +542,15 @@ header {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.71rem;
-  min-width: 600px;
+  min-width: 900px;
   table-layout: fixed;
 }
 
-.market-matrix th.mm-seg  { width: 36px; }
+.market-matrix th.mm-seg     { width: 36px; }
 .market-matrix th.mm-vehicle { width: auto; }
-.market-matrix th.mm-prod { width: 96px; } /* each product group = 2 × 48px */
-.mm-del-th                { width: 28px !important; }
-.mm-subhead th:nth-child(n+3):not(.mm-del-th) { width: 48px; }
+.market-matrix th.mm-prod    { width: 260px; } /* each product group = 2 × 130px */
+.mm-del-th                   { width: 32px !important; }
+.mm-subhead th:nth-child(n+3):not(.mm-del-th) { width: 130px; }
 
 .market-matrix thead th {
   position: sticky;
@@ -623,8 +623,7 @@ header {
 .mm-cell {
   text-align: center;
   border-left: 1px solid rgba(255,255,255,0.04);
-  width: 48px;
-  overflow: hidden;
+  width: 130px;
 }
 .mm-cell .matrix-badge {
   margin: 1px;
@@ -3954,8 +3953,9 @@ body.matrix-edit-active td.mm-cell {
 .mm-badge-display {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 3px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 .mm-badge-tag {
   display: inline-flex;
