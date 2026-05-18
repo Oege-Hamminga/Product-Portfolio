@@ -3853,20 +3853,21 @@ body.matrix-edit-active td.mm-cell {
 .ct-notes-cell { min-width: 140px; max-width: 220px; }
 .ct-notes-input {
   width: 100%;
-  background: #fff;
-  border: 1px solid #ccc;
+  background: #ffffff !important;
+  border: 1px solid #bbb !important;
   border-radius: 4px;
-  color: #111;
+  color: #111111 !important;
   font-size: 0.76rem;
   font-family: inherit;
   padding: 4px 7px;
   box-sizing: border-box;
+  -webkit-text-fill-color: #111111 !important;
 }
-.ct-notes-input::placeholder { color: #aaa; }
-.ct-notes-input:focus { outline: none; border-color: #888; }
+.ct-notes-input::placeholder { color: #999 !important; -webkit-text-fill-color: #999 !important; }
+.ct-notes-input:focus { outline: none; border-color: #555 !important; }
 .ct-notes-text {
   font-size: 0.76rem;
-  color: #111;
+  color: #111111 !important;
   font-style: italic;
   line-height: 1.3;
 }
