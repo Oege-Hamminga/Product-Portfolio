@@ -131,6 +131,10 @@
           <div class="matrix-legend">
             <span class="matrix-badge matrix-badge--s">S</span><span>Snoeks</span>
             <span class="matrix-badge matrix-badge--d">D</span><span>Durisotti</span>
+            <div class="mm-theme-toggle">
+              <button class="mm-theme-btn mm-theme-btn--black" data-theme="black" title="Black background">&#9632; Black</button>
+              <button class="mm-theme-btn mm-theme-btn--white" data-theme="white" title="White background">&#9633; White</button>
+            </div>
             <button class="export-pdf-btn" onclick="printPDF('matrix')">Export PDF</button>
           </div>
 
@@ -409,6 +413,20 @@
         var open = panel.classList.toggle('matrix-collapsible--open');
         btn.textContent = open ? 'Hide vehicle matrix ↑' : 'Show full vehicle matrix ↓';
         btn.classList.toggle('matrix-toggle-btn--open', open);
+      });
+    })();
+
+    (function() {
+      var matrixPanel = document.getElementById('mkt-ov-matrix');
+      document.querySelector('.mm-theme-toggle').addEventListener('click', function(e) {
+        var themBtn = e.target.closest('.mm-theme-btn');
+        if (!themBtn) return;
+        var theme = themBtn.dataset.theme;
+        var active = matrixPanel.dataset.mmTheme === theme;
+        matrixPanel.dataset.mmTheme = active ? '' : theme;
+        document.querySelectorAll('.mm-theme-btn').forEach(function(b) {
+          b.classList.toggle('mm-theme-btn--active', !active && b.dataset.theme === theme);
+        });
       });
     })();
   </script>
