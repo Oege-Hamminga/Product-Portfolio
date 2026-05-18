@@ -502,10 +502,10 @@ header {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 3px;
-  font-size: 0.55rem;
+  font-size: 0.6rem;
   font-weight: 900;
   letter-spacing: 0;
   flex-shrink: 0;
@@ -515,9 +515,9 @@ header {
   color: #fff;
 }
 .matrix-badge--d {
-  background: rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.55);
-  border: 1px solid rgba(255,255,255,0.18);
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid rgba(29,78,216,0.3);
 }
 
 .matrix-fit-tag {
@@ -591,9 +591,9 @@ header {
 }
 
 .market-matrix td {
-  padding: 7px 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  color: rgba(255,255,255,0.55);
+  padding: 4px 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+  color: rgba(0,0,0,0.65);
   vertical-align: middle;
 }
 
@@ -631,7 +631,7 @@ header {
 }
 
 .mm-group-label td {
-  padding: 12px 10px 4px;
+  padding: 7px 8px 2px;
   border-bottom: none;
 }
 .mm-seg-badge {
@@ -3848,3 +3848,92 @@ body.matrix-edit-active td.mm-cell {
   border-radius: 3px;
 }
 .mkt-intro-edit-icon:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.08); }
+
+/* ── Market Matrix white background ──────────────────────────────── */
+#mkt-ov-matrix {
+  background: #fff;
+  border-radius: 2px;
+  padding: 16px 22px 4px;
+  margin: 0 -22px;
+}
+#mkt-ov-matrix .market-summary-grid {
+  background: rgba(0,0,0,0.06);
+}
+#mkt-ov-matrix .ms-stat {
+  background: #f5f5f5;
+}
+#mkt-ov-matrix .ms-val { color: #111; }
+#mkt-ov-matrix .ms-of { color: rgba(0,0,0,0.35); }
+#mkt-ov-matrix .ms-label { color: rgba(0,0,0,0.5); }
+#mkt-ov-matrix .ms-sub { color: rgba(0,0,0,0.38); }
+#mkt-ov-matrix .mss-bar { background: rgba(0,0,0,0.09); }
+#mkt-ov-matrix .mss-pct { color: rgba(0,0,0,0.45); }
+#mkt-ov-matrix .mss-pct em { color: rgba(0,0,0,0.75); }
+#mkt-ov-matrix .matrix-legend { color: rgba(0,0,0,0.55); }
+#mkt-ov-matrix .matrix-toggle-btn {
+  background: rgba(0,0,0,0.03);
+  border-color: rgba(0,0,0,0.12);
+  color: rgba(0,0,0,0.5);
+}
+#mkt-ov-matrix .matrix-toggle-btn:hover,
+#mkt-ov-matrix .matrix-toggle-btn--open {
+  border-color: rgba(204,0,0,0.4);
+  color: var(--red);
+  background: rgba(204,0,0,0.04);
+}
+#mkt-ov-matrix .matrix-scroll {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 2px;
+}
+#mkt-ov-matrix .market-matrix thead th {
+  background: #f0f0f0;
+}
+#mkt-ov-matrix .market-matrix th {
+  color: rgba(0,0,0,0.45);
+  border-bottom-color: rgba(0,0,0,0.1);
+}
+#mkt-ov-matrix .market-matrix th.mm-prod {
+  border-left-color: rgba(0,0,0,0.07);
+  color: rgba(0,0,0,0.55);
+}
+#mkt-ov-matrix .mm-subhead th {
+  color: rgba(0,0,0,0.35);
+  border-bottom-color: rgba(0,0,0,0.07);
+}
+#mkt-ov-matrix .mm-subhead th:nth-child(n+3) {
+  border-left-color: rgba(0,0,0,0.05);
+}
+#mkt-ov-matrix .market-matrix td {
+  border-bottom-color: rgba(0,0,0,0.06);
+  color: rgba(0,0,0,0.65);
+}
+#mkt-ov-matrix .mm-seg-cell {
+  color: rgba(0,0,0,0.3) !important;
+}
+#mkt-ov-matrix .mm-vehicle-cell {
+  color: rgba(0,0,0,0.85) !important;
+}
+#mkt-ov-matrix .mm-vehicle-cell .mm-sub {
+  color: rgba(0,0,0,0.38);
+}
+#mkt-ov-matrix .mm-cell {
+  border-left-color: rgba(0,0,0,0.05);
+}
+#mkt-ov-matrix .mm-group-label td {
+  color: rgba(0,0,0,0.4);
+}
+#mkt-ov-matrix .market-matrix tbody tr:not(.mm-group-label):hover td {
+  background: rgba(0,0,0,0.025);
+}
+#mkt-ov-matrix .mm-row--uncovered td {
+  opacity: 0.55;
+}
+#mkt-ov-matrix .mm-row--uncovered .mm-vehicle-cell::after {
+  color: rgba(180,120,0,0.8);
+}
+#mkt-ov-matrix .matrix-fit-tag {
+  background: rgba(0,0,0,0.06);
+  color: rgba(0,0,0,0.5);
+  border-color: rgba(0,0,0,0.12);
+}
