@@ -543,7 +543,14 @@ header {
   border-collapse: collapse;
   font-size: 0.71rem;
   min-width: 600px;
+  table-layout: fixed;
 }
+
+.market-matrix th.mm-seg  { width: 36px; }
+.market-matrix th.mm-vehicle { width: auto; }
+.market-matrix th.mm-prod { width: 96px; } /* each product group = 2 × 48px */
+.mm-del-th                { width: 28px !important; }
+.mm-subhead th:nth-child(n+3):not(.mm-del-th) { width: 48px; }
 
 .market-matrix thead th {
   position: sticky;
@@ -616,7 +623,8 @@ header {
 .mm-cell {
   text-align: center;
   border-left: 1px solid rgba(255,255,255,0.04);
-  min-width: 44px;
+  width: 48px;
+  overflow: hidden;
 }
 .mm-cell .matrix-badge {
   margin: 1px;
