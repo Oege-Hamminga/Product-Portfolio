@@ -3879,9 +3879,9 @@ body.matrix-edit-active td.mm-cell {
   margin: 0;
 }
 #mkt-ov-matrix .matrix-collapsible {
-  background: #ececec;
+  background: transparent;
   margin: 0 -22px;
-  padding: 12px 22px 8px;
+  padding: 0;
 }
 #mkt-ov-matrix .matrix-legend { color: rgba(255,255,255,0.45); }
 #mkt-ov-matrix .matrix-toggle-btn {
@@ -3896,9 +3896,10 @@ body.matrix-edit-active td.mm-cell {
   background: rgba(204,0,0,0.05);
 }
 #mkt-ov-matrix .matrix-scroll {
-  background: #f5f5f5;
-  border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 2px;
+  background: #ececec;
+  border: none;
+  border-radius: 0;
+  padding: 12px 22px 12px;
 }
 #mkt-ov-matrix .market-matrix thead th {
   background: #e2e2e2;
