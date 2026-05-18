@@ -3874,22 +3874,26 @@ body.matrix-edit-active td.mm-cell {
 
 /* ── Market Matrix light-grey background ─────────────────────────── */
 #mkt-ov-matrix {
-  background: #ececec;
-  border-radius: 2px;
-  padding: 16px 22px 4px;
-  margin: 0 -22px;
+  background: transparent;
+  padding: 0;
+  margin: 0;
 }
-#mkt-ov-matrix .matrix-legend { color: rgba(0,0,0,0.55); }
+#mkt-ov-matrix .matrix-collapsible {
+  background: #ececec;
+  margin: 0 -22px;
+  padding: 12px 22px 8px;
+}
+#mkt-ov-matrix .matrix-legend { color: rgba(255,255,255,0.45); }
 #mkt-ov-matrix .matrix-toggle-btn {
-  background: rgba(0,0,0,0.04);
-  border-color: rgba(0,0,0,0.14);
-  color: rgba(0,0,0,0.5);
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.45);
 }
 #mkt-ov-matrix .matrix-toggle-btn:hover,
 #mkt-ov-matrix .matrix-toggle-btn--open {
   border-color: rgba(204,0,0,0.4);
   color: var(--red);
-  background: rgba(204,0,0,0.04);
+  background: rgba(204,0,0,0.05);
 }
 #mkt-ov-matrix .matrix-scroll {
   background: #f5f5f5;
