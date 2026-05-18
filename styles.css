@@ -476,14 +476,6 @@ header {
   opacity: 0.45;
 }
 
-.mm-row--uncovered .mm-vehicle-cell::after {
-  content: ' — opportunity';
-  font-size: 0.5rem;
-  font-weight: 600;
-  color: rgba(255,200,80,0.55);
-  letter-spacing: 0.5px;
-  margin-left: 6px;
-}
 
 /* Market matrix legend */
 .matrix-legend {
@@ -3944,9 +3936,6 @@ body.matrix-edit-active td.mm-cell {
 #mkt-ov-matrix .mm-row--uncovered td {
   opacity: 0.55;
 }
-#mkt-ov-matrix .mm-row--uncovered .mm-vehicle-cell::after {
-  color: rgba(160,100,0,0.9);
-}
 #mkt-ov-matrix .matrix-fit-tag {
   background: rgba(0,0,0,0.06);
   color: rgba(0,0,0,0.5);
@@ -3989,6 +3978,62 @@ body.matrix-edit-active td.mm-cell {
   background: #fef9c3;
   color: #854d0e;
   border: 1px solid rgba(133,77,14,0.25);
+}
+.mm-badge-tag--investigate {
+  background: #f3e8ff;
+  color: #6b21a8;
+  border: 1px solid rgba(107,33,168,0.25);
+}
+
+/* ── Delete row button ───────────────────────────────────────────── */
+.mm-del-th {
+  width: 28px;
+  min-width: 28px;
+}
+.mm-del-cell {
+  text-align: center;
+  padding: 0 4px !important;
+  border-left: none !important;
+}
+.mm-del-btn {
+  background: none;
+  border: 1px solid rgba(204,0,0,0.3);
+  color: rgba(204,0,0,0.7);
+  border-radius: 3px;
+  width: 20px;
+  height: 20px;
+  font-size: 0.75rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  display: none;
+}
+.mm-del-btn:hover {
+  background: rgba(204,0,0,0.08);
+  border-color: var(--red);
+  color: var(--red);
+}
+
+/* ── Add vehicle button ──────────────────────────────────────────── */
+.mm-add-row-btn {
+  display: none;
+  width: 100%;
+  margin-top: 8px;
+  padding: 7px 16px;
+  background: rgba(0,0,0,0.04);
+  border: 1px dashed rgba(0,0,0,0.2);
+  border-radius: 3px;
+  color: rgba(0,0,0,0.45);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.mm-add-row-btn:hover {
+  background: rgba(204,0,0,0.05);
+  border-color: rgba(204,0,0,0.35);
+  color: var(--red);
 }
 
 /* ── Market Matrix tab visibility ────────────────────────────────── */

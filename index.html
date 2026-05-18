@@ -418,15 +418,36 @@
     const STORAGE_KEY = 'snoeks_matrix_state';
 
     const OPTS = [
-      { value: '',      label: '—' },
-      { value: 'S',     label: 'S' },
-      { value: 'D',     label: 'D' },
-      { value: 'SD',    label: 'S & D' },
-      { value: 'New',   label: 'New' },
-      { value: 'Other', label: 'Other' },
+      { value: '',                   label: '—' },
+      { value: 'Snoeks',             label: 'Snoeks' },
+      { value: 'Durisotti',          label: 'Durisotti' },
+      { value: 'Snoeks & Durisotti', label: 'Snoeks & Durisotti' },
+      { value: 'Other',              label: 'Other' },
+      { value: 'New',                label: 'New' },
+      { value: 'Investigate',        label: 'Investigate' },
     ];
 
-    // Build initial state from current HTML badges
+    const COLS = ['cc-oem','cc-af','fc-oem','fc-af','pw-oem','pw-af'];
+
+    function makeBadgeHTML(val) {
+      if (!val) return '';
+      if (val === 'Snoeks & Durisotti' || val === 'SD')
+        return '<span class="mm-badge-tag mm-badge-tag--s">Snoeks</span><span class="mm-badge-tag mm-badge-tag--d">Durisotti</span>';
+      if (val === 'Snoeks'      || val === 'S') return '<span class="mm-badge-tag mm-badge-tag--s">Snoeks</span>';
+      if (val === 'Durisotti'   || val === 'D') return '<span class="mm-badge-tag mm-badge-tag--d">Durisotti</span>';
+      if (val === 'New')         return '<span class="mm-badge-tag mm-badge-tag--new">New</span>';
+      if (val === 'Other')       return '<span class="mm-badge-tag mm-badge-tag--other">Other</span>';
+      if (val === 'Investigate') return '<span class="mm-badge-tag mm-badge-tag--investigate">Investigate</span>';
+      return '';
+    }
+
+    function normalizeVal(v) {
+      if (v === 'S')  return 'Snoeks';
+      if (v === 'D')  return 'Durisotti';
+      if (v === 'SD') return 'Snoeks & Durisotti';
+      return v || '';
+    }
+
     function buildInitialState() {
       const state = {};
       document.querySelectorAll('#matrix-collapsible tbody tr[data-row]').forEach(tr => {
@@ -436,91 +457,159 @@
           const col = td.dataset.col;
           const hasS = !!td.querySelector('.matrix-badge--s');
           const hasD = !!td.querySelector('.matrix-badge--d');
-          state[row][col] = hasS && hasD ? 'SD' : hasS ? 'S' : hasD ? 'D' : '';
+          state[row][col] = hasS && hasD ? 'Snoeks & Durisotti' : hasS ? 'Snoeks' : hasD ? 'Durisotti' : '';
         });
       });
       return state;
     }
 
-    // Migrate old array format → new string format
     function maybesMigrate(s) {
-      const firstRow = Object.values(s)[0];
-      if (!firstRow) return s;
-      const firstCell = Object.values(firstRow)[0];
-      if (!Array.isArray(firstCell)) return s;
       const n = {};
       Object.keys(s).forEach(row => {
         n[row] = {};
         Object.keys(s[row]).forEach(col => {
           const v = s[row][col];
-          const hasS = Array.isArray(v) && v.includes('S');
-          const hasD = Array.isArray(v) && v.includes('D');
-          n[row][col] = hasS && hasD ? 'SD' : hasS ? 'S' : hasD ? 'D' : '';
+          if (Array.isArray(v)) {
+            const hasS = v.includes('S'), hasD = v.includes('D');
+            n[row][col] = hasS && hasD ? 'Snoeks & Durisotti' : hasS ? 'Snoeks' : hasD ? 'Durisotti' : '';
+          } else {
+            n[row][col] = normalizeVal(v);
+          }
         });
       });
       return n;
     }
 
-    // Build pill badge HTML for a given cell value
-    function makeBadgeHTML(val) {
-      if (!val) return '';
-      if (val === 'SD') return '<span class="mm-badge-tag mm-badge-tag--s">S</span><span class="mm-badge-tag mm-badge-tag--d">D</span>';
-      if (val === 'S')     return '<span class="mm-badge-tag mm-badge-tag--s">S</span>';
-      if (val === 'D')     return '<span class="mm-badge-tag mm-badge-tag--d">D</span>';
-      if (val === 'New')   return '<span class="mm-badge-tag mm-badge-tag--new">New</span>';
-      if (val === 'Other') return '<span class="mm-badge-tag mm-badge-tag--other">Other</span>';
-      return '';
+    function buildCell(td, row, col, val, state) {
+      td.innerHTML = '';
+      const disp = document.createElement('span');
+      disp.className = 'mm-badge-display';
+      disp.innerHTML = makeBadgeHTML(val);
+      td.appendChild(disp);
+
+      const sel = document.createElement('select');
+      sel.className = 'mm-select';
+      sel.disabled = true;
+      sel.style.display = 'none';
+      OPTS.forEach(opt => {
+        const o = document.createElement('option');
+        o.value = opt.value;
+        o.textContent = opt.label;
+        if (opt.value === val) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener('change', function() {
+        const newVal = this.value;
+        if (!state[row]) state[row] = {};
+        state[row][col] = newVal;
+        disp.innerHTML = makeBadgeHTML(newVal);
+        const hasAny = COLS.some(c => state[row][c]);
+        td.closest('tr').classList.toggle('mm-row--uncovered', !hasAny);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        updateInsights(state);
+      });
+      td.appendChild(sel);
     }
 
-    // Replace badge content with select elements in every mm-cell
     function buildSelects(state) {
+      // Add delete column to thead if missing
+      const thead = document.querySelector('.market-matrix thead');
+      if (thead && !thead.querySelector('.mm-del-th')) {
+        thead.querySelectorAll('tr').forEach(tr => {
+          const th = document.createElement('th');
+          th.className = 'mm-del-th';
+          tr.appendChild(th);
+        });
+        document.querySelectorAll('#matrix-collapsible tbody tr.mm-group-label td[colspan]').forEach(td => {
+          td.colSpan = parseInt(td.colSpan) + 1;
+        });
+      }
+
       document.querySelectorAll('#matrix-collapsible tbody tr[data-row]').forEach(tr => {
         const row = tr.dataset.row;
         tr.querySelectorAll('td[data-col]').forEach(td => {
           const col = td.dataset.col;
-          const val = (state[row] && state[row][col]) || '';
-          td.innerHTML = '';
-
-          const disp = document.createElement('span');
-          disp.className = 'mm-badge-display';
-          disp.innerHTML = makeBadgeHTML(val);
-          td.appendChild(disp);
-
-          const sel = document.createElement('select');
-          sel.className = 'mm-select mm-select--' + (val || 'none');
-          sel.disabled = true;
-          sel.style.display = 'none';
-          OPTS.forEach(opt => {
-            const o = document.createElement('option');
-            o.value = opt.value;
-            o.textContent = opt.label;
-            if (opt.value === val) o.selected = true;
-            sel.appendChild(o);
-          });
-          sel.addEventListener('change', function() {
-            const newVal = this.value;
-            if (!state[row]) state[row] = {};
-            state[row][col] = newVal;
-            this.className = 'mm-select mm-select--' + (newVal || 'none');
-            disp.innerHTML = makeBadgeHTML(newVal);
-            const hasAny = Object.values(state[row]).some(v => v !== '');
-            tr.classList.toggle('mm-row--uncovered', !hasAny);
+          const val = normalizeVal((state[row] && state[row][col]) || '');
+          buildCell(td, row, col, val, state);
+        });
+        if (!tr.querySelector('.mm-del-cell')) {
+          const delTd = document.createElement('td');
+          delTd.className = 'mm-del-cell';
+          const delBtn = document.createElement('button');
+          delBtn.className = 'mm-del-btn';
+          delBtn.title = 'Remove row';
+          delBtn.textContent = '×';
+          delBtn.style.display = 'none';
+          delBtn.addEventListener('click', () => {
+            delete state[row];
+            tr.remove();
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
             updateInsights(state);
           });
-          td.appendChild(sel);
-        });
+          delTd.appendChild(delBtn);
+          tr.appendChild(delTd);
+        }
       });
     }
 
-    // Load or init state
-    let matrixState;
-    try { matrixState = JSON.parse(localStorage.getItem(STORAGE_KEY)) || null; } catch(e){}
-    if (!matrixState) {
-      matrixState = buildInitialState();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(matrixState));
-    } else {
-      matrixState = maybesMigrate(matrixState);
+    function addVehicleRow(state) {
+      const seg = prompt('Segment (F1 / K1 / K2/3 / New):');
+      if (seg === null) return;
+      if (!['F1','K1','K2/3','New'].includes(seg.trim())) {
+        alert('Invalid segment. Use F1, K1, K2/3, or New.'); return;
+      }
+      const name = prompt('Vehicle name:');
+      if (!name || !name.trim()) return;
+      const rowKey = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+      if (state[rowKey]) { alert('A row with this name already exists.'); return; }
+
+      state[rowKey] = {};
+      COLS.forEach(c => { state[rowKey][c] = ''; });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+
+      const tbody = document.querySelector('.market-matrix tbody');
+      const tr = document.createElement('tr');
+      tr.dataset.row = rowKey;
+      tr.classList.add('mm-row--uncovered');
+
+      const segTd = document.createElement('td');
+      segTd.className = 'mm-seg-cell';
+      segTd.textContent = seg.trim();
+      tr.appendChild(segTd);
+
+      const nameTd = document.createElement('td');
+      nameTd.className = 'mm-vehicle-cell';
+      nameTd.textContent = name.trim();
+      tr.appendChild(nameTd);
+
+      COLS.forEach(col => {
+        const td = document.createElement('td');
+        td.className = 'mm-cell';
+        td.dataset.col = col;
+        buildCell(td, rowKey, col, '', state);
+        td.querySelector('.mm-badge-display').style.display = 'none';
+        const sel = td.querySelector('.mm-select');
+        sel.style.display = '';
+        sel.disabled = false;
+        tr.appendChild(td);
+      });
+
+      const delTd = document.createElement('td');
+      delTd.className = 'mm-del-cell';
+      const delBtn = document.createElement('button');
+      delBtn.className = 'mm-del-btn';
+      delBtn.title = 'Remove row';
+      delBtn.textContent = '×';
+      delBtn.addEventListener('click', () => {
+        delete state[rowKey];
+        tr.remove();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        updateInsights(state);
+      });
+      delTd.appendChild(delBtn);
+      tr.appendChild(delTd);
+      tbody.appendChild(tr);
+      updateInsights(state);
     }
 
     function updateInsights(state) {
@@ -541,10 +630,10 @@
         if (!seg || !(seg in totals)) return;
         totals[seg]++;
         const rs = state[row] || {};
-        const sn = v => v === 'S' || v === 'SD';
-        const hasCc  = sn(rs['cc-oem'])  || sn(rs['cc-af']);
-        const hasFc  = sn(rs['fc-oem'])  || sn(rs['fc-af']);
-        const hasPw  = sn(rs['pw-oem'])  || sn(rs['pw-af']);
+        const sn = v => v === 'Snoeks' || v === 'Snoeks & Durisotti';
+        const hasCc = sn(rs['cc-oem']) || sn(rs['cc-af']);
+        const hasFc = sn(rs['fc-oem']) || sn(rs['fc-af']);
+        const hasPw = sn(rs['pw-oem']) || sn(rs['pw-af']);
         if (hasCc || hasFc || hasPw) { covered.all++; covered[seg]++; }
         if (hasCc) covered.cc++;
         if (hasFc) covered.fc++;
@@ -570,8 +659,26 @@
       });
     }
 
+    // Load or init state
+    let matrixState;
+    try { matrixState = JSON.parse(localStorage.getItem(STORAGE_KEY)) || null; } catch(e){}
+    if (!matrixState) {
+      matrixState = buildInitialState();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(matrixState));
+    } else {
+      matrixState = maybesMigrate(matrixState);
+    }
+
     buildSelects(matrixState);
     updateInsights(matrixState);
+
+    // Add vehicle button (visible only in edit mode)
+    const addVehicleBtn = document.createElement('button');
+    addVehicleBtn.className = 'mm-add-row-btn';
+    addVehicleBtn.textContent = '+ Add vehicle';
+    addVehicleBtn.style.display = 'none';
+    addVehicleBtn.addEventListener('click', () => addVehicleRow(matrixState));
+    document.querySelector('.matrix-scroll').appendChild(addVehicleBtn);
 
     let editMode = false;
     let unlocked = false;
@@ -588,6 +695,8 @@
       document.body.classList.add('matrix-edit-active');
       document.querySelectorAll('.mm-badge-display').forEach(s => s.style.display = 'none');
       document.querySelectorAll('.mm-select').forEach(sel => { sel.style.display = ''; sel.disabled = false; });
+      document.querySelectorAll('.mm-del-btn').forEach(b => b.style.display = '');
+      addVehicleBtn.style.display = '';
     }
 
     function deactivateEditMode(btn) {
@@ -597,6 +706,8 @@
       document.body.classList.remove('matrix-edit-active');
       document.querySelectorAll('.mm-select').forEach(sel => { sel.style.display = 'none'; sel.disabled = true; });
       document.querySelectorAll('.mm-badge-display').forEach(s => s.style.display = '');
+      document.querySelectorAll('.mm-del-btn').forEach(b => b.style.display = 'none');
+      addVehicleBtn.style.display = 'none';
     }
 
     document.getElementById('matrix-edit-btn').addEventListener('click', function() {
