@@ -744,6 +744,7 @@ function populateMarket(product) {
       const s = saved[c.code] || { active: base.active, homologation: normalizeHomol(base.homologation) };
       s.homologation = normalizeHomol(s.homologation);
       if (!s.customers) s.customers = [];
+      if (!s.notes) s.notes = '';
       countryState[c.code] = s;
     });
 
@@ -795,6 +796,10 @@ function populateMarket(product) {
             </label>`).join('')}
         </td>`;
 
+        const notesCell = locked
+          ? `<td class="ct-notes-cell">${st.notes ? `<span class="ct-notes-text">${st.notes}</span>` : ''}</td>`
+          : `<td class="ct-notes-cell"><input type="text" class="ct-notes-input" data-country="${c.code}" value="${(st.notes||'').replace(/"/g,'&quot;')}" placeholder="Notes…"/></td>`;
+
         return `
           <tr class="ct-country-row${st.active ? ' ct-country-row--active' : ''}" data-country="${c.code}">
             <td class="ct-code">${c.code}</td>
@@ -806,6 +811,7 @@ function populateMarket(product) {
               </select>
             </td>
             ${homolCell}
+            ${notesCell}
             <td></td>
           </tr>
           ${customerRows}
@@ -844,7 +850,7 @@ function populateMarket(product) {
         </div>
         <div class="country-table-wrap">
           <table class="country-table">
-            <thead><tr><th></th><th>Country</th><th>Status</th><th>Homologation</th><th></th></tr></thead>
+            <thead><tr><th></th><th>Country</th><th>Status</th><th>Homologation</th><th>Notes</th><th></th></tr></thead>
             <tbody id="country-table-body">${renderRows(!mktUnlocked)}</tbody>
           </table>
         </div>
@@ -913,6 +919,13 @@ function populateMarket(product) {
           countryState[code].customers.splice(cidx, 1);
           saveState();
           refreshTable(false);
+        });
+      });
+      // Notes
+      el.querySelectorAll('.ct-notes-input').forEach(inp => {
+        inp.addEventListener('input', function() {
+          countryState[this.dataset.country].notes = this.value;
+          saveState();
         });
       });
     }

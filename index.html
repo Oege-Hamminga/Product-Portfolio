@@ -901,6 +901,7 @@
             const s = saved[c.code] || { active: base.active, homologation: normH(base.homologation) };
             s.homologation = normH(s.homologation);
             if (!s.customers) s.customers = [];
+            if (!s.notes) s.notes = '';
             state[c.code] = s;
           });
 
@@ -930,6 +931,10 @@
                        ${actUnlocked ? '' : 'disabled'} ${hArr.includes(opt) ? 'checked' : ''}/>
                 <span>${opt}</span>
               </label>`).join('');
+            const notesCell = actUnlocked
+              ? `<td class="ct-notes-cell"><input type="text" class="ct-notes-input af-notes-input" data-key="${KEY}" data-code="${c.code}" value="${(st.notes||'').replace(/"/g,'&quot;')}" placeholder="Notes…"/></td>`
+              : `<td class="ct-notes-cell">${st.notes ? `<span class="ct-notes-text">${st.notes}</span>` : ''}</td>`;
+
             return `
               <tr class="ct-country-row${st.active ? ' ct-country-row--active' : ''}">
                 <td class="ct-code">${c.code}</td><td class="ct-name">${c.name}</td>
@@ -937,7 +942,7 @@
                   <option value="true"  ${st.active  ? 'selected':''}>Active</option>
                   <option value="false" ${!st.active ? 'selected':''}>Not active</option>
                 </select></td>
-                <td class="ct-homol">${homolCbs}</td><td></td>
+                <td class="ct-homol">${homolCbs}</td>${notesCell}<td></td>
               </tr>${custRows}${addRow}`;
           }).join('');
 
@@ -953,7 +958,7 @@
               <div class="act-product-body">
                 <div class="country-table-wrap">
                   <table class="country-table">
-                    <thead><tr><th></th><th>Country</th><th>Status</th><th>Homologation</th><th></th></tr></thead>
+                    <thead><tr><th></th><th>Country</th><th>Status</th><th>Homologation</th><th>Notes</th><th></th></tr></thead>
                     <tbody>${rows}</tbody>
                   </table>
                 </div>
@@ -1019,6 +1024,16 @@
             let s = {}; try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
             if (s[code] && s[code].customers) { s[code].customers.splice(parseInt(this.dataset.cidx), 1); localStorage.setItem(KEY, JSON.stringify(s)); }
             renderAFList();
+          });
+        });
+        // Notes
+        list.querySelectorAll('.af-notes-input').forEach(inp => {
+          inp.addEventListener('input', function() {
+            const KEY = this.dataset.key; const code = this.dataset.code;
+            let s = {}; try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
+            if (!s[code]) s[code] = { active: false, homologation: [], customers: [], notes: '' };
+            s[code].notes = this.value;
+            localStorage.setItem(KEY, JSON.stringify(s));
           });
         });
       }
