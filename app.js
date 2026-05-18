@@ -88,7 +88,7 @@ function render() {
     const meta    = BRAND_META[p.brand] || { color: "#333", abbr: p.brand.slice(0,3).toUpperCase() };
     const textCol = meta.textDark ? "rgba(0,0,0,0.85)" : "rgba(255,255,255,0.92)";
     const vanCol  = meta.textDark ? "rgba(0,0,0,0.5)"  : "rgba(255,255,255,0.55)";
-    const imgUrl  = VAN_IMAGES[p.van] || "";
+    const imgUrl  = localStorage.getItem('snoeks_img_van_' + p.van) || VAN_IMAGES[p.van] || "";
     const fbStyle = `background:linear-gradient(135deg,${meta.color} 0%,${meta.color}bb 100%)`;
 
     const vehicleTypes = [...new Set(

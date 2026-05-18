@@ -83,47 +83,47 @@
 
           <div class="market-summary-grid">
             <div class="ms-stat">
-              <div class="ms-val-row"><span class="ms-val">35</span><span class="ms-of">/70</span></div>
+              <div class="ms-val-row"><span class="ms-val" id="ms-covered-val">35</span><span class="ms-of" id="ms-covered-of">/70</span></div>
               <div class="ms-label">Models Covered</div>
-              <div class="ms-sub">50% of tracked LCV market</div>
+              <div class="ms-sub" id="ms-covered-pct">50% of tracked LCV market</div>
             </div>
             <div class="ms-stat">
-              <div class="ms-val-row"><span class="ms-val">40%</span></div>
+              <div class="ms-val-row"><span class="ms-val" id="ms-cc-val">40%</span></div>
               <div class="ms-label">Crew Cab Coverage</div>
-              <div class="ms-sub">28 of 70 models</div>
+              <div class="ms-sub" id="ms-cc-sub">28 of 70 models</div>
             </div>
             <div class="ms-stat">
-              <div class="ms-val-row"><span class="ms-val">10%</span></div>
+              <div class="ms-val-row"><span class="ms-val" id="ms-fc-val">10%</span></div>
               <div class="ms-label">Flex Cab Coverage</div>
-              <div class="ms-sub">7 of 70 models</div>
+              <div class="ms-sub" id="ms-fc-sub">7 of 70 models</div>
             </div>
             <div class="ms-stat">
-              <div class="ms-val-row"><span class="ms-val">16%</span></div>
+              <div class="ms-val-row"><span class="ms-val" id="ms-pw-val">16%</span></div>
               <div class="ms-label">Partition Wall Coverage</div>
-              <div class="ms-sub">11 of 70 models</div>
+              <div class="ms-sub" id="ms-pw-sub">11 of 70 models</div>
             </div>
           </div>
 
           <div class="market-seg-summary">
             <div class="mss-item">
               <span class="mss-seg">F1</span>
-              <span class="mss-bar"><span class="mss-fill" style="width:36%"></span></span>
-              <span class="mss-pct">8 / 22 &nbsp;<em>36%</em></span>
+              <span class="mss-bar"><span class="mss-fill" id="ms-f1-bar" style="width:36%"></span></span>
+              <span class="mss-pct" id="ms-f1-pct">8 / 22 &nbsp;<em>36%</em></span>
             </div>
             <div class="mss-item">
               <span class="mss-seg">K1</span>
-              <span class="mss-bar"><span class="mss-fill" style="width:71%"></span></span>
-              <span class="mss-pct">15 / 21 &nbsp;<em>71%</em></span>
+              <span class="mss-bar"><span class="mss-fill" id="ms-k1-bar" style="width:71%"></span></span>
+              <span class="mss-pct" id="ms-k1-pct">15 / 21 &nbsp;<em>71%</em></span>
             </div>
             <div class="mss-item">
               <span class="mss-seg">K2/3</span>
-              <span class="mss-bar"><span class="mss-fill" style="width:65%"></span></span>
-              <span class="mss-pct">11 / 17 &nbsp;<em>65%</em></span>
+              <span class="mss-bar"><span class="mss-fill" id="ms-k23-bar" style="width:65%"></span></span>
+              <span class="mss-pct" id="ms-k23-pct">11 / 17 &nbsp;<em>65%</em></span>
             </div>
             <div class="mss-item">
               <span class="mss-seg">New</span>
-              <span class="mss-bar"><span class="mss-fill" style="width:10%"></span></span>
-              <span class="mss-pct">1 / 10 &nbsp;<em>10%</em></span>
+              <span class="mss-bar"><span class="mss-fill" id="ms-new-bar" style="width:10%"></span></span>
+              <span class="mss-pct" id="ms-new-pct">1 / 10 &nbsp;<em>10%</em></span>
             </div>
           </div>
 
@@ -487,6 +487,7 @@
             const hasAny = Object.values(state[row]).some(v => v !== '');
             tr.classList.toggle('mm-row--uncovered', !hasAny);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            updateInsights(state);
           });
           td.appendChild(sel);
         });
@@ -503,7 +504,55 @@
       matrixState = maybesMigrate(matrixState);
     }
 
+    function updateInsights(state) {
+      const tbody = document.querySelector('.market-matrix tbody');
+      if (!tbody) return;
+      const totals  = { F1: 0, K1: 0, 'K2/3': 0, New: 0 };
+      const covered = { all: 0, cc: 0, fc: 0, pw: 0, F1: 0, K1: 0, 'K2/3': 0, New: 0 };
+      let inNew = false;
+      tbody.querySelectorAll('tr').forEach(tr => {
+        if (tr.classList.contains('mm-group-label')) {
+          if (tr.querySelector('.mm-seg-badge--new')) inNew = true;
+          return;
+        }
+        const row = tr.dataset.row;
+        if (!row) return;
+        const segCell = tr.querySelector('.mm-seg-cell');
+        const seg = inNew ? 'New' : (segCell ? segCell.textContent.trim() : null);
+        if (!seg || !(seg in totals)) return;
+        totals[seg]++;
+        const rs = state[row] || {};
+        const sn = v => v === 'S' || v === 'SD';
+        const hasCc  = sn(rs['cc-oem'])  || sn(rs['cc-af']);
+        const hasFc  = sn(rs['fc-oem'])  || sn(rs['fc-af']);
+        const hasPw  = sn(rs['pw-oem'])  || sn(rs['pw-af']);
+        if (hasCc || hasFc || hasPw) { covered.all++; covered[seg]++; }
+        if (hasCc) covered.cc++;
+        if (hasFc) covered.fc++;
+        if (hasPw) covered.pw++;
+      });
+      const total = totals.F1 + totals.K1 + totals['K2/3'] + totals.New;
+      const pct = (n, t) => t ? Math.round(n / t * 100) : 0;
+      const el = id => document.getElementById(id);
+      if (el('ms-covered-val')) el('ms-covered-val').textContent = covered.all;
+      if (el('ms-covered-of'))  el('ms-covered-of').textContent  = '/' + total;
+      if (el('ms-covered-pct')) el('ms-covered-pct').textContent = pct(covered.all, total) + '% of tracked LCV market';
+      if (el('ms-cc-val')) el('ms-cc-val').textContent = pct(covered.cc, total) + '%';
+      if (el('ms-cc-sub')) el('ms-cc-sub').textContent = covered.cc + ' of ' + total + ' models';
+      if (el('ms-fc-val')) el('ms-fc-val').textContent = pct(covered.fc, total) + '%';
+      if (el('ms-fc-sub')) el('ms-fc-sub').textContent = covered.fc + ' of ' + total + ' models';
+      if (el('ms-pw-val')) el('ms-pw-val').textContent = pct(covered.pw, total) + '%';
+      if (el('ms-pw-sub')) el('ms-pw-sub').textContent = covered.pw + ' of ' + total + ' models';
+      [['F1','f1'],['K1','k1'],['K2/3','k23'],['New','new']].forEach(([seg, id]) => {
+        const t = totals[seg], c = covered[seg], p = pct(c, t);
+        const b = el('ms-' + id + '-bar'), pe = el('ms-' + id + '-pct');
+        if (b)  b.style.width = p + '%';
+        if (pe) pe.innerHTML  = c + ' / ' + t + ' &nbsp;<em>' + p + '%</em>';
+      });
+    }
+
     buildSelects(matrixState);
+    updateInsights(matrixState);
 
     let editMode = false;
     let unlocked = false;
