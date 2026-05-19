@@ -8,6 +8,52 @@
 </head>
 <body>
 
+  <!-- ── Login overlay ─────────────────────────────────────────────── -->
+  <div id="login-overlay">
+    <div id="login-card">
+      <img src="Snoeks brand.png" alt="Snoeks Automotive" id="login-logo" />
+      <p id="login-title">Product Portfolio</p>
+      <p id="login-subtitle">Enter your access code to continue</p>
+      <div id="login-field-wrap">
+        <input id="login-pw" type="password" placeholder="Access code" autocomplete="current-password" />
+        <button id="login-btn">→</button>
+      </div>
+      <p id="login-error">Incorrect access code</p>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      function checkPw(v) { return v === atob('QUlAc25vZWtzMjY='); }
+      const overlay = document.getElementById('login-overlay');
+      if (sessionStorage.getItem('snoeks_auth') === '1') {
+        overlay.style.display = 'none';
+        return;
+      }
+      document.body.classList.add('login-active');
+      function tryLogin() {
+        const val = document.getElementById('login-pw').value;
+        if (checkPw(val)) {
+          sessionStorage.setItem('snoeks_auth', '1');
+          overlay.classList.add('login-overlay--out');
+          setTimeout(() => {
+            overlay.style.display = 'none';
+            document.body.classList.remove('login-active');
+          }, 400);
+        } else {
+          document.getElementById('login-error').style.display = 'block';
+          document.getElementById('login-pw').value = '';
+          document.getElementById('login-pw').focus();
+        }
+      }
+      document.getElementById('login-btn').addEventListener('click', tryLogin);
+      document.getElementById('login-pw').addEventListener('keydown', e => {
+        if (e.key === 'Enter') tryLogin();
+        document.getElementById('login-error').style.display = 'none';
+      });
+    })();
+  </script>
+
   <header>
     <div class="header-inner">
       <a href="index.html" class="logo">
