@@ -662,12 +662,15 @@
         const row = tr.dataset.row;
         if (!row) return;
 
-        // Determine van type: stored value > group context
-        // 'mixed' = Incoming/Asian group — all three product columns open
+        // Determine van type — Incoming/Asian group always 'mixed' (overrides stored value)
         const storedType = state.__types && state.__types[row];
-        const vanType = storedType || (isNewGroup ? 'mixed' : isPassengerGroup ? 'passenger' : 'panel');
+        const vanType = isNewGroup ? 'mixed'
+                      : storedType || (isPassengerGroup ? 'passenger' : 'panel');
         tr.dataset.vanType = vanType;
-        if (!storedType) { if (!state.__types) state.__types = {}; state.__types[row] = vanType; }
+        if (vanType !== storedType) {
+          if (!state.__types) state.__types = {};
+          state.__types[row] = vanType;
+        }
 
         const lockedCols = LOCKED[vanType] || []; // LOCKED['mixed'] === undefined → []
 
