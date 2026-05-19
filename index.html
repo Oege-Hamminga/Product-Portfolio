@@ -474,50 +474,43 @@
 
     // Clean up all data for a deleted vehicle row
     function cascadeDeleteVehicle(vehicleName) {
-      const name = vehicleName.trim();
+      const name    = vehicleName.trim();
       const nameLow = name.toLowerCase();
 
-      // Collect every brand|van key that could match this vehicle name.
-      // Strategy: check all custom products + catalogue products using full-name equality,
-      // then also try every possible first-N-words-as-brand split as a safety net.
-      const matched = new Set();
-
-      const catalogProds = typeof products !== 'undefined' ? [...products] : [];
+      // 1. Directly remove all matching custom products (most reliable — no key guessing needed)
       let customProds = [];
       try { customProds = JSON.parse(localStorage.getItem('snoeks_custom_products')) || []; } catch(e) {}
-
-      [...catalogProds, ...customProds].forEach(pr => {
-        const full = `${pr.brand} ${pr.van}`.trim().toLowerCase();
-        if (nameLow === full || nameLow.startsWith(full + ' ') || nameLow.startsWith(full + ',')) {
-          matched.add(`${pr.brand}|${pr.van}`);
-        }
+      const matchedBVs = new Set();
+      const remaining = customProds.filter(p => {
+        const full = `${p.brand} ${p.van}`.trim().toLowerCase();
+        if (nameLow === full) { matchedBVs.add(`${p.brand}|${p.van}`); return false; }
+        return true;
       });
-
-      // Fallback: try every split point in the name so we catch any brand/van combo
-      if (matched.size === 0) {
-        const parts = name.split(' ');
-        for (let i = 1; i < parts.length; i++) {
-          matched.add(`${parts.slice(0, i).join(' ')}|${parts.slice(i).join(' ')}`);
-        }
-        if (matched.size === 0) matched.add(`${name}|`);
+      if (remaining.length !== customProds.length) {
+        localStorage.setItem('snoeks_custom_products', JSON.stringify(remaining));
       }
 
+      // Also check catalogue products for the hidden-set key
+      const catalogProds = typeof products !== 'undefined' ? [...products] : [];
+      catalogProds.forEach(pr => {
+        const full = `${pr.brand} ${pr.van}`.trim().toLowerCase();
+        if (nameLow === full) matchedBVs.add(`${pr.brand}|${pr.van}`);
+      });
+
+      // Fallback for matrix-only rows that have no product entry
+      if (matchedBVs.size === 0) {
+        const parts = name.split(' ');
+        matchedBVs.add(parts.length >= 2
+          ? `${parts[0]}|${parts.slice(1).join(' ')}`
+          : `${name}|`);
+      }
+
+      // 2. Add to matrix hidden set and wipe related localStorage keys
+      const matHidden = getHiddenVehicles();
       const TYPES    = ['Crew Cab','Flex Cab','Partition Wall'];
       const FITMENTS = ['OEM','After-fit'];
-
-      matched.forEach(brandVan => {
-        // Add to both hidden-vehicle stores (matrix panel + product grid)
-        const matHidden = getHiddenVehicles();
+      matchedBVs.forEach(brandVan => {
         matHidden.add(brandVan);
-        localStorage.setItem(HIDDEN_VEH_KEY, JSON.stringify([...matHidden]));
-
-        try {
-          const gridHidden = new Set(JSON.parse(localStorage.getItem('snoeks_hidden_products') || '[]'));
-          gridHidden.add(brandVan);
-          localStorage.setItem('snoeks_hidden_products', JSON.stringify([...gridHidden]));
-        } catch(e) {}
-
-        // Wipe all per-product localStorage keys
         TYPES.forEach(t => FITMENTS.forEach(f => {
           const k = `${brandVan}|${t}|${f}`;
           ['snoeks_plants_','snoeks_mkt_','snoeks_intro_','snoeks_img_prod_'].forEach(pfx =>
@@ -527,8 +520,6 @@
         localStorage.removeItem(`snoeks_vmeta_${brandVan}`);
         if (vanPart) localStorage.removeItem(`snoeks_img_van_${vanPart}`);
         localStorage.removeItem(`snoeks_sel_hidden_${brandVan}`);
-
-        // Remove from OEM plant assignments
         try {
           const plants = JSON.parse(localStorage.getItem('snoeks_oem_plants')) || [];
           plants.forEach(pl => {
@@ -537,15 +528,9 @@
           localStorage.setItem('snoeks_oem_plants', JSON.stringify(plants));
         } catch(e) {}
       });
+      localStorage.setItem(HIDDEN_VEH_KEY, JSON.stringify([...matHidden]));
 
-      // Remove all matching entries from custom products
-      try {
-        const cp = JSON.parse(localStorage.getItem('snoeks_custom_products')) || [];
-        const filtered = cp.filter(p => !matched.has(`${p.brand}|${p.van}`));
-        localStorage.setItem('snoeks_custom_products', JSON.stringify(filtered));
-      } catch(e) {}
-
-      // Rebuild visible activity panels
+      // 3. Rebuild visible activity panels
       const oemPanel = document.getElementById('mkt-ov-oem');
       if (oemPanel && oemPanel.classList.contains('mkt-ov-panel--active')) buildOEMPanel(oemPanel);
       const afPanel = document.getElementById('mkt-ov-af');
@@ -1081,12 +1066,7 @@
     // ── OEM Panel (plant-centric) ──────────────────────────────────────
     function buildOEMPanel(container) {
       function getCustomProds() { try { return JSON.parse(localStorage.getItem('snoeks_custom_products')) || []; } catch(e) { return []; } }
-      function buildHiddenSet() {
-        const s = new Set(JSON.parse(localStorage.getItem('snoeks_matrix_hidden') || '[]'));
-        try { JSON.parse(localStorage.getItem('snoeks_hidden_products') || '[]').forEach(v => s.add(v)); } catch(e) {}
-        return s;
-      }
-      const _oemHidden = buildHiddenSet();
+      const _oemHidden = new Set(JSON.parse(localStorage.getItem('snoeks_matrix_hidden') || '[]'));
       const oemProds = (typeof products !== 'undefined') ? [...products, ...getCustomProds()].filter(p => p.fitment === 'OEM' && !_oemHidden.has(`${p.brand}|${p.van}`)) : [];
       const PLANTS_KEY = 'snoeks_oem_plants';
       const oemExpanded = new Set();
@@ -1260,12 +1240,7 @@
     // ── AF Panel ──────────────────────────────────────────────────────
     function buildAFPanel(container) {
       function getCustomProdsAF() { try { return JSON.parse(localStorage.getItem('snoeks_custom_products')) || []; } catch(e) { return []; } }
-      function buildHiddenSetAF() {
-        const s = new Set(JSON.parse(localStorage.getItem('snoeks_matrix_hidden') || '[]'));
-        try { JSON.parse(localStorage.getItem('snoeks_hidden_products') || '[]').forEach(v => s.add(v)); } catch(e) {}
-        return s;
-      }
-      const _afHidden = buildHiddenSetAF();
+      const _afHidden = new Set(JSON.parse(localStorage.getItem('snoeks_matrix_hidden') || '[]'));
       const afProds = (typeof products !== 'undefined') ? [...products, ...getCustomProdsAF()].filter(p => p.fitment !== 'OEM' && !_afHidden.has(`${p.brand}|${p.van}`)) : [];
       const afExpanded = new Set();
       function normH(v) { return Array.isArray(v) ? v : (!v||v==='—') ? [] : [v]; }
