@@ -632,6 +632,29 @@ header {
 .mm-group-label td {
   padding: 7px 8px 2px;
   border-bottom: none;
+  display: flex;
+  align-items: center;
+}
+.mm-group-add-btn {
+  display: none;
+  margin-left: auto;
+  padding: 2px 8px;
+  background: rgba(0,0,0,0.04);
+  border: 1px dashed rgba(0,0,0,0.25);
+  border-radius: 3px;
+  color: rgba(0,0,0,0.45);
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.mm-group-add-btn:hover {
+  background: rgba(0,0,0,0.08);
+  border-color: rgba(0,0,0,0.4);
+  color: rgba(0,0,0,0.65);
 }
 .mm-seg-badge {
   display: inline-flex;

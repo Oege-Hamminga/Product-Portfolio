@@ -602,6 +602,31 @@
       tbody.querySelectorAll('tr').forEach(tr => {
         if (tr.classList.contains('mm-group-label')) {
           isPassengerGroup = /passenger/i.test(tr.textContent);
+
+          // Inject per-group "+ Add" button (once)
+          if (!tr.querySelector('.mm-group-add-btn')) {
+            const td = tr.querySelector('td');
+            const badgeEl = td && td.querySelector('.mm-seg-badge');
+            const seg = badgeEl
+              ? (badgeEl.classList.contains('mm-seg-badge--new') ? 'New' : badgeEl.textContent.trim())
+              : 'F1';
+            const vanType = isPassengerGroup ? 'passenger' : 'panel';
+            const addBtn = document.createElement('button');
+            addBtn.className = 'mm-group-add-btn';
+            addBtn.textContent = '+ Add';
+            addBtn.style.display = 'none';
+            addBtn.addEventListener('click', () => {
+              // Insert before the next group-label row, or at end of tbody
+              let insertBefore = null;
+              let sib = tr.nextElementSibling;
+              while (sib) {
+                if (sib.classList.contains('mm-group-label')) { insertBefore = sib; break; }
+                sib = sib.nextElementSibling;
+              }
+              addVehicleRow(state, seg, vanType, insertBefore);
+            });
+            td.appendChild(addBtn);
+          }
           return;
         }
         const row = tr.dataset.row;
@@ -651,17 +676,9 @@
       });
     }
 
-    function addVehicleRow(state) {
-      const seg = prompt('Segment (F1 / K1 / K2/3 / New):');
-      if (seg === null) return;
-      if (!['F1','K1','K2/3','New'].includes(seg.trim())) {
-        alert('Invalid segment. Use F1, K1, K2/3, or New.'); return;
-      }
+    function addVehicleRow(state, seg, vanType, insertBeforeRow) {
       const name = prompt('Vehicle name:');
       if (!name || !name.trim()) return;
-      const vtInput = prompt('Van type:\n  1 = Panel Van (Crew Cab / Flex Cab applicable)\n  2 = Passenger Van (Partition Wall applicable)');
-      if (vtInput === null) return;
-      const vanType = vtInput.trim() === '2' ? 'passenger' : 'panel';
 
       const rowKey = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
       if (state[rowKey]) { alert('A row with this name already exists.'); return; }
@@ -675,11 +692,12 @@
       const tbody = document.querySelector('.market-matrix tbody');
       const tr = document.createElement('tr');
       tr.dataset.row = rowKey;
+      tr.dataset.vanType = vanType;
       tr.classList.add('mm-row--uncovered');
 
       const segTd = document.createElement('td');
       segTd.className = 'mm-seg-cell';
-      segTd.textContent = seg.trim();
+      segTd.textContent = seg;
       tr.appendChild(segTd);
 
       const nameTd = document.createElement('td');
@@ -687,15 +705,20 @@
       nameTd.textContent = name.trim();
       tr.appendChild(nameTd);
 
+      const lockedCols = LOCKED[vanType] || [];
       COLS.forEach(col => {
         const td = document.createElement('td');
         td.className = 'mm-cell';
         td.dataset.col = col;
-        buildCell(td, rowKey, col, '', state);
-        td.querySelector('.mm-badge-display').style.display = 'none';
-        const sel = td.querySelector('.mm-select');
-        sel.style.display = '';
-        sel.disabled = false;
+        if (lockedCols.includes(col)) {
+          td.classList.add('mm-cell--locked');
+        } else {
+          buildCell(td, rowKey, col, '', state);
+          td.querySelector('.mm-badge-display').style.display = 'none';
+          const sel = td.querySelector('.mm-select');
+          sel.style.display = 'inline-block';
+          sel.disabled = false;
+        }
         tr.appendChild(td);
       });
 
@@ -705,6 +728,7 @@
       delBtn.className = 'mm-del-btn';
       delBtn.title = 'Remove row';
       delBtn.textContent = '×';
+      delBtn.style.display = 'inline-block';
       delBtn.addEventListener('click', () => {
         const nameEl = tr.querySelector('.mm-vehicle-cell');
         if (nameEl) cascadeDeleteVehicle(nameEl.textContent.trim());
@@ -716,7 +740,12 @@
       });
       delTd.appendChild(delBtn);
       tr.appendChild(delTd);
-      tbody.appendChild(tr);
+
+      if (insertBeforeRow) {
+        tbody.insertBefore(tr, insertBeforeRow);
+      } else {
+        tbody.appendChild(tr);
+      }
       updateInsights(state);
     }
 
@@ -824,14 +853,6 @@
     buildSelects(matrixState);
     updateInsights(matrixState);
 
-    // Add vehicle button (visible only in edit mode)
-    const addVehicleBtn = document.createElement('button');
-    addVehicleBtn.className = 'mm-add-row-btn';
-    addVehicleBtn.textContent = '+ Add vehicle';
-    addVehicleBtn.style.display = 'none';
-    addVehicleBtn.addEventListener('click', () => addVehicleRow(matrixState));
-    document.querySelector('.matrix-scroll').appendChild(addVehicleBtn);
-
     let editMode = false;
     let unlocked = false;
     let activePopover = null;
@@ -848,7 +869,7 @@
       document.querySelectorAll('.mm-badge-display').forEach(s => s.style.display = 'none');
       document.querySelectorAll('.mm-select').forEach(sel => { sel.style.display = 'inline-block'; sel.disabled = false; });
       document.querySelectorAll('.mm-del-btn').forEach(b => b.style.display = 'inline-block');
-      addVehicleBtn.style.display = 'block';
+      document.querySelectorAll('.mm-group-add-btn').forEach(b => b.style.display = 'inline-block');
     }
 
     function deactivateEditMode(btn) {
@@ -859,7 +880,7 @@
       document.querySelectorAll('.mm-select').forEach(sel => { sel.style.display = 'none'; sel.disabled = true; });
       document.querySelectorAll('.mm-badge-display').forEach(s => s.style.display = 'inline-flex');
       document.querySelectorAll('.mm-del-btn').forEach(b => b.style.display = 'none');
-      addVehicleBtn.style.display = 'none';
+      document.querySelectorAll('.mm-group-add-btn').forEach(b => b.style.display = 'none');
     }
 
     document.getElementById('matrix-edit-btn').addEventListener('click', function() {
