@@ -778,6 +778,42 @@
       matrixState = maybesMigrate(matrixState);
     }
 
+    // One-time cleanup: remove any test vehicles (e.g. "Citroën test")
+    (function purgeTestVehicles() {
+      try {
+        const cp = JSON.parse(localStorage.getItem('snoeks_custom_products')) || [];
+        const isTest = p => /citro/i.test(p.brand||'') && /test/i.test(p.van||'');
+        const filtered = cp.filter(p => !isTest(p));
+        if (filtered.length !== cp.length) {
+          const removed = cp.filter(isTest);
+          removed.forEach(p => {
+            const bv = `${p.brand}|${p.van}`;
+            ['Crew Cab','Flex Cab','Partition Wall'].forEach(t => {
+              ['OEM','After-fit'].forEach(f => {
+                const k = `${bv}|${t}|${f}`;
+                localStorage.removeItem(`snoeks_mkt_${k}`);
+                localStorage.removeItem(`snoeks_plants_${k}`);
+                localStorage.removeItem(`snoeks_intro_${k}`);
+                localStorage.removeItem(`snoeks_img_prod_${k}`);
+              });
+            });
+            const hidden = new Set(JSON.parse(localStorage.getItem('snoeks_matrix_hidden') || '[]'));
+            hidden.add(bv);
+            localStorage.setItem('snoeks_matrix_hidden', JSON.stringify([...hidden]));
+          });
+          localStorage.setItem('snoeks_custom_products', JSON.stringify(filtered));
+        }
+        // Also purge from matrix state
+        Object.keys(matrixState).forEach(k => {
+          if (/citro.*test|test.*citro/i.test(k)) {
+            delete matrixState[k];
+            if (matrixState.__types) delete matrixState.__types[k];
+          }
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(matrixState));
+      } catch(e) {}
+    })();
+
     buildSelects(matrixState);
     updateInsights(matrixState);
 
