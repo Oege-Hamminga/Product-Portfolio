@@ -416,6 +416,69 @@
   // ── Editable Market Matrix ──────────────────────────────────────────
   (function(){
     const STORAGE_KEY = 'snoeks_matrix_state';
+    const HIDDEN_VEH_KEY = 'snoeks_matrix_hidden';
+
+    function getHiddenVehicles() {
+      try { return new Set(JSON.parse(localStorage.getItem(HIDDEN_VEH_KEY)) || []); } catch(e) { return new Set(); }
+    }
+    function addHiddenVehicle(bv) {
+      const s = getHiddenVehicles(); s.add(bv);
+      localStorage.setItem(HIDDEN_VEH_KEY, JSON.stringify([...s]));
+    }
+
+    // Clean up all data for a deleted vehicle row
+    function cascadeDeleteVehicle(vehicleName) {
+      const name = vehicleName.trim();
+      // Find matching brand|van from products array
+      let brandVan = null;
+      const allProds = typeof products !== 'undefined' ? [...products] : [];
+      try { allProds.push(...(JSON.parse(localStorage.getItem('snoeks_custom_products')) || [])); } catch(e) {}
+      for (const pr of allProds) {
+        const prefix = `${pr.brand} ${pr.van}`;
+        if (name === prefix || name.startsWith(prefix + ' ') || name.startsWith(prefix + ',')) {
+          brandVan = `${pr.brand}|${pr.van}`; break;
+        }
+      }
+      if (!brandVan) return;
+      addHiddenVehicle(brandVan);
+
+      // Wipe per-product localStorage keys
+      const types = ['Crew Cab','Flex Cab','Partition Wall'];
+      const fitments = ['OEM','After-fit'];
+      types.forEach(t => fitments.forEach(f => {
+        const pkey = `${brandVan}|${t}|${f}`;
+        localStorage.removeItem(`snoeks_plants_${pkey}`);
+        localStorage.removeItem(`snoeks_mkt_${pkey}`);
+        localStorage.removeItem(`snoeks_intro_${pkey}`);
+        localStorage.removeItem(`snoeks_img_prod_${pkey}`);
+      }));
+      const [brand, van] = brandVan.split('|');
+      localStorage.removeItem(`snoeks_vmeta_${brandVan}`);
+      localStorage.removeItem(`snoeks_img_van_${van}`);
+      localStorage.removeItem(`snoeks_sel_hidden_${brandVan}`);
+
+      // Remove from OEM plants
+      try {
+        const plants = JSON.parse(localStorage.getItem('snoeks_oem_plants')) || [];
+        plants.forEach(pl => {
+          pl.products = (pl.products || []).filter(k => !k.startsWith(brandVan + '|'));
+        });
+        localStorage.setItem('snoeks_oem_plants', JSON.stringify(plants));
+      } catch(e) {}
+
+      // Remove from custom products
+      try {
+        const cp = JSON.parse(localStorage.getItem('snoeks_custom_products')) || [];
+        const filtered = cp.filter(p => `${p.brand}|${p.van}` !== brandVan);
+        localStorage.setItem('snoeks_custom_products', JSON.stringify(filtered));
+      } catch(e) {}
+
+      // Rebuild visible activity panels
+      const oemPanel = document.getElementById('mkt-ov-oem');
+      if (oemPanel && oemPanel.classList.contains('mkt-ov-panel--active')) buildOEMPanel(oemPanel);
+      const afPanel = document.getElementById('mkt-ov-af');
+      if (afPanel && afPanel.classList.contains('mkt-ov-panel--active')) buildAFPanel(afPanel);
+    }
 
     const OPTS = [
       { value: '',                   label: '—' },
@@ -511,6 +574,9 @@
       td.appendChild(sel);
     }
 
+    // Locked cols by van type
+    const LOCKED = { passenger: ['cc-oem','cc-af','fc-oem','fc-af'], panel: ['pw-oem','pw-af'] };
+
     function buildSelects(state) {
       // Add delete column to thead if missing
       const thead = document.querySelector('.market-matrix thead');
@@ -525,13 +591,39 @@
         });
       }
 
-      document.querySelectorAll('#matrix-collapsible tbody tr[data-row]').forEach(tr => {
+      let isPassengerGroup = false;
+      const tbody = document.querySelector('.market-matrix tbody');
+      if (!tbody) return;
+
+      tbody.querySelectorAll('tr').forEach(tr => {
+        if (tr.classList.contains('mm-group-label')) {
+          isPassengerGroup = /passenger/i.test(tr.textContent);
+          return;
+        }
         const row = tr.dataset.row;
+        if (!row) return;
+
+        // Determine van type: use stored value, fall back to group label
+        const storedType = state.__types && state.__types[row];
+        const vanType = storedType || (isPassengerGroup ? 'passenger' : 'panel');
+        tr.dataset.vanType = vanType;
+        // Persist detected type
+        if (!storedType) { if (!state.__types) state.__types = {}; state.__types[row] = vanType; }
+
+        const lockedCols = LOCKED[vanType] || [];
+
         tr.querySelectorAll('td[data-col]').forEach(td => {
           const col = td.dataset.col;
-          const val = normalizeVal((state[row] && state[row][col]) || '');
-          buildCell(td, row, col, val, state);
+          if (lockedCols.includes(col)) {
+            td.innerHTML = '';
+            td.classList.add('mm-cell--locked');
+          } else {
+            td.classList.remove('mm-cell--locked');
+            const val = normalizeVal((state[row] && state[row][col]) || '');
+            buildCell(td, row, col, val, state);
+          }
         });
+
         if (!tr.querySelector('.mm-del-cell')) {
           const delTd = document.createElement('td');
           delTd.className = 'mm-del-cell';
@@ -541,7 +633,10 @@
           delBtn.textContent = '×';
           delBtn.style.display = 'none';
           delBtn.addEventListener('click', () => {
+            const nameEl = tr.querySelector('.mm-vehicle-cell');
+            if (nameEl) cascadeDeleteVehicle(nameEl.textContent.trim());
             delete state[row];
+            if (state.__types) delete state.__types[row];
             tr.remove();
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
             updateInsights(state);
@@ -560,11 +655,17 @@
       }
       const name = prompt('Vehicle name:');
       if (!name || !name.trim()) return;
+      const vtInput = prompt('Van type:\n  1 = Panel Van (Crew Cab / Flex Cab applicable)\n  2 = Passenger Van (Partition Wall applicable)');
+      if (vtInput === null) return;
+      const vanType = vtInput.trim() === '2' ? 'passenger' : 'panel';
+
       const rowKey = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
       if (state[rowKey]) { alert('A row with this name already exists.'); return; }
 
       state[rowKey] = {};
       COLS.forEach(c => { state[rowKey][c] = ''; });
+      if (!state.__types) state.__types = {};
+      state.__types[rowKey] = vanType;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 
       const tbody = document.querySelector('.market-matrix tbody');
@@ -616,6 +717,8 @@
       const tbody = document.querySelector('.market-matrix tbody');
       if (!tbody) return;
       const totals  = { F1: 0, K1: 0, 'K2/3': 0, New: 0 };
+      const ccTotal = { F1: 0, K1: 0, 'K2/3': 0, New: 0 }; // panel vans only
+      const pwTotal = { F1: 0, K1: 0, 'K2/3': 0, New: 0 }; // passenger vans only
       const covered = { all: 0, cc: 0, fc: 0, pw: 0, F1: 0, K1: 0, 'K2/3': 0, New: 0 };
       let inNew = false;
       tbody.querySelectorAll('tr').forEach(tr => {
@@ -629,28 +732,34 @@
         const seg = inNew ? 'New' : (segCell ? segCell.textContent.trim() : null);
         if (!seg || !(seg in totals)) return;
         totals[seg]++;
+        const vanType = tr.dataset.vanType || 'panel';
         const rs = state[row] || {};
         const sn = v => v === 'Snoeks' || v === 'Snoeks & Durisotti';
-        const hasCc = sn(rs['cc-oem']) || sn(rs['cc-af']);
-        const hasFc = sn(rs['fc-oem']) || sn(rs['fc-af']);
-        const hasPw = sn(rs['pw-oem']) || sn(rs['pw-af']);
+        // CC/FC only applies to panel vans; PW only applies to passenger vans
+        const hasCc = vanType === 'panel' && (sn(rs['cc-oem']) || sn(rs['cc-af']));
+        const hasFc = vanType === 'panel' && (sn(rs['fc-oem']) || sn(rs['fc-af']));
+        const hasPw = vanType === 'passenger' && (sn(rs['pw-oem']) || sn(rs['pw-af']));
+        if (vanType === 'panel') ccTotal[seg]++;
+        if (vanType === 'passenger') pwTotal[seg]++;
         if (hasCc || hasFc || hasPw) { covered.all++; covered[seg]++; }
         if (hasCc) covered.cc++;
         if (hasFc) covered.fc++;
         if (hasPw) covered.pw++;
       });
-      const total = totals.F1 + totals.K1 + totals['K2/3'] + totals.New;
+      const total   = totals.F1 + totals.K1 + totals['K2/3'] + totals.New;
+      const totalCC = ccTotal.F1 + ccTotal.K1 + ccTotal['K2/3'] + ccTotal.New;
+      const totalPW = pwTotal.F1 + pwTotal.K1 + pwTotal['K2/3'] + pwTotal.New;
       const pct = (n, t) => t ? Math.round(n / t * 100) : 0;
       const el = id => document.getElementById(id);
       if (el('ms-covered-val')) el('ms-covered-val').textContent = covered.all;
       if (el('ms-covered-of'))  el('ms-covered-of').textContent  = '/' + total;
       if (el('ms-covered-pct')) el('ms-covered-pct').textContent = pct(covered.all, total) + '% of tracked LCV market';
-      if (el('ms-cc-val')) el('ms-cc-val').textContent = pct(covered.cc, total) + '%';
-      if (el('ms-cc-sub')) el('ms-cc-sub').textContent = covered.cc + ' of ' + total + ' models';
-      if (el('ms-fc-val')) el('ms-fc-val').textContent = pct(covered.fc, total) + '%';
-      if (el('ms-fc-sub')) el('ms-fc-sub').textContent = covered.fc + ' of ' + total + ' models';
-      if (el('ms-pw-val')) el('ms-pw-val').textContent = pct(covered.pw, total) + '%';
-      if (el('ms-pw-sub')) el('ms-pw-sub').textContent = covered.pw + ' of ' + total + ' models';
+      if (el('ms-cc-val')) el('ms-cc-val').textContent = pct(covered.cc, totalCC) + '%';
+      if (el('ms-cc-sub')) el('ms-cc-sub').textContent = covered.cc + ' of ' + totalCC + ' panel vans';
+      if (el('ms-fc-val')) el('ms-fc-val').textContent = pct(covered.fc, totalCC) + '%';
+      if (el('ms-fc-sub')) el('ms-fc-sub').textContent = covered.fc + ' of ' + totalCC + ' panel vans';
+      if (el('ms-pw-val')) el('ms-pw-val').textContent = pct(covered.pw, totalPW) + '%';
+      if (el('ms-pw-sub')) el('ms-pw-sub').textContent = covered.pw + ' of ' + totalPW + ' passenger vans';
       [['F1','f1'],['K1','k1'],['K2/3','k23'],['New','new']].forEach(([seg, id]) => {
         const t = totals[seg], c = covered[seg], p = pct(c, t);
         const b = el('ms-' + id + '-bar'), pe = el('ms-' + id + '-pct');
@@ -827,7 +936,8 @@
     // ── OEM Panel (plant-centric) ──────────────────────────────────────
     function buildOEMPanel(container) {
       function getCustomProds() { try { return JSON.parse(localStorage.getItem('snoeks_custom_products')) || []; } catch(e) { return []; } }
-      const oemProds = (typeof products !== 'undefined') ? [...products, ...getCustomProds()].filter(p => p.fitment === 'OEM') : [];
+      const _oemHidden = new Set(JSON.parse(localStorage.getItem('snoeks_matrix_hidden') || '[]'));
+      const oemProds = (typeof products !== 'undefined') ? [...products, ...getCustomProds()].filter(p => p.fitment === 'OEM' && !_oemHidden.has(`${p.brand}|${p.van}`)) : [];
       const PLANTS_KEY = 'snoeks_oem_plants';
       const oemExpanded = new Set();
 
@@ -1000,7 +1110,8 @@
     // ── AF Panel ──────────────────────────────────────────────────────
     function buildAFPanel(container) {
       function getCustomProdsAF() { try { return JSON.parse(localStorage.getItem('snoeks_custom_products')) || []; } catch(e) { return []; } }
-      const afProds = (typeof products !== 'undefined') ? [...products, ...getCustomProdsAF()].filter(p => p.fitment !== 'OEM') : [];
+      const _afHidden = new Set(JSON.parse(localStorage.getItem('snoeks_matrix_hidden') || '[]'));
+      const afProds = (typeof products !== 'undefined') ? [...products, ...getCustomProdsAF()].filter(p => p.fitment !== 'OEM' && !_afHidden.has(`${p.brand}|${p.van}`)) : [];
       const afExpanded = new Set();
       function normH(v) { return Array.isArray(v) ? v : (!v||v==='—') ? [] : [v]; }
       function certCls(v) { return v==='YES'?'ct-cert--yes':v==='NO'?'ct-cert--no':'ct-cert--interest'; }

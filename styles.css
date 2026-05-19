@@ -4021,6 +4021,17 @@ body.matrix-edit-active td.mm-cell {
   border-color: var(--red);
   color: var(--red);
 }
+.mm-cell--locked {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 4px,
+    rgba(0,0,0,0.045) 4px,
+    rgba(0,0,0,0.045) 8px
+  );
+  cursor: not-allowed;
+  pointer-events: none;
+}
 
 /* ── Add vehicle button ──────────────────────────────────────────── */
 .mm-add-row-btn {
