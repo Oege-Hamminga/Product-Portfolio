@@ -602,31 +602,6 @@
       tbody.querySelectorAll('tr').forEach(tr => {
         if (tr.classList.contains('mm-group-label')) {
           isPassengerGroup = /passenger/i.test(tr.textContent);
-
-          // Inject per-group "+ Add" button (once)
-          if (!tr.querySelector('.mm-group-add-btn')) {
-            const td = tr.querySelector('td');
-            const badgeEl = td && td.querySelector('.mm-seg-badge');
-            const seg = badgeEl
-              ? (badgeEl.classList.contains('mm-seg-badge--new') ? 'New' : badgeEl.textContent.trim())
-              : 'F1';
-            const vanType = isPassengerGroup ? 'passenger' : 'panel';
-            const addBtn = document.createElement('button');
-            addBtn.className = 'mm-group-add-btn';
-            addBtn.textContent = '+ Add';
-            addBtn.style.display = 'none';
-            addBtn.addEventListener('click', () => {
-              // Insert before the next group-label row, or at end of tbody
-              let insertBefore = null;
-              let sib = tr.nextElementSibling;
-              while (sib) {
-                if (sib.classList.contains('mm-group-label')) { insertBefore = sib; break; }
-                sib = sib.nextElementSibling;
-              }
-              addVehicleRow(state, seg, vanType, insertBefore);
-            });
-            td.appendChild(addBtn);
-          }
           return;
         }
         const row = tr.dataset.row;
@@ -674,6 +649,44 @@
           tr.appendChild(delTd);
         }
       });
+
+      // Inject a bottom-of-group "+ Add vehicle" row for each group (once)
+      if (!tbody.querySelector('.mm-group-add-row')) {
+        tbody.querySelectorAll('tr.mm-group-label').forEach(labelTr => {
+          const badgeEl = labelTr.querySelector('.mm-seg-badge');
+          const seg = badgeEl
+            ? (badgeEl.classList.contains('mm-seg-badge--new') ? 'New' : badgeEl.textContent.trim())
+            : 'F1';
+          const vanType = /passenger/i.test(labelTr.textContent) ? 'passenger' : 'panel';
+
+          // Find the next group-label sibling (or null = end of tbody)
+          let nextLabel = null;
+          let sib = labelTr.nextElementSibling;
+          while (sib) {
+            if (sib.classList.contains('mm-group-label')) { nextLabel = sib; break; }
+            sib = sib.nextElementSibling;
+          }
+
+          const addTr = document.createElement('tr');
+          addTr.className = 'mm-group-add-row';
+          addTr.style.display = 'none';
+          const colCount = parseInt(labelTr.querySelector('td').colSpan) || 9;
+          const addTd = document.createElement('td');
+          addTd.colSpan = colCount;
+          const addBtn = document.createElement('button');
+          addBtn.className = 'mm-group-add-btn';
+          addBtn.textContent = '+ Add vehicle';
+          addBtn.addEventListener('click', () => addVehicleRow(state, seg, vanType, addTr));
+          addTd.appendChild(addBtn);
+          addTr.appendChild(addTd);
+
+          if (nextLabel) {
+            tbody.insertBefore(addTr, nextLabel);
+          } else {
+            tbody.appendChild(addTr);
+          }
+        });
+      }
     }
 
     function addVehicleRow(state, seg, vanType, insertBeforeRow) {
@@ -869,7 +882,7 @@
       document.querySelectorAll('.mm-badge-display').forEach(s => s.style.display = 'none');
       document.querySelectorAll('.mm-select').forEach(sel => { sel.style.display = 'inline-block'; sel.disabled = false; });
       document.querySelectorAll('.mm-del-btn').forEach(b => b.style.display = 'inline-block');
-      document.querySelectorAll('.mm-group-add-btn').forEach(b => b.style.display = 'inline-block');
+      document.querySelectorAll('.mm-group-add-row').forEach(r => r.style.display = '');
     }
 
     function deactivateEditMode(btn) {
@@ -880,7 +893,7 @@
       document.querySelectorAll('.mm-select').forEach(sel => { sel.style.display = 'none'; sel.disabled = true; });
       document.querySelectorAll('.mm-badge-display').forEach(s => s.style.display = 'inline-flex');
       document.querySelectorAll('.mm-del-btn').forEach(b => b.style.display = 'none');
-      document.querySelectorAll('.mm-group-add-btn').forEach(b => b.style.display = 'none');
+      document.querySelectorAll('.mm-group-add-row').forEach(r => r.style.display = 'none');
     }
 
     document.getElementById('matrix-edit-btn').addEventListener('click', function() {
