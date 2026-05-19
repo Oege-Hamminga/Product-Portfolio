@@ -846,9 +846,9 @@
       btn.classList.add('matrix-edit-btn--active');
       document.body.classList.add('matrix-edit-active');
       document.querySelectorAll('.mm-badge-display').forEach(s => s.style.display = 'none');
-      document.querySelectorAll('.mm-select').forEach(sel => { sel.style.display = ''; sel.disabled = false; });
-      document.querySelectorAll('.mm-del-btn').forEach(b => b.style.display = '');
-      addVehicleBtn.style.display = '';
+      document.querySelectorAll('.mm-select').forEach(sel => { sel.style.display = 'inline-block'; sel.disabled = false; });
+      document.querySelectorAll('.mm-del-btn').forEach(b => b.style.display = 'inline-block');
+      addVehicleBtn.style.display = 'block';
     }
 
     function deactivateEditMode(btn) {
@@ -857,7 +857,7 @@
       btn.classList.remove('matrix-edit-btn--active');
       document.body.classList.remove('matrix-edit-active');
       document.querySelectorAll('.mm-select').forEach(sel => { sel.style.display = 'none'; sel.disabled = true; });
-      document.querySelectorAll('.mm-badge-display').forEach(s => s.style.display = '');
+      document.querySelectorAll('.mm-badge-display').forEach(s => s.style.display = 'inline-flex');
       document.querySelectorAll('.mm-del-btn').forEach(b => b.style.display = 'none');
       addVehicleBtn.style.display = 'none';
     }
