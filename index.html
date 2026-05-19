@@ -649,25 +649,27 @@
       }
 
       let isPassengerGroup = false;
+      let isNewGroup = false;
       const tbody = document.querySelector('.market-matrix tbody');
       if (!tbody) return;
 
       tbody.querySelectorAll('tr').forEach(tr => {
         if (tr.classList.contains('mm-group-label')) {
-          isPassengerGroup = /passenger/i.test(tr.textContent);
+          isNewGroup       = !!tr.querySelector('.mm-seg-badge--new');
+          isPassengerGroup = !isNewGroup && /passenger/i.test(tr.textContent);
           return;
         }
         const row = tr.dataset.row;
         if (!row) return;
 
-        // Determine van type: use stored value, fall back to group label
+        // Determine van type: stored value > group context
+        // 'mixed' = Incoming/Asian group — all three product columns open
         const storedType = state.__types && state.__types[row];
-        const vanType = storedType || (isPassengerGroup ? 'passenger' : 'panel');
+        const vanType = storedType || (isNewGroup ? 'mixed' : isPassengerGroup ? 'passenger' : 'panel');
         tr.dataset.vanType = vanType;
-        // Persist detected type
         if (!storedType) { if (!state.__types) state.__types = {}; state.__types[row] = vanType; }
 
-        const lockedCols = LOCKED[vanType] || [];
+        const lockedCols = LOCKED[vanType] || []; // LOCKED['mixed'] === undefined → []
 
         tr.querySelectorAll('td[data-col]').forEach(td => {
           const col = td.dataset.col;
@@ -710,7 +712,8 @@
           const seg = badgeEl
             ? (badgeEl.classList.contains('mm-seg-badge--new') ? 'New' : badgeEl.textContent.trim())
             : 'F1';
-          const vanType = /passenger/i.test(labelTr.textContent) ? 'passenger' : 'panel';
+          const isNew   = !!badgeEl && badgeEl.classList.contains('mm-seg-badge--new');
+          const vanType = isNew ? 'mixed' : /passenger/i.test(labelTr.textContent) ? 'passenger' : 'panel';
 
           // Find the next group-label sibling (or null = end of tbody)
           let nextLabel = null;
