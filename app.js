@@ -1,4 +1,4 @@
-const state = { brand: "all", type: "all", segment: "all", sort: "default" };
+const state = { brand: "all", type: "all", segment: "all", fitment: "all", sort: "default" };
 
 // ── Custom / hidden vehicles ────────────────────────────────────────
 const CUSTOM_KEY  = 'snoeks_custom_products';
@@ -83,14 +83,15 @@ function wireChips(containerId, stateKey) {
 wireChips("brand-chips",   "brand");
 wireChips("type-chips",    "type");
 wireChips("segment-chips", "segment");
+wireChips("fitment-chips", "fitment");
 
 sortSelect.addEventListener("change", () => { state.sort = sortSelect.value; render(); });
 
 document.getElementById("reset-btn").addEventListener("click", () => {
-  state.brand = state.type = state.segment = "all";
+  state.brand = state.type = state.segment = state.fitment = "all";
   state.sort = "default";
   sortSelect.value = "default";
-  ["brand-chips","type-chips","segment-chips"].forEach(id => {
+  ["brand-chips","type-chips","segment-chips","fitment-chips"].forEach(id => {
     document.querySelectorAll(`#${id} .chip`).forEach(c =>
       c.classList.toggle("active", c.dataset.value === "all")
     );
@@ -114,9 +115,11 @@ function render() {
   for (const p of sorted) {
     const key = `${p.brand}|${p.van}`;
     if (seen.has(key)) continue;
+    const vehicleProds = allProds.filter(q => `${q.brand}|${q.van}` === key);
     const ok = (state.brand   === "all" || p.brand   === state.brand)
             && (state.segment === "all" || p.segment === state.segment)
-            && (state.type    === "all" || p.type    === state.type);
+            && (state.type    === "all" || p.type    === state.type)
+            && (state.fitment === "all" || vehicleProds.some(q => q.fitment === state.fitment));
     if (ok) { seen.add(key); filtered.push(p); }
   }
 

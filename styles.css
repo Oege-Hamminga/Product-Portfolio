@@ -842,6 +842,8 @@ header {
 
 .chip--type:hover  { border-color: var(--dark); color: var(--dark); }
 .chip--type.active { background: var(--dark); border-color: var(--dark); color: var(--white); }
+.chip--fitment:hover  { border-color: #1d6fa4; color: #1d6fa4; }
+.chip--fitment.active { background: #1d6fa4; border-color: #1d6fa4; color: #fff; }
 
 .segment-legend {
   margin-top: 9px;
