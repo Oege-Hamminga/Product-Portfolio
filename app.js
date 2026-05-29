@@ -109,17 +109,21 @@ function render() {
     return 0;
   });
 
+  // Pre-compute which vehicles have at least one product of the selected fitment
+  const fitmentKeys = state.fitment === "all"
+    ? null
+    : new Set(allProds.filter(q => q.fitment === state.fitment).map(q => `${q.brand}|${q.van}`));
+
   // Deduplicate by brand+van while applying filters
   const seen     = new Set();
   const filtered = [];
   for (const p of sorted) {
     const key = `${p.brand}|${p.van}`;
     if (seen.has(key)) continue;
-    const vehicleProds = allProds.filter(q => `${q.brand}|${q.van}` === key);
     const ok = (state.brand   === "all" || p.brand   === state.brand)
             && (state.segment === "all" || p.segment === state.segment)
             && (state.type    === "all" || p.type    === state.type)
-            && (state.fitment === "all" || vehicleProds.some(q => q.fitment === state.fitment));
+            && (!fitmentKeys  || fitmentKeys.has(key));
     if (ok) { seen.add(key); filtered.push(p); }
   }
 
