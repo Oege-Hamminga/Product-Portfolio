@@ -1,8 +1,9 @@
-const state = { brand: "all", type: "all", segment: "all", sort: "default" };
+const state = { brand: "all", type: "all", segment: "all", fitment: "all", sort: "default" };
 
 // ── Custom / hidden vehicles ────────────────────────────────────────
-const CUSTOM_KEY = 'snoeks_custom_products';
-const HIDDEN_KEY = 'snoeks_hidden_products';
+const CUSTOM_KEY  = 'snoeks_custom_products';
+const HIDDEN_KEY  = 'snoeks_hidden_products';
+const MATRIX_HID  = 'snoeks_matrix_hidden';
 
 function getCustomProducts() {
   try { return JSON.parse(localStorage.getItem(CUSTOM_KEY)) || []; } catch(e) { return []; }
@@ -15,6 +16,53 @@ function getAllProducts() {
   const base = products.filter(p => !hidden.has(`${p.brand}|${p.van}`));
   return [...base, ...getCustomProducts().filter(p => !hidden.has(`${p.brand}|${p.van}`))];
 }
+
+// Shared cascade-delete helper: wipes all data for a brand|van key
+function deleteVehicleData(bv) {
+  // Remove from custom products
+  try {
+    const cp = JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]');
+    localStorage.setItem(CUSTOM_KEY, JSON.stringify(cp.filter(p => `${p.brand}|${p.van}` !== bv)));
+  } catch(e) {}
+  // Hide in product grid and matrix panel builders
+  try {
+    const gh = new Set(JSON.parse(localStorage.getItem(HIDDEN_KEY) || '[]'));
+    gh.add(bv); localStorage.setItem(HIDDEN_KEY, JSON.stringify([...gh]));
+  } catch(e) {}
+  try {
+    const mh = new Set(JSON.parse(localStorage.getItem(MATRIX_HID) || '[]'));
+    mh.add(bv); localStorage.setItem(MATRIX_HID, JSON.stringify([...mh]));
+  } catch(e) {}
+  // Wipe per-product localStorage keys
+  ['Crew Cab','Flex Cab','Partition Wall'].forEach(t => {
+    ['OEM','After-fit'].forEach(f => {
+      const k = `${bv}|${t}|${f}`;
+      ['snoeks_plants_','snoeks_mkt_','snoeks_intro_','snoeks_img_prod_'].forEach(pfx =>
+        localStorage.removeItem(pfx + k));
+    });
+  });
+  const vanPart = bv.split('|')[1] || '';
+  localStorage.removeItem(`snoeks_vmeta_${bv}`);
+  if (vanPart) localStorage.removeItem(`snoeks_img_van_${vanPart}`);
+  localStorage.removeItem(`snoeks_sel_hidden_${bv}`);
+  // Remove from OEM plant assignments
+  try {
+    const plants = JSON.parse(localStorage.getItem('snoeks_oem_plants') || '[]');
+    plants.forEach(pl => { pl.products = (pl.products||[]).filter(k => !k.startsWith(bv+'|')); });
+    localStorage.setItem('snoeks_oem_plants', JSON.stringify(plants));
+  } catch(e) {}
+}
+
+// Startup: purge any vehicle whose name contains the word "test"
+(function purgeTestVehicles() {
+  try {
+    const cp = JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]');
+    const testBVs = new Set(
+      cp.filter(p => /\btest\b/i.test(`${p.brand} ${p.van}`)).map(p => `${p.brand}|${p.van}`)
+    );
+    testBVs.forEach(bv => deleteVehicleData(bv));
+  } catch(e) {}
+})();
 
 const grid         = document.getElementById("product-grid");
 const noResults    = document.getElementById("no-results");
@@ -35,14 +83,15 @@ function wireChips(containerId, stateKey) {
 wireChips("brand-chips",   "brand");
 wireChips("type-chips",    "type");
 wireChips("segment-chips", "segment");
+wireChips("fitment-chips", "fitment");
 
 sortSelect.addEventListener("change", () => { state.sort = sortSelect.value; render(); });
 
 document.getElementById("reset-btn").addEventListener("click", () => {
-  state.brand = state.type = state.segment = "all";
+  state.brand = state.type = state.segment = state.fitment = "all";
   state.sort = "default";
   sortSelect.value = "default";
-  ["brand-chips","type-chips","segment-chips"].forEach(id => {
+  ["brand-chips","type-chips","segment-chips","fitment-chips"].forEach(id => {
     document.querySelectorAll(`#${id} .chip`).forEach(c =>
       c.classList.toggle("active", c.dataset.value === "all")
     );
@@ -60,6 +109,11 @@ function render() {
     return 0;
   });
 
+  // Pre-compute which vehicles have at least one product of the selected fitment
+  const fitmentKeys = state.fitment === "all"
+    ? null
+    : new Set(allProds.filter(q => q.fitment === state.fitment).map(q => `${q.brand}|${q.van}`));
+
   // Deduplicate by brand+van while applying filters
   const seen     = new Set();
   const filtered = [];
@@ -68,7 +122,8 @@ function render() {
     if (seen.has(key)) continue;
     const ok = (state.brand   === "all" || p.brand   === state.brand)
             && (state.segment === "all" || p.segment === state.segment)
-            && (state.type    === "all" || p.type    === state.type);
+            && (state.type    === "all" || p.type    === state.type)
+            && (!fitmentKeys  || fitmentKeys.has(key));
     if (ok) { seen.add(key); filtered.push(p); }
   }
 
@@ -129,6 +184,7 @@ function render() {
 let gridEditUnlocked = false;
 
 function showGridPw(anchor, onSuccess) {
+  if (window.isPMUnlocked && window.isPMUnlocked()) { onSuccess(); return; }
   const ex = document.getElementById('grid-pw-pop');
   if (ex) { ex.remove(); return; }
   const pop = document.createElement('div');
@@ -184,9 +240,7 @@ document.getElementById('product-grid').addEventListener('click', e => {
   const delBtn = e.target.closest('.vehicle-delete-btn');
   if (!delBtn || !gridEditUnlocked) return;
   e.preventDefault();
-  const key = delBtn.dataset.key;
-  const hidden = [...getHiddenSet(), key];
-  localStorage.setItem(HIDDEN_KEY, JSON.stringify(hidden));
+  deleteVehicleData(delBtn.dataset.key);
   render();
 });
 

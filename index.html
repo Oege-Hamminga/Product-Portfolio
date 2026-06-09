@@ -8,16 +8,73 @@
 </head>
 <body>
 
+  <script>
+    // ── Global PM unlock state (shared across all edit panels) ──────────
+    window.isPMUnlocked = function() { return sessionStorage.getItem('pm_unlocked') === '1'; };
+    window.setPMUnlocked = function(val) {
+      if (val) { sessionStorage.setItem('pm_unlocked', '1'); } else { sessionStorage.removeItem('pm_unlocked'); }
+      document.dispatchEvent(new CustomEvent('pm-lock-change', { detail: { unlocked: !!val } }));
+    };
+  </script>
   <header>
     <div class="header-inner">
       <a href="index.html" class="logo">
         <img src="Snoeks brand.png" alt="Snoeks Automotive" class="logo-img" />
       </a>
+      <!-- ── PM Login widget ─────────────────────────────────────────── -->
+      <div id="pm-login-widget">
+        <div id="pm-login-form">
+          <input id="pm-login-user" type="text" placeholder="Username" autocomplete="username" />
+          <input id="pm-login-pw" type="password" placeholder="Password" autocomplete="current-password" />
+          <button id="pm-login-btn">Login</button>
+          <span id="pm-login-error">Incorrect credentials</span>
+        </div>
+        <div id="pm-logged-in" style="display:none">
+          <span id="pm-logged-label">Product Managers</span>
+          <button id="pm-logout-btn">Logout</button>
+        </div>
+      </div>
       <div class="header-right">
         <span class="header-tag">Product Portfolio</span>
       </div>
     </div>
   </header>
+
+  <script>
+    (function() {
+      function applyLoginState(unlocked) {
+        document.getElementById('pm-login-form').style.display  = unlocked ? 'none'  : 'flex';
+        document.getElementById('pm-logged-in').style.display   = unlocked ? 'flex'  : 'none';
+        document.getElementById('pm-login-error').style.display = 'none';
+      }
+      // Restore state from sessionStorage on load
+      applyLoginState(window.isPMUnlocked());
+
+      document.getElementById('pm-login-btn').addEventListener('click', function() {
+        const user = document.getElementById('pm-login-user').value.trim();
+        const pw   = document.getElementById('pm-login-pw').value;
+        if (user === 'Product Managers' && pw === 'PM26') {
+          window.setPMUnlocked(true);
+          applyLoginState(true);
+        } else {
+          document.getElementById('pm-login-error').style.display = 'inline';
+          document.getElementById('pm-login-pw').value = '';
+          document.getElementById('pm-login-pw').focus();
+        }
+      });
+      document.getElementById('pm-login-pw').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') document.getElementById('pm-login-btn').click();
+        document.getElementById('pm-login-error').style.display = 'none';
+      });
+      document.getElementById('pm-login-user').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') document.getElementById('pm-login-pw').focus();
+      });
+      document.getElementById('pm-logout-btn').addEventListener('click', function() {
+        window.setPMUnlocked(false);
+        applyLoginState(false);
+      });
+    })();
+  </script>
 
   <section class="hero">
     <div class="hero-inner">
@@ -580,7 +637,7 @@
 
     document.getElementById('matrix-edit-btn').addEventListener('click', function() {
       if (editMode) { deactivateEditMode(this); return; }
-      if (unlocked) { activateEditMode(this); return; }
+      if (unlocked || window.isPMUnlocked()) { unlocked = true; activateEditMode(this); return; }
       if (activePopover) { closePopover(); return; }
       const btn = this;
       const pop = document.createElement('div');
@@ -659,6 +716,7 @@
     let actUnlocked = false;
 
     function showActPw(anchor, onSuccess) {
+      if (window.isPMUnlocked && window.isPMUnlocked()) { actUnlocked = true; onSuccess(); return; }
       const ex = document.getElementById('act-pw-pop');
       if (ex) { ex.remove(); return; }
       const pop = document.createElement('div');
