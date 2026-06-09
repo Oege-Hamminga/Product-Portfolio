@@ -764,6 +764,50 @@ function populateMarket(product) {
     try { homolNotes = Object.assign({ CoC: '', GWC: '', IVA: '' }, JSON.parse(localStorage.getItem(HOMOL_KEY)) || {}); } catch(e) {}
     function saveHomolNotes() { localStorage.setItem(HOMOL_KEY, JSON.stringify(homolNotes)); }
 
+    function renderPresenceRows(locked) {
+      return ALL_COUNTRIES.map(c => {
+        const st = countryState[c.code];
+        const customers = st.customers || [];
+
+        const customerRows = st.active ? customers.map((cu, ci) => `
+          <tr class="ct-customer-row">
+            <td class="ct-cust-indent">↳</td>
+            <td class="ct-cust-name" colspan="2">${cu.name || '—'} <span class="ct-cust-loc-inline">${cu.location ? '· ' + cu.location : ''}</span></td>
+            <td><span class="ct-cert ${certClass(cu.certified)}">${cu.certified}</span></td>
+            <td>${locked ? '' : `<button class="cust-remove-btn" data-country="${c.code}" data-cidx="${ci}">✕</button>`}</td>
+          </tr>`).join('') : '';
+
+        const addRow = (!locked && st.active) ? `
+          <tr class="ct-customer-add-row" data-country="${c.code}">
+            <td class="ct-cust-indent"></td>
+            <td><input class="cust-input" placeholder="Customer name" data-role="name"/></td>
+            <td><input class="cust-input" placeholder="Location" data-role="loc"/></td>
+            <td>
+              <select class="cust-cert-sel">
+                <option value="YES">YES</option><option value="NO">NO</option><option value="INTEREST">INTEREST</option>
+              </select>
+            </td>
+            <td><button class="cust-add-btn" data-country="${c.code}">+</button></td>
+          </tr>` : '';
+
+        return `
+          <tr class="ct-country-row${st.active ? ' ct-country-row--active' : ''}" data-country="${c.code}">
+            <td class="ct-code">${c.code}</td>
+            <td class="ct-name">${c.name}</td>
+            <td class="ct-active">
+              <select class="ct-select ct-select--status" data-field="active" ${locked ? 'disabled' : ''}>
+                <option value="true"  ${st.active  ? 'selected':''}>Active</option>
+                <option value="false" ${!st.active ? 'selected':''}>Not active</option>
+              </select>
+            </td>
+            <td class="ct-cust-count">${customers.length ? customers.length + ' customer' + (customers.length > 1 ? 's' : '') : (st.active ? '—' : '')}</td>
+            <td></td>
+          </tr>
+          ${customerRows}
+          ${addRow}`;
+      }).join('');
+    }
+
     el.innerHTML = `
       <div class="mkt-overview-row">
         <div class="mkt-stat-card">
@@ -820,73 +864,6 @@ function populateMarket(product) {
             <textarea class="homol-textarea" id="homol-iva" placeholder="Add IVA information…" ${mktUnlocked ? '' : 'readonly'}>${homolNotes.IVA}</textarea>
           </div>
         </div>
-      </div>
-    `;
-
-    function renderPresenceRows(locked) {
-      return ALL_COUNTRIES.map(c => {
-        const st = countryState[c.code];
-        const customers = st.customers || [];
-
-        const customerRows = st.active ? customers.map((cu, ci) => `
-          <tr class="ct-customer-row">
-            <td class="ct-cust-indent">↳</td>
-            <td class="ct-cust-name" colspan="2">${cu.name || '—'} <span class="ct-cust-loc-inline">${cu.location ? '· ' + cu.location : ''}</span></td>
-            <td><span class="ct-cert ${certClass(cu.certified)}">${cu.certified}</span></td>
-            <td>${locked ? '' : `<button class="cust-remove-btn" data-country="${c.code}" data-cidx="${ci}">✕</button>`}</td>
-          </tr>`).join('') : '';
-
-        const addRow = (!locked && st.active) ? `
-          <tr class="ct-customer-add-row" data-country="${c.code}">
-            <td class="ct-cust-indent"></td>
-            <td><input class="cust-input" placeholder="Customer name" data-role="name"/></td>
-            <td><input class="cust-input" placeholder="Location" data-role="loc"/></td>
-            <td>
-              <select class="cust-cert-sel">
-                <option value="YES">YES</option><option value="NO">NO</option><option value="INTEREST">INTEREST</option>
-              </select>
-            </td>
-            <td><button class="cust-add-btn" data-country="${c.code}">+</button></td>
-          </tr>` : '';
-
-        return `
-          <tr class="ct-country-row${st.active ? ' ct-country-row--active' : ''}" data-country="${c.code}">
-            <td class="ct-code">${c.code}</td>
-            <td class="ct-name">${c.name}</td>
-            <td class="ct-active">
-              <select class="ct-select ct-select--status" data-field="active" ${locked ? 'disabled' : ''}>
-                <option value="true"  ${st.active  ? 'selected':''}>Active</option>
-                <option value="false" ${!st.active ? 'selected':''}>Not active</option>
-              </select>
-            </td>
-            <td class="ct-cust-count">${customers.length ? customers.length + ' customer' + (customers.length > 1 ? 's' : '') : (st.active ? '—' : '')}</td>
-            <td></td>
-          </tr>
-          ${customerRows}
-          ${addRow}`;
-      }).join('');
-    }
-        <div class="mkt-stat-card">
-          <div class="mkt-stat-label">Active Markets</div>
-          <div class="mkt-stat-value" id="mkt-active-count">${activeCount} countries</div>
-        </div>
-      </div>
-
-      <div class="mkt-section">
-        <div class="mkt-section-header mkt-section-header--flex">
-          <div>
-            <div class="mkt-section-title">Market &amp; Homologation Overview</div>
-            <div class="mkt-section-sub">Active status, homologation method and customers per country</div>
-          </div>
-          <button class="mkt-edit-btn" id="af-edit-btn">${mktUnlocked ? 'Done' : 'Edit'}</button>
-        </div>
-        <div class="country-table-wrap">
-          <table class="country-table">
-            <thead><tr><th></th><th>Country</th><th>Status</th><th>Homologation</th><th>Notes</th><th></th></tr></thead>
-            <tbody id="country-table-body">${renderRows(!mktUnlocked)}</tbody>
-          </table>
-        </div>
-        <p class="mkt-homol-note">CoC = Certificate of Conformity. GWC = General Whole-vehicle Certification. IVA = Individual Vehicle Approval.</p>
       </div>
     `;
 
