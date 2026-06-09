@@ -230,19 +230,20 @@ header {
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: rgba(255,255,255,0.75);
   transition: color var(--transition);
   display: flex;
   align-items: center;
   gap: 6px;
+  flex: 1;
 }
 
-.back-link:hover { color: var(--red); }
+.back-link:hover { color: #fff; }
 
 /* ── HERO ──────────────────────────────────────────────────────────── */
 .hero {
   background: var(--red);
-  padding: 52px 32px;
+  padding: 28px 32px 24px;
   position: relative;
   overflow: hidden;
 }
@@ -286,7 +287,7 @@ header {
   letter-spacing: 5px;
   color: rgba(255,255,255,0.55);
   font-weight: 800;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -301,7 +302,7 @@ header {
 }
 
 .hero h1 {
-  font-size: clamp(1.9rem, 4vw, 3rem);
+  font-size: clamp(1.4rem, 3vw, 2rem);
   font-weight: 900;
   color: var(--white);
   text-transform: uppercase;
@@ -312,10 +313,11 @@ header {
 
 .hero-desc {
   color: rgba(255,255,255,0.72);
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   max-width: 580px;
-  line-height: 1.8;
+  line-height: 1.7;
   letter-spacing: 0.2px;
+  margin-top: 6px;
 }
 
 /* ── OVERVIEW SECTION (two info squares) ─────────────────────────── */
@@ -1238,7 +1240,7 @@ footer {
 .breadcrumb-bar {
   background: var(--white);
   border-bottom: 1px solid var(--grey-2);
-  padding: 10px 32px;
+  padding: 7px 32px;
 }
 
 .breadcrumb-inner {
@@ -3824,6 +3826,7 @@ body.pm-unlocked .mkt-edit-btn {
 /* ── IMAGE CARD EDIT OVERLAYS ─────────────────────────────────────── */
 .image-card { position: relative; }
 .img-edit-icon-btn {
+  display: none;
   position: absolute;
   top: 6px; right: 6px;
   padding: 3px 8px;
@@ -3837,6 +3840,7 @@ body.pm-unlocked .mkt-edit-btn {
   z-index: 10;
   font-family: inherit;
 }
+body.pm-unlocked .img-edit-icon-btn { display: block; }
 .img-upload-btn {
   display: inline-block;
   padding: 5px 12px;

@@ -197,8 +197,7 @@ function unlockAndPopulate(product) {
 
   document.getElementById("tabs-lock").classList.add("hidden");
 
-  /* ── Show meta edit button ────────────────────────────────────── */
-  document.getElementById('meta-edit-btn').style.display = 'inline-block';
+  /* ── Meta edit button is shown via CSS (body.pm-unlocked) ───── */
 
   /* ── Wire meta edit button ────────────────────────────────────── */
   const metaEditBtn = document.getElementById('meta-edit-btn');
@@ -354,7 +353,6 @@ let selectorEditUnlocked = false;
 function wireSelectorEdit() {
   const editBtn = document.getElementById('selector-edit-btn');
   if (!editBtn) return;
-  editBtn.style.display = 'inline-block';
   editBtn.addEventListener('click', function() {
     if (selectorEditUnlocked) {
       selectorEditUnlocked = false;
@@ -519,9 +517,13 @@ function renderMetaTable(product, editing) {
    MARKET PRESENCE
 ═══════════════════════════════════════════════════════════════════════ */
 
-let mktUnlocked = false;
+let mktUnlocked = window.isPMUnlocked ? window.isPMUnlocked() : false;
+
+// Stay in sync when header login changes
+document.addEventListener('pm-lock-change', function(e) { mktUnlocked = e.detail.unlocked; });
 
 function showMktPasswordPrompt(anchor, onSuccess) {
+  if (window.isPMUnlocked && window.isPMUnlocked()) { mktUnlocked = true; onSuccess(); return; }
   const existing = document.getElementById('mkt-pw-pop');
   if (existing) { existing.remove(); return; }
   const pop = document.createElement('div');
