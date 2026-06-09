@@ -184,6 +184,7 @@ function render() {
 let gridEditUnlocked = false;
 
 function showGridPw(anchor, onSuccess) {
+  if (window.isPMUnlocked && window.isPMUnlocked()) { onSuccess(); return; }
   const ex = document.getElementById('grid-pw-pop');
   if (ex) { ex.remove(); return; }
   const pop = document.createElement('div');
