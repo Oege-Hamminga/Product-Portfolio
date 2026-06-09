@@ -756,72 +756,13 @@ function populateMarket(product) {
       return v === 'YES' ? 'ct-cert--yes' : v === 'NO' ? 'ct-cert--no' : 'ct-cert--interest';
     }
 
-    function renderRows(locked) {
-      return ALL_COUNTRIES.map(c => {
-        const st = countryState[c.code];
-        const customers = st.customers || [];
-        const homolArr  = st.homologation || [];
-
-        // Customer rows — always visible when country is active
-        const customerRows = st.active ? customers.map((cu, ci) => `
-          <tr class="ct-customer-row">
-            <td class="ct-cust-indent">↳</td>
-            <td class="ct-cust-name">${cu.name || "—"}</td>
-            <td class="ct-cust-loc">${cu.location || "—"}</td>
-            <td><span class="ct-cert ${certClass(cu.certified)}">${cu.certified}</span></td>
-            <td>${locked ? '' : `<button class="cust-remove-btn" data-country="${c.code}" data-cidx="${ci}">✕</button>`}</td>
-          </tr>`).join('') : '';
-
-        const addRow = (!locked && st.active) ? `
-          <tr class="ct-customer-add-row" data-country="${c.code}">
-            <td class="ct-cust-indent"></td>
-            <td><input class="cust-input" placeholder="Customer name" data-role="name" /></td>
-            <td><input class="cust-input" placeholder="Location"      data-role="loc"  /></td>
-            <td>
-              <select class="cust-cert-sel">
-                <option value="YES">YES</option>
-                <option value="NO">NO</option>
-                <option value="INTEREST">INTEREST</option>
-              </select>
-            </td>
-            <td><button class="cust-add-btn" data-country="${c.code}">+</button></td>
-          </tr>` : '';
-
-        // Homologation — three independent checkboxes
-        const homolCell = `<td class="ct-homol">
-          ${['CoC','GWC','IVA'].map(opt => `
-            <label class="ct-homol-check${locked ? ' ct-homol-check--locked' : ''}">
-              <input type="checkbox" class="ct-check" data-field="homologation" data-val="${opt}"
-                     data-country="${c.code}" ${locked ? 'disabled' : ''}
-                     ${homolArr.includes(opt) ? 'checked' : ''} />
-              <span>${opt}</span>
-            </label>`).join('')}
-        </td>`;
-
-        const notesCell = locked
-          ? `<td class="ct-notes-cell">${st.notes ? `<span class="ct-notes-text">${st.notes}</span>` : ''}</td>`
-          : `<td class="ct-notes-cell"><input type="text" class="ct-notes-input" data-country="${c.code}" value="${(st.notes||'').replace(/"/g,'&quot;')}" placeholder="Notes…"/></td>`;
-
-        return `
-          <tr class="ct-country-row${st.active ? ' ct-country-row--active' : ''}" data-country="${c.code}">
-            <td class="ct-code">${c.code}</td>
-            <td class="ct-name">${c.name}</td>
-            <td class="ct-active">
-              <select class="ct-select ct-select--status" data-field="active" ${locked ? 'disabled' : ''}>
-                <option value="true"  ${st.active  ? 'selected':''}>Active</option>
-                <option value="false" ${!st.active ? 'selected':''}>Not active</option>
-              </select>
-            </td>
-            ${homolCell}
-            ${notesCell}
-            <td></td>
-          </tr>
-          ${customerRows}
-          ${addRow}`;
-      }).join('');
-    }
-
     const activeCount = ALL_COUNTRIES.filter(c => countryState[c.code].active).length;
+
+    // ── Homologation notes stored separately per product (not per country)
+    const HOMOL_KEY = `snoeks_homol_${product.brand}|${product.van}|${product.type}|${product.fitment}`;
+    let homolNotes = { CoC: '', GWC: '', IVA: '' };
+    try { homolNotes = Object.assign({ CoC: '', GWC: '', IVA: '' }, JSON.parse(localStorage.getItem(HOMOL_KEY)) || {}); } catch(e) {}
+    function saveHomolNotes() { localStorage.setItem(HOMOL_KEY, JSON.stringify(homolNotes)); }
 
     el.innerHTML = `
       <div class="mkt-overview-row">
@@ -833,9 +774,98 @@ function populateMarket(product) {
           </div>
         </div>
         <div class="mkt-stat-card">
-          <div class="mkt-stat-label">Customer</div>
+          <div class="mkt-stat-label">Channel</div>
           <div class="mkt-stat-value">After-fit conversion</div>
         </div>
+        <div class="mkt-stat-card">
+          <div class="mkt-stat-label">Active Markets</div>
+          <div class="mkt-stat-value" id="mkt-active-count">${activeCount} countries</div>
+        </div>
+      </div>
+
+      <!-- ── Section 1: Market Presence ── -->
+      <div class="mkt-section">
+        <div class="mkt-section-header mkt-section-header--flex">
+          <div>
+            <div class="mkt-section-title">Market Presence</div>
+            <div class="mkt-section-sub">Active countries and customers per market</div>
+          </div>
+          <button class="mkt-edit-btn" id="af-edit-btn">${mktUnlocked ? 'Done' : 'Edit'}</button>
+        </div>
+        <div class="country-table-wrap">
+          <table class="country-table">
+            <thead><tr><th></th><th>Country</th><th>Status</th><th>Customers</th><th></th></tr></thead>
+            <tbody id="country-table-body">${renderPresenceRows(!mktUnlocked)}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── Section 2: Homologation ── -->
+      <div class="mkt-section mkt-homol-section">
+        <div class="mkt-section-header">
+          <div class="mkt-section-title">Homologation</div>
+          <div class="mkt-section-sub">Type-approval methods applicable to this product</div>
+        </div>
+        <div class="homol-cols">
+          <div class="homol-col">
+            <div class="homol-col-title">Certificate of Conformity <span class="homol-col-abbr">(CoC)</span></div>
+            <textarea class="homol-textarea" id="homol-coc" placeholder="Add CoC information…" ${mktUnlocked ? '' : 'readonly'}>${homolNotes.CoC}</textarea>
+          </div>
+          <div class="homol-col">
+            <div class="homol-col-title">Goedkeuring Wijziging Constructie <span class="homol-col-abbr">(GWC)</span></div>
+            <textarea class="homol-textarea" id="homol-gwc" placeholder="Add GWC information…" ${mktUnlocked ? '' : 'readonly'}>${homolNotes.GWC}</textarea>
+          </div>
+          <div class="homol-col">
+            <div class="homol-col-title">Individual Vehicle Approval <span class="homol-col-abbr">(IVA)</span></div>
+            <textarea class="homol-textarea" id="homol-iva" placeholder="Add IVA information…" ${mktUnlocked ? '' : 'readonly'}>${homolNotes.IVA}</textarea>
+          </div>
+        </div>
+      </div>
+    `;
+
+    function renderPresenceRows(locked) {
+      return ALL_COUNTRIES.map(c => {
+        const st = countryState[c.code];
+        const customers = st.customers || [];
+
+        const customerRows = st.active ? customers.map((cu, ci) => `
+          <tr class="ct-customer-row">
+            <td class="ct-cust-indent">↳</td>
+            <td class="ct-cust-name" colspan="2">${cu.name || '—'} <span class="ct-cust-loc-inline">${cu.location ? '· ' + cu.location : ''}</span></td>
+            <td><span class="ct-cert ${certClass(cu.certified)}">${cu.certified}</span></td>
+            <td>${locked ? '' : `<button class="cust-remove-btn" data-country="${c.code}" data-cidx="${ci}">✕</button>`}</td>
+          </tr>`).join('') : '';
+
+        const addRow = (!locked && st.active) ? `
+          <tr class="ct-customer-add-row" data-country="${c.code}">
+            <td class="ct-cust-indent"></td>
+            <td><input class="cust-input" placeholder="Customer name" data-role="name"/></td>
+            <td><input class="cust-input" placeholder="Location" data-role="loc"/></td>
+            <td>
+              <select class="cust-cert-sel">
+                <option value="YES">YES</option><option value="NO">NO</option><option value="INTEREST">INTEREST</option>
+              </select>
+            </td>
+            <td><button class="cust-add-btn" data-country="${c.code}">+</button></td>
+          </tr>` : '';
+
+        return `
+          <tr class="ct-country-row${st.active ? ' ct-country-row--active' : ''}" data-country="${c.code}">
+            <td class="ct-code">${c.code}</td>
+            <td class="ct-name">${c.name}</td>
+            <td class="ct-active">
+              <select class="ct-select ct-select--status" data-field="active" ${locked ? 'disabled' : ''}>
+                <option value="true"  ${st.active  ? 'selected':''}>Active</option>
+                <option value="false" ${!st.active ? 'selected':''}>Not active</option>
+              </select>
+            </td>
+            <td class="ct-cust-count">${customers.length ? customers.length + ' customer' + (customers.length > 1 ? 's' : '') : (st.active ? '—' : '')}</td>
+            <td></td>
+          </tr>
+          ${customerRows}
+          ${addRow}`;
+      }).join('');
+    }
         <div class="mkt-stat-card">
           <div class="mkt-stat-label">Active Markets</div>
           <div class="mkt-stat-value" id="mkt-active-count">${activeCount} countries</div>
@@ -869,37 +899,23 @@ function populateMarket(product) {
     }
 
     function refreshTable(locked) {
-      el.querySelector('#country-table-body').innerHTML = renderRows(locked);
+      el.querySelector('#country-table-body').innerHTML = renderPresenceRows(locked);
       const cnt = el.querySelector('#mkt-active-count');
       if (cnt) cnt.textContent = ALL_COUNTRIES.filter(c => countryState[c.code].active).length + ' countries';
       wireTableEvents(locked);
+      wireHomolTextareas(locked);
     }
 
     function wireTableEvents(locked) {
-      // Status select (Active / Not active)
       el.querySelectorAll('.ct-select--status').forEach(sel => {
         sel.addEventListener('change', function() {
           const row  = this.closest('tr[data-country]');
           if (!row) return;
-          const code = row.dataset.country;
-          countryState[code].active = (this.value === 'true');
+          countryState[row.dataset.country].active = (this.value === 'true');
           saveState();
           refreshTable(locked);
         });
       });
-      // Homologation checkboxes
-      el.querySelectorAll('.ct-check[data-field="homologation"]').forEach(cb => {
-        cb.addEventListener('change', function() {
-          const code = this.dataset.country;
-          const val  = this.dataset.val;
-          let arr = countryState[code].homologation || [];
-          countryState[code].homologation = this.checked
-            ? (arr.includes(val) ? arr : [...arr, val])
-            : arr.filter(v => v !== val);
-          saveState();
-        });
-      });
-      // Add customer
       el.querySelectorAll('.cust-add-btn').forEach(btn => {
         btn.addEventListener('click', function() {
           const code = this.dataset.country;
@@ -913,25 +929,29 @@ function populateMarket(product) {
           refreshTable(false);
         });
       });
-      // Remove customer
       el.querySelectorAll('.cust-remove-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-          const code = this.dataset.country;
-          const cidx = parseInt(this.dataset.cidx);
-          countryState[code].customers.splice(cidx, 1);
+          countryState[this.dataset.country].customers.splice(parseInt(this.dataset.cidx), 1);
           saveState();
           refreshTable(false);
         });
       });
-      // Notes
-      el.querySelectorAll('.ct-notes-input').forEach(inp => {
-        inp.addEventListener('input', function() {
-          countryState[this.dataset.country].notes = this.value;
-          saveState();
+    }
+
+    function wireHomolTextareas(locked) {
+      ['coc','gwc','iva'].forEach(key => {
+        const ta = el.querySelector(`#homol-${key}`);
+        if (!ta) return;
+        ta.readOnly = locked;
+        ta.addEventListener('input', function() {
+          homolNotes[key.toUpperCase()] = this.value;
+          saveHomolNotes();
         });
       });
     }
+
     wireTableEvents(!mktUnlocked);
+    wireHomolTextareas(!mktUnlocked);
 
     const afEditBtn = el.querySelector('#af-edit-btn');
     afEditBtn.addEventListener('click', function() {

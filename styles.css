@@ -33,6 +33,7 @@
 
 body {
   font-family: 'Segoe UI', 'Inter', Arial, sans-serif;
+  font-size: 15.5px; /* slightly larger base */
   background: var(--grey-0);
   color: var(--text);
   min-height: 100vh;
@@ -1686,7 +1687,7 @@ footer {
 .mkt-stat-card:hover::before { background: var(--red); }
 
 .mkt-stat-label {
-  font-size: 0.55rem;
+  font-size: 0.6rem;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 2.5px;
@@ -1695,7 +1696,7 @@ footer {
 }
 
 .mkt-stat-value {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 900;
   color: var(--text);
   line-height: 1.25;
@@ -1722,7 +1723,7 @@ footer {
 .mkt-section-icon { display: none; }
 
 .mkt-section-title {
-  font-size: 0.67rem;
+  font-size: 0.72rem;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -2542,13 +2543,13 @@ footer {
 .country-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.78rem;
+  font-size: 0.83rem;
 }
 
 .country-table th {
-  padding: 8px 12px;
+  padding: 9px 12px;
   text-align: left;
-  font-size: 0.55rem;
+  font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -2558,16 +2559,16 @@ footer {
 }
 
 .country-table td {
-  padding: 7px 12px;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--grey-2);
-  color: rgba(0,0,0,0.75);
+  color: rgba(0,0,0,0.85);
 }
 
 .country-table tr:last-child td { border-bottom: none; }
 .country-table tr:hover td { background: var(--grey-1); }
 
-.ct-code { font-weight: 800; font-size: 0.65rem; letter-spacing: 1px; color: rgba(0,0,0,0.4) !important; }
-.ct-name { color: rgba(0,0,0,0.85) !important; font-weight: 500; }
+.ct-code { font-weight: 800; font-size: 0.7rem; letter-spacing: 1px; color: rgba(0,0,0,0.5) !important; }
+.ct-name { color: rgba(0,0,0,0.9) !important; font-weight: 600; }
 
 .country-status {
   display: inline-block;
@@ -3582,7 +3583,7 @@ body.pm-unlocked .mkt-edit-btn {
 }
 
 .act-desc {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
   margin: 0;
   flex: 1;
@@ -3605,7 +3606,7 @@ body.pm-unlocked .mkt-edit-btn {
 }
 
 .act-product-name {
-  font-size: 0.78rem;
+  font-size: 0.84rem;
   font-weight: 800;
   color: var(--text);
   text-transform: uppercase;
@@ -3680,7 +3681,7 @@ body.pm-unlocked .mkt-edit-btn {
 .act-product-card .plant-table td,
 .act-product-card .country-table td {
   color: #171717;
-  font-size: 0.78rem;
+  font-size: 0.83rem;
   background: #fff;
 }
 
@@ -3809,6 +3810,82 @@ body.pm-unlocked .mkt-edit-btn {
   background: var(--grey-1);
   color: var(--text);
 }
+
+/* ── Homologation section (product detail page) ──────────────────── */
+.mkt-homol-section {
+  margin-top: 20px;
+}
+.homol-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 12px;
+}
+@media (max-width: 700px) { .homol-cols { grid-template-columns: 1fr; } }
+.homol-col {
+  background: #fff;
+  border: 1px solid var(--grey-2);
+  border-radius: 6px;
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.homol-col-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+.homol-col-abbr {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.homol-textarea {
+  flex: 1;
+  min-height: 100px;
+  padding: 8px 10px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  color: var(--text);
+  border: 1px solid var(--grey-2);
+  border-radius: 4px;
+  background: var(--grey-0);
+  resize: vertical;
+  outline: none;
+  line-height: 1.6;
+  transition: border-color 0.15s, background 0.15s;
+}
+.homol-textarea:focus {
+  border-color: #888;
+  background: #fff;
+}
+.homol-textarea[readonly] {
+  color: var(--text-muted);
+  cursor: default;
+}
+
+/* ── Customer inline location ─────────────────────────────────────── */
+.ct-cust-loc-inline { color: var(--text-muted); font-size: 0.85em; }
+.ct-cust-count      { color: var(--text-muted); font-size: 0.82rem; }
+
+/* ── OEM activity: force all text black for readability ──────────── */
+#mkt-ov-oem,
+#mkt-ov-oem * {
+  color: #171717;
+}
+#mkt-ov-oem .act-product-header { background: #f0f0f0; border-color: #d0d0d0; }
+#mkt-ov-oem .act-product-name   { color: #171717; font-weight: 700; }
+#mkt-ov-oem .act-product-badge  { background: #e0e0e0; color: #333; border: 1px solid #ccc; }
+#mkt-ov-oem .act-product-seg    { color: #555; }
+#mkt-ov-oem .act-product-count  { color: #555; }
+#mkt-ov-oem .act-product-chevron { color: #444; }
+#mkt-ov-oem .act-desc           { color: #444; }
+#mkt-ov-oem input,
+#mkt-ov-oem select              { color: #171717; background: #fff; border-color: #bbb; }
+#mkt-ov-oem .plant-add-btn,
+#mkt-ov-oem .oem-prod-add       { background: var(--red); color: #fff; border-color: var(--red); }
+#mkt-ov-oem .oem-plant-rm       { color: #c62828; background: transparent; }
 
 /* ── META EDIT INPUT ──────────────────────────────────────────────── */
 .meta-edit-input {

@@ -1239,18 +1239,20 @@
       renderOEMList();
     }
 
-    // ── AF Panel ──────────────────────────────────────────────────────
+    // ── AF Panel — Market Presence only ───────────────────────────────
     function buildAFPanel(container) {
       function getCustomProdsAF() { try { return JSON.parse(localStorage.getItem('snoeks_custom_products')) || []; } catch(e) { return []; } }
       const _afHidden = new Set(JSON.parse(localStorage.getItem('snoeks_matrix_hidden') || '[]'));
-      const afProds = (typeof products !== 'undefined') ? [...products, ...getCustomProdsAF()].filter(p => p.fitment !== 'OEM' && !_afHidden.has(`${p.brand}|${p.van}`)) : [];
+      // Only After-fit products (exclude OEM)
+      const afProds = (typeof products !== 'undefined')
+        ? [...products, ...getCustomProdsAF()].filter(p => p.fitment === 'After-fit' && !_afHidden.has(`${p.brand}|${p.van}`))
+        : [];
       const afExpanded = new Set();
-      function normH(v) { return Array.isArray(v) ? v : (!v||v==='—') ? [] : [v]; }
       function certCls(v) { return v==='YES'?'ct-cert--yes':v==='NO'?'ct-cert--no':'ct-cert--interest'; }
 
       container.innerHTML = `
         <div class="act-toolbar">
-          <p class="act-desc">Market &amp; homologation data is synced with product detail pages — changes here update all After-fit overviews.</p>
+          <p class="act-desc">Market presence per After-fit product — active countries and customers.</p>
           <button class="mkt-edit-btn" id="af-act-edit">${actUnlocked ? 'Done' : 'Edit'}</button>
           <button class="export-pdf-btn" onclick="printPDF('af')">Export PDF</button>
         </div>
@@ -1272,23 +1274,20 @@
 
           const state = {};
           ALL_C.forEach(c => {
-            const base = cd[c.code] || { active: false, homologation: [] };
-            const s = saved[c.code] || { active: base.active, homologation: normH(base.homologation) };
-            s.homologation = normH(s.homologation);
+            const base = cd[c.code] || { active: false, customers: [] };
+            const s = saved[c.code] || { active: base.active, customers: [] };
             if (!s.customers) s.customers = [];
-            if (!s.notes) s.notes = '';
             state[c.code] = s;
           });
 
           const activeCount = ALL_C.filter(c => state[c.code].active).length;
 
           const rows = ALL_C.map(c => {
-            const st = state[c.code]; const hArr = st.homologation;
+            const st = state[c.code];
             const custRows = st.active ? (st.customers||[]).map((cu, ci) => `
               <tr class="ct-customer-row">
                 <td class="ct-cust-indent">↳</td>
-                <td class="ct-cust-name">${cu.name||'—'}</td>
-                <td class="ct-cust-loc">${cu.location||'—'}</td>
+                <td class="ct-cust-name" colspan="2">${cu.name||'—'} <span class="ct-cust-loc-inline">${cu.location ? '· '+cu.location : ''}</span></td>
                 <td><span class="ct-cert ${certCls(cu.certified)}">${cu.certified}</span></td>
                 <td>${actUnlocked ? `<button class="af-cust-rm" data-key="${KEY}" data-code="${c.code}" data-cidx="${ci}">✕</button>` : ''}</td>
               </tr>`).join('') : '';
@@ -1300,24 +1299,17 @@
                 <td><select class="cust-cert-sel"><option>YES</option><option>NO</option><option>INTEREST</option></select></td>
                 <td><button class="af-cust-add" data-key="${KEY}" data-code="${c.code}">+</button></td>
               </tr>` : '';
-            const homolCbs = ['CoC','GWC','IVA'].map(opt => `
-              <label class="ct-homol-check${actUnlocked ? '' : ' ct-homol-check--locked'}">
-                <input type="checkbox" class="ct-check af-homol-cb" data-key="${KEY}" data-code="${c.code}" data-val="${opt}"
-                       ${actUnlocked ? '' : 'disabled'} ${hArr.includes(opt) ? 'checked' : ''}/>
-                <span>${opt}</span>
-              </label>`).join('');
-            const notesCell = actUnlocked
-              ? `<td class="ct-notes-cell"><input type="text" class="ct-notes-input af-notes-input" data-key="${KEY}" data-code="${c.code}" value="${(st.notes||'').replace(/"/g,'&quot;')}" placeholder="Notes…"/></td>`
-              : `<td class="ct-notes-cell">${st.notes ? `<span class="ct-notes-text">${st.notes}</span>` : ''}</td>`;
 
             return `
               <tr class="ct-country-row${st.active ? ' ct-country-row--active' : ''}">
-                <td class="ct-code">${c.code}</td><td class="ct-name">${c.name}</td>
+                <td class="ct-code">${c.code}</td>
+                <td class="ct-name">${c.name}</td>
                 <td><select class="ct-select ct-select--status af-status-sel" data-key="${KEY}" data-code="${c.code}" ${actUnlocked ? '' : 'disabled'}>
                   <option value="true"  ${st.active  ? 'selected':''}>Active</option>
                   <option value="false" ${!st.active ? 'selected':''}>Not active</option>
                 </select></td>
-                <td class="ct-homol">${homolCbs}</td>${notesCell}<td></td>
+                <td class="ct-cust-count">${(st.customers||[]).length ? (st.customers.length + ' customer' + (st.customers.length > 1 ? 's' : '')) : (st.active ? '—' : '')}</td>
+                <td></td>
               </tr>${custRows}${addRow}`;
           }).join('');
 
@@ -1333,7 +1325,7 @@
               <div class="act-product-body">
                 <div class="country-table-wrap">
                   <table class="country-table">
-                    <thead><tr><th></th><th>Country</th><th>Status</th><th>Homologation</th><th>Notes</th><th></th></tr></thead>
+                    <thead><tr><th></th><th>Country</th><th>Status</th><th>Customers</th><th></th></tr></thead>
                     <tbody>${rows}</tbody>
                   </table>
                 </div>
@@ -1341,7 +1333,6 @@
             </div>`;
         }).join('');
 
-        // Toggle expand/collapse
         list.querySelectorAll('.act-product-header--toggle').forEach(hdr => {
           hdr.addEventListener('click', function(e) {
             if (e.target.closest('button, input, select')) return;
@@ -1350,32 +1341,17 @@
             renderAFList();
           });
         });
-
-        // Wire status selects
         list.querySelectorAll('.af-status-sel').forEach(sel => {
           sel.addEventListener('change', function() {
             const KEY = this.dataset.key; const code = this.dataset.code;
             let s = {}; try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
-            if (!s[code]) s[code] = { active: false, homologation: [], customers: [] };
+            if (!s[code]) s[code] = { active: false, customers: [] };
             s[code].active = (this.value === 'true');
-            if (!s[code].homologation) s[code].homologation = [];
-            if (!s[code].customers)   s[code].customers = [];
+            if (!s[code].customers) s[code].customers = [];
             localStorage.setItem(KEY, JSON.stringify(s));
             renderAFList();
           });
         });
-        // Wire homologation checkboxes
-        list.querySelectorAll('.af-homol-cb').forEach(cb => {
-          cb.addEventListener('change', function() {
-            const KEY = this.dataset.key; const code = this.dataset.code; const val = this.dataset.val;
-            let s = {}; try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
-            if (!s[code]) s[code] = { active: false, homologation: [], customers: [] };
-            let arr = normH(s[code].homologation);
-            s[code].homologation = this.checked ? (arr.includes(val) ? arr : [...arr, val]) : arr.filter(v => v !== val);
-            localStorage.setItem(KEY, JSON.stringify(s));
-          });
-        });
-        // Add customer
         list.querySelectorAll('.af-cust-add').forEach(btn => {
           btn.addEventListener('click', function() {
             const KEY = this.dataset.key; const code = this.dataset.code;
@@ -1385,30 +1361,19 @@
             const cert = row.querySelector('.cust-cert-sel').value;
             if (!name) { row.querySelector('[data-role="cname"]').focus(); return; }
             let s = {}; try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
-            if (!s[code]) s[code] = { active: true, homologation: [], customers: [] };
+            if (!s[code]) s[code] = { active: true, customers: [] };
             if (!s[code].customers) s[code].customers = [];
             s[code].customers.push({ name, location: loc, certified: cert });
             localStorage.setItem(KEY, JSON.stringify(s));
             renderAFList();
           });
         });
-        // Remove customer
         list.querySelectorAll('.af-cust-rm').forEach(btn => {
           btn.addEventListener('click', function() {
             const KEY = this.dataset.key; const code = this.dataset.code;
             let s = {}; try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
             if (s[code] && s[code].customers) { s[code].customers.splice(parseInt(this.dataset.cidx), 1); localStorage.setItem(KEY, JSON.stringify(s)); }
             renderAFList();
-          });
-        });
-        // Notes
-        list.querySelectorAll('.af-notes-input').forEach(inp => {
-          inp.addEventListener('input', function() {
-            const KEY = this.dataset.key; const code = this.dataset.code;
-            let s = {}; try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
-            if (!s[code]) s[code] = { active: false, homologation: [], customers: [], notes: '' };
-            s[code].notes = this.value;
-            localStorage.setItem(KEY, JSON.stringify(s));
           });
         });
       }
