@@ -12,66 +12,109 @@
     // ── Global PM unlock state (shared across all edit panels) ──────────
     window.isPMUnlocked = function() { return sessionStorage.getItem('pm_unlocked') === '1'; };
     window.setPMUnlocked = function(val) {
-      if (val) { sessionStorage.setItem('pm_unlocked', '1'); } else { sessionStorage.removeItem('pm_unlocked'); }
+      if (val) { sessionStorage.setItem('pm_unlocked', '1'); document.body.classList.add('pm-unlocked'); }
+      else      { sessionStorage.removeItem('pm_unlocked'); document.body.classList.remove('pm-unlocked'); }
       document.dispatchEvent(new CustomEvent('pm-lock-change', { detail: { unlocked: !!val } }));
     };
+    // Apply on page load (before DOM is fully built; body class set here)
+    if (window.isPMUnlocked()) document.body.classList.add('pm-unlocked');
   </script>
   <header>
     <div class="header-inner">
       <a href="index.html" class="logo">
         <img src="Snoeks brand.png" alt="Snoeks Automotive" class="logo-img" />
       </a>
-      <!-- ── PM Login widget ─────────────────────────────────────────── -->
-      <div id="pm-login-widget">
-        <div id="pm-login-form">
-          <input id="pm-login-user" type="text" placeholder="Username" autocomplete="username" />
-          <input id="pm-login-pw" type="password" placeholder="Password" autocomplete="current-password" />
-          <button id="pm-login-btn">Login</button>
-          <span id="pm-login-error">Incorrect credentials</span>
+      <span class="header-title">Product Portfolio</span>
+      <!-- ── PM Login icon button (far right) ──────────────────────── -->
+      <button id="pm-login-icon-btn" title="Login" aria-label="Login">
+        <svg id="pm-icon-user" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <svg id="pm-icon-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="8" r="4"/><polyline points="7 13 10 16 17 11"/></svg>
+      </button>
+      <!-- ── PM Login popover ──────────────────────────────────────── -->
+      <div id="pm-login-pop" style="display:none">
+        <div id="pm-pop-login">
+          <p class="pm-pop-title">Product Manager Login</p>
+          <label class="pm-pop-label">Username</label>
+          <input id="pm-pop-user" type="text" autocomplete="username" placeholder="Product Managers" />
+          <label class="pm-pop-label">Password</label>
+          <input id="pm-pop-pw" type="password" autocomplete="current-password" placeholder="••••••" />
+          <p id="pm-pop-error">Incorrect credentials</p>
+          <button id="pm-pop-btn">Login</button>
         </div>
-        <div id="pm-logged-in" style="display:none">
-          <span id="pm-logged-label">Product Managers</span>
-          <button id="pm-logout-btn">Logout</button>
+        <div id="pm-pop-out" style="display:none">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><circle cx="12" cy="8" r="4"/><polyline points="7 13 10 16 17 11"/></svg>
+          <span id="pm-pop-name">Product Managers</span>
+          <button id="pm-pop-logout">Logout</button>
         </div>
-      </div>
-      <div class="header-right">
-        <span class="header-tag">Product Portfolio</span>
       </div>
     </div>
   </header>
 
   <script>
     (function() {
+      const iconBtn   = document.getElementById('pm-login-icon-btn');
+      const pop       = document.getElementById('pm-login-pop');
+      const iconUser  = document.getElementById('pm-icon-user');
+      const iconCheck = document.getElementById('pm-icon-check');
+
       function applyLoginState(unlocked) {
-        document.getElementById('pm-login-form').style.display  = unlocked ? 'none'  : 'flex';
-        document.getElementById('pm-logged-in').style.display   = unlocked ? 'flex'  : 'none';
-        document.getElementById('pm-login-error').style.display = 'none';
+        iconUser.style.display  = unlocked ? 'none'  : 'block';
+        iconCheck.style.display = unlocked ? 'block' : 'none';
+        iconBtn.classList.toggle('pm-icon-btn--active', unlocked);
+        document.getElementById('pm-pop-login').style.display = unlocked ? 'none' : 'flex';
+        document.getElementById('pm-pop-out').style.display   = unlocked ? 'flex' : 'none';
+        document.getElementById('pm-pop-error').style.display = 'none';
       }
-      // Restore state from sessionStorage on load
+
       applyLoginState(window.isPMUnlocked());
 
-      document.getElementById('pm-login-btn').addEventListener('click', function() {
-        const user = document.getElementById('pm-login-user').value.trim();
-        const pw   = document.getElementById('pm-login-pw').value;
+      iconBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        pop.style.display = pop.style.display === 'none' ? 'flex' : 'none';
+        if (pop.style.display === 'flex' && !window.isPMUnlocked()) {
+          setTimeout(() => document.getElementById('pm-pop-user').focus(), 50);
+        }
+      });
+
+      function tryLogin() {
+        const user = document.getElementById('pm-pop-user').value.trim();
+        const pw   = document.getElementById('pm-pop-pw').value;
         if (user === 'Product Managers' && pw === 'PM26') {
           window.setPMUnlocked(true);
           applyLoginState(true);
+          setTimeout(() => { pop.style.display = 'none'; }, 600);
         } else {
-          document.getElementById('pm-login-error').style.display = 'inline';
-          document.getElementById('pm-login-pw').value = '';
-          document.getElementById('pm-login-pw').focus();
+          document.getElementById('pm-pop-error').style.display = 'block';
+          document.getElementById('pm-pop-pw').value = '';
+          document.getElementById('pm-pop-pw').focus();
         }
+      }
+
+      document.getElementById('pm-pop-btn').addEventListener('click', tryLogin);
+      document.getElementById('pm-pop-pw').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') tryLogin();
+        document.getElementById('pm-pop-error').style.display = 'none';
       });
-      document.getElementById('pm-login-pw').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') document.getElementById('pm-login-btn').click();
-        document.getElementById('pm-login-error').style.display = 'none';
+      document.getElementById('pm-pop-user').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') document.getElementById('pm-pop-pw').focus();
       });
-      document.getElementById('pm-login-user').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') document.getElementById('pm-login-pw').focus();
-      });
-      document.getElementById('pm-logout-btn').addEventListener('click', function() {
+      document.getElementById('pm-pop-logout').addEventListener('click', function() {
         window.setPMUnlocked(false);
         applyLoginState(false);
+        document.getElementById('pm-pop-user').value = '';
+        document.getElementById('pm-pop-pw').value = '';
+      });
+
+      // Close popover when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!pop.contains(e.target) && e.target !== iconBtn) {
+          pop.style.display = 'none';
+        }
+      });
+
+      // Listen for lock change events (e.g. from other scripts)
+      document.addEventListener('pm-lock-change', function(e) {
+        applyLoginState(e.detail.unlocked);
       });
     })();
   </script>
@@ -951,8 +994,11 @@
     updateInsights(matrixState);
 
     let editMode = false;
-    let unlocked = false;
+    let unlocked = window.isPMUnlocked();
     let activePopover = null;
+
+    // Keep in sync when header login state changes
+    document.addEventListener('pm-lock-change', function(e) { unlocked = e.detail.unlocked; });
 
     function closePopover() {
       if (activePopover) { activePopover.remove(); activePopover = null; }
@@ -1058,7 +1104,10 @@
       });
     });
 
-    let actUnlocked = false;
+    let actUnlocked = window.isPMUnlocked();
+
+    // Keep in sync when header login state changes
+    document.addEventListener('pm-lock-change', function(e) { actUnlocked = e.detail.unlocked; });
 
     function showActPw(anchor, onSuccess) {
       if (window.isPMUnlocked && window.isPMUnlocked()) { actUnlocked = true; onSuccess(); return; }
